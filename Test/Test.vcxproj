@@ -76,15 +76,6 @@
     <LibraryPath>D:\Visual Studio Projects\_deps\lib\Release;D:\Visual Studio Projects\NGIV\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>D:\Visual Studio Projects\_deps\include;D:\Visual Studio Projects\NGIV;$(IncludePath)</IncludePath>
   </PropertyGroup>
-<<<<<<< HEAD
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Visual Studio Projects\NGIV;D:\Visual Studio Projects\_deps\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Visual Studio Projects\NGIV;D:\Visual Studio Projects\_deps\include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-=======
->>>>>>> parent of b842b4e... 0.2 release
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
