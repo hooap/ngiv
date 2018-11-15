@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ngiv", "ngiv\ngiv.vcxproj", "{0B3A0B84-56C7-4746-884B-E36CC3E69239}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{899528FD-DD51-49D2-A12C-B050EB04D954}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0B3A0B84-56C7-4746-884B-E36CC3E69239} = {0B3A0B84-56C7-4746-884B-E36CC3E69239}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
