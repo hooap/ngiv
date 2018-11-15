@@ -22,7 +22,7 @@ namespace ngiv {
 	};
 
 
-	namespace fs = std::tr2::sys;
+	//namespace fs = std::tr2::sys;
 	
 	inline bool filetobuffer(const std::string& filepath, std::vector<unsigned char>& buffer)
 	{
@@ -249,6 +249,7 @@ namespace ngiv {
 	}
 	
 		
+	/*
 		inline bool getDirectoryEntries(const char* path, std::vector<DirEntry>& rvEntries) {
 			auto dpath = fs::path(path);
 			// Must be directory
@@ -272,12 +273,10 @@ namespace ngiv {
 		inline bool checkDirectory(const char* path) {
 			return fs::exists(fs::path(path));
 		}
+		*/
 
-		inline bool checkFile(const std::string& filename) {
-			std::ifstream ifile(filename.c_str());
-			return (bool)ifile;
-		}
 
+	/*
 		inline bool copy(std::string npath, std::string ntopath) {
 			std::error_code a;
 			fs::copy(fs::path(npath), fs::path(ntopath),a);
@@ -308,6 +307,14 @@ namespace ngiv {
 			return 1;
 			
 		}
+		*/
+
+
+		inline bool checkFile(const std::string& filename) {
+			std::ifstream ifile(filename.c_str());
+			return (bool)ifile;
+		}
+
 		inline bool deletefile(std::string path){
 			int code = std::remove(path.c_str());
 			if (code == 0) return 1;
