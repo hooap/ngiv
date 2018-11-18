@@ -25,7 +25,6 @@ namespace ngiv {
 	void Camera2D::update() {
 		if (need == true)
 		{
-			// kendin yeniden yazýlacak !!
 			glm::vec3 translate = glm::vec3(-_position.x + _screenwidth / 2, -_position.y + _screenheight / 2, 0.0f);
 			_cameramatrix = glm::translate(_orthomatrix, translate);
 			//Camera Scale
