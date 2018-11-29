@@ -1,0 +1,240 @@
+
+def calc_area(x1,y1,x2,y2):
+	xdif = abs(x2-x1)
+	ydif = abs(y2-y1)
+	return xdif * ydif
+
+
+def is_firmus(first,second):
+	### we dont know if its (lower-left & upper-right)  or  (upper-left & lower-right) 
+
+
+	epsilon = 0.001
+	###convert to upperleft lowerright
+	firstupperleft = []
+	firstlowerright = []
+
+
+
+	###get individual corners of the each object
+	if(first[0] < first[2]):
+		### first x is bigger than second
+		firstupperleft.append(first[0])
+		firstlowerright.append(first[2])
+	else:
+		firstupperleft.append(first[2])
+		firstlowerright.append(first[0])
+
+	if(first[1] > first[3]):
+		###first dots y is bigger so its (upper-left & lower-right) for this object
+		firstupperleft.append(first[1])
+		firstlowerright.append(first[3])
+	else:
+		###second dots y is bigger so its (lower-left & upper-right) for this object
+		firstupperleft.append(first[3])
+		firstlowerright.append(first[1])
+
+
+
+
+	###we got first obj's upperleft and lowerright
+	### do it for second obj again
+	secondupperleft = []
+	secondlowerright = []
+
+	if(second[0] < second[2]):
+		### first x is bigger than second
+		secondupperleft.append(second[0])
+		secondlowerright.append(second[2])
+	else:
+		secondupperleft.append(second[2])
+		secondlowerright.append(second[0])
+
+	if(second[1] > second[3]):
+		###first dots y is bigger so its (upper-left & lower-right) for this object
+		secondupperleft.append(second[1])
+		secondlowerright.append(second[3])
+	else:
+		###second dots y is bigger so its (lower-left & upper-right) for this object
+		secondupperleft.append(second[3])
+		secondlowerright.append(second[1])
+	### we got upperleft and lowerright corners
+
+	### check which one is the lower block 
+	firstoneislower = False
+	if(firstlowerright[1] < secondlowerright[1]):
+		firstoneislower = True
+
+	lowerobjectupperleft = []
+	lowerobjectlowerright = []
+
+	upperobjectupperleft = []
+	upperobjectlowerright = []
+
+	if(firstoneislower):
+		lowerobjectupperleft = firstupperleft
+		lowerobjectlowerright = firstlowerright
+		upperobjectupperleft = secondupperleft
+		upperobjectlowerright = secondlowerright
+	else:
+		lowerobjectupperleft = secondupperleft
+		lowerobjectlowerright = secondlowerright
+		upperobjectupperleft = firstupperleft
+		upperobjectlowerright = firstlowerright
+
+### check if first rule is correct
+	first_rule_correct = False
+	if (abs(lowerobjectlowerright[1]) < epsilon):
+		first_rule_correct = True
+
+###check if second rule is correct
+	second_rule_correct = False
+
+	bx1 = -1
+	bx2 = -1
+	by = -1
+
+	ux1 = -1
+	ux2 = -1
+	uy = -1
+
+	bx1 = lowerobjectupperleft[0]
+	bx2 = lowerobjectlowerright[0]
+	by = lowerobjectupperleft[1]
+
+	ux1 = upperobjectupperleft[0]
+	ux2 = upperobjectlowerright[0]
+	uy = upperobjectlowerright[1]
+
+	if(abs(uy - by) < epsilon):
+		###uppers bottom and lowers up corner is on the same y value
+		if (ux2 > bx1 and bx1 < ux2) or (bx2 > ux1 and bx2 > ux1):
+			### they make contact
+			second_rule_correct = True
+
+
+
+###CALCULATE CENTER OF MASSES
+	centerofmassofupperobj = []
+###get centerofmass of upperobj for third rule
+	### add the x of centerofmass
+	centerofmassofupperobj.append( ((float)(upperobjectlowerright[0])+upperobjectupperleft[0]) / 2.0)
+	### add the y of centerofmass
+	centerofmassofupperobj.append( ((float)(upperobjectupperleft[1])+upperobjectlowerright[1]) / 2.0)
+
+
+#center of mass of lowerobj
+	centerofmassoflowerobj = []	
+	### add the x of centerofmass
+	centerofmassoflowerobj.append( ((float)(lowerobjectlowerright[0])+lowerobjectupperleft[0]) / 2.0)
+	### add the y of centerofmass
+	centerofmassoflowerobj.append( ((float)(lowerobjectupperleft[1])+lowerobjectlowerright[1]) / 2.0)
+
+
+###check if third rule is correct
+	third_rule_correct = False	
+	if((centerofmassofupperobj[0] >= lowerobjectupperleft[0] or abs(centerofmassofupperobj[0] - lowerobjectupperleft[0]) < epsilon) and (centerofmassofupperobj[0] <= lowerobjectlowerright[0] or abs(centerofmassofupperobj[0] - lowerobjectlowerright[0])< epsilon ) ):
+		third_rule_correct = True
+
+	
+### we got all of the rules 
+
+
+
+### first output case FIRMUS
+	if first_rule_correct and second_rule_correct and third_rule_correct:
+		###its FIRMUS
+		##lets calculate the area of objects			
+		uarea = calc_area(upperobjectlowerright[0],upperobjectlowerright[1],upperobjectupperleft[0],upperobjectupperleft[1])	
+		larea = calc_area(lowerobjectlowerright[0],lowerobjectlowerright[1],lowerobjectupperleft[0],lowerobjectupperleft[1])	
+
+		output = ["FIRMUS",uarea + larea]
+		return output
+
+
+### second output case ADDENDUM
+	if(first_rule_correct and second_rule_correct):	
+
+		minimumblock = []
+		if(centerofmassofupperobj > centerofmassoflowerobj):
+			#upper object is on the left side of the bottom object
+			#upper objects center of mass should be on the bottom objects left x value			
+			difinx = upperobjectlowerright[0] - lowerobjectlowerright[0]
+			requiredx = lowerobjectlowerright[0] - difinx
+			minimumblock.append(upperobjectupperleft[0])
+			minimumblock.append(upperobjectlowerright[1])
+			minimumblock.append(requiredx)
+			minimumblock.append(upperobjectupperleft[1])			
+		else:
+			difinx = lowerobjectupperleft[0] - upperobjectupperleft[0]
+			requiredx = lowerobjectupperleft[0] + difinx
+			minimumblock.append(upperobjectlowerright[0])
+			minimumblock.append(upperobjectlowerright[1])
+			minimumblock.append(requiredx)
+			minimumblock.append(upperobjectupperleft[1])
+
+
+
+		output = ["ADDENDUM",minimumblock]
+		return output
+
+
+### last output case DAMNARE
+		
+
+
+
+
+	contact = False
+	# check if y of upper object is lower than upper object's y
+	if(upperobjectlowerright[1] >= lowerobjectupperleft[1] or abs(upperobjectlowerright[1] - lowerobjectupperleft[1]) < epsilon):
+		# no problem just calculate areas and return
+		contact = False
+	elif(upperobjectlowerright[0] <= lowerobjectupperleft[0] or abs(upperobjectlowerright[0] - lowerobjectupperleft[0]) < epsilon):	# no its lower than low obj lets check if they can avoid intersection with upper being on the left side
+		contact = False
+	elif(upperobjectupperleft[0] >= lowerobjectlowerright[0] or abs(upperobjectupperleft[0] - lowerobjectlowerright[0]) < epsilon):# still no luck check if they can avoid contact upper being on the right
+		contact = False
+	else:
+		contact = True
+	
+	if(contact == False): # no contact return the sum of the areas
+		uarea = calc_area(upperobjectlowerright[0],upperobjectlowerright[1],upperobjectupperleft[0],upperobjectupperleft[1])	
+		larea = calc_area(lowerobjectlowerright[0],lowerobjectlowerright[1],lowerobjectupperleft[0],lowerobjectupperleft[1])	
+		output = ["DAMNARE",uarea+larea]
+		return output
+	else:
+		fupoint = min(lowerobjectupperleft[1],upperobjectupperleft[1])
+		flpoint = max(lowerobjectlowerright[1],upperobjectlowerright[1])
+
+		ycontact = fupoint - flpoint
+
+		frpoint = min(upperobjectlowerright[0],lowerobjectlowerright[0])
+		flpoint = max(upperobjectupperleft[0],lowerobjectupperleft[0])
+		xcontact = frpoint - flpoint;
+		
+
+		print(xcontact,ycontact)
+
+		uarea = calc_area(upperobjectlowerright[0],upperobjectlowerright[1],upperobjectupperleft[0],upperobjectupperleft[1])	
+		larea = calc_area(lowerobjectlowerright[0],lowerobjectlowerright[1],lowerobjectupperleft[0],lowerobjectupperleft[1])	
+		area = uarea + larea
+		carea = calc_area(0,0,xcontact,ycontact)
+
+
+		return ["DAMNARE",area - carea]
+
+	
+if __name__  == "__main__":
+# [-3,7,5,15],[-7,0,7,5] [0,10,-8.7,0],[-4,9,-1,14]
+#    print(is_firmus([-0.5,10,-6,13],[-7,0,3,10])) # firmus
+#	print(is_firmus([-8,11,2,5],[1,0,-2,5])) # appendum
+#	print(is_firmus([-3,7,5,15],[-7,0,7,5])) # damnare
+#	print("134.0")
+
+
+
+	print(is_firmus([6,4,3.9,-1],[0.5,14.2,9.5,4])) # damnare
+
+
+
+
