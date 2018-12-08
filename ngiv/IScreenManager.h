@@ -7,8 +7,8 @@ namespace ngiv {
 	class IScreenManager
 	{
 	public:
-		IScreenManager();
-		~IScreenManager();
+		IScreenManager(){}
+		~IScreenManager(){}
 
 		void init(ngiv::Window* window, ColorRGBA8 backgroundColor) {
 			_window = window;
@@ -16,28 +16,73 @@ namespace ngiv {
 		}
 
 		void addScreen(IScreen* screen) {
-			_screens.push_back(screen);
-			if (_screens.size() == 1) {
-				active_screen = _screens[0];
-			}
+			_screens.push_back(screen);			
 		}
-		void setActiveScreen(IScreen* screenpointer) {
+		void setActiveScreen(int index) {
 			static bool first = true;
 			if (first) {
-				active_screen = screenpointer;
+				active_screen = _screens[index];
 				active_screen->onEntry();
 				return;
 			}
 			active_screen->onExit();
-			active_screen = screenpointer;
+			active_screen = _screens[index];
 			active_screen->onEntry();
 			return;
 		}
-		bool do_screen_loop();
+		void setActiveScreen(IScreen* screen) {
+			static bool first = true;
+			if (first) {
+				active_screen = screen;
+				active_screen->onEntry();
+				return;
+			}
+			active_screen->onExit();
+			active_screen = screen;
+			active_screen->onEntry();
+			return;
+		}
+
+
+
+		bool do_screen_loop() {
+			if (active_screen->switchscreen != nullptr) {
+				IScreen* ns = active_screen->switchscreen;
+				active_screen->switchscreen = nullptr;
+				active_screen->onExit();
+				active_screen = ns;
+				active_screen->onEntry();			 
+			}
+
+			bool exit = active_screen->internalupdate();
+			if (exit) {
+				quitlogic();
+				return true;
+			}
+
+			exit = active_screen->update(0);
+			if (exit) {
+				quitlogic();
+				return true;
+			}
+
+
+			active_screen->draw();
+			active_screen->render();
+
+			_window->swapWindow();
+			return false;
+		}
+
 
 
 	private:
-		void quitlogic();
+		void quitlogic() {
+			for (int i = 0; i < _screens.size(); i++) {
+				_screens[i]->disposeScreen();
+			}
+			_screens.clear();
+		}
 
 
 		ngiv::Window* _window;

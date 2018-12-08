@@ -20,10 +20,13 @@ public:
 	virtual void render() override;
 
 	
+private:
 	virtual void initui() override;
 	virtual void init() override;
 	virtual void dispose() override;
-private:
+
+
+
 
 	void save() {
 		_container.savetofile("savefile.txt");

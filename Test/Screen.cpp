@@ -128,6 +128,9 @@ void Screen::checkInput() {
 	if (_inputmanager.isKeyPressed(SDLK_KP_MINUS)) {
 		load();
 	}
+	if (_inputmanager.isKeyPressed(SDLK_F6)) {
+		setSwitchScreen("leveleditor");
+	}
 
 }
 

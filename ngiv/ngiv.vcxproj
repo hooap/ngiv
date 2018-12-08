@@ -131,7 +131,6 @@
     <ClCompile Include="GLSLProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="IScreen.cpp" />
-    <ClCompile Include="IScreenManager.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NGUI.cpp" />
     <ClCompile Include="Noise.cpp" />

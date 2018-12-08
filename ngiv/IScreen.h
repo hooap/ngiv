@@ -2,12 +2,13 @@
 
 //#define NOMINMAX
 
-
 #include "GLSLProgram.h"
 #include "InputManager.h"
 #include "NGUI.h"
-//#include "DebugRenderer.h"
 #include "Window.h"
+#include "Misc.h"
+
+#include <map>
 
 namespace ngiv{
 
@@ -31,24 +32,41 @@ namespace ngiv{
 		
 
 
+
+		virtual void setscreenPointer(std::string name,IScreen* a) {
+			screenpointers.insert(std::make_pair(name, a));
+		}
+		
+
+
 		IScreen* switchscreen = nullptr;
 
-		virtual void setscreenPointera(IScreen* a) {	}
-		virtual void setscreenPointerb(IScreen* b) {	}
-
-
+	protected:
 		virtual void initui() = 0;
 		virtual void init() = 0;
 		virtual void dispose() = 0;
-		
-	protected:
+
+
+
 		bool initialized = false;
 		static bool getInput(InputManager& i, Window* w);	
-			
+		
+		void setSwitchScreen(std::string name) {
+			auto it = screenpointers.find(name);
+			if (it != screenpointers.end()) {
+				switchscreen = it->second;
+			}
+			else {
+				ngiv::error("switchscreen:" + name + "not found", false);
+			}
+		}
+
 		InputManager* getinputmanager() { return &_inputmanager; }		
 		
-	protected:			
-		
+	protected:	
+		std::map<std::string, IScreen*> screenpointers;
+
+
 		int _width, _height;
 		
 								

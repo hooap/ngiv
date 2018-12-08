@@ -5,7 +5,7 @@
 #include <fstream>
 #include "Misc.h"
 #include "ModelLoader.h"
-
+#include "PhysicsWorld.h"
 
 namespace ngiv {
 

@@ -1,6 +1,7 @@
 #include "Manager.h"
 
 #include <ngiv\NGIV.h>
+#include <ngiv/BasicLevelEditor.h>
 
 Manager::Manager()
 {
@@ -24,12 +25,20 @@ void Manager::init() {
 	}
 	_window.create("Tech Demo", width, height, flags, false);
 
+	Screen *_screen = new Screen();
+
 	_screenManager.init(&_window, ngiv::ColorRGBA8(255, 255, 255, 255));
 	//create screen
-	_screen.initScreen(width,height,&_window,"Fonts//calibril.ttf",64);	
 
-	_screenManager.addScreen(&_screen);
-	_screenManager.setActiveScreen(&_screen);
+	ngiv::BasicLevelEditor* _leveleditor = new ngiv::BasicLevelEditor();
+	_leveleditor->initScreen(width,height,&_window, "Fonts//calibril.ttf", 64);
+
+	_screen->initScreen(width,height,&_window,"Fonts//calibril.ttf",64);	
+	_screen->setscreenPointer("leveleditor", _leveleditor);
+
+
+	_screenManager.addScreen(_screen);
+	_screenManager.setActiveScreen(0);
 }
 void Manager::run() {
 

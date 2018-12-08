@@ -15,7 +15,6 @@ private:
 	void init();
 	void dispose();
 	ngiv::IScreenManager _screenManager;
-	Screen _screen;
 	ngiv::Window _window;
 
 

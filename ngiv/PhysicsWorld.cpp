@@ -223,24 +223,18 @@ namespace ngiv {
 			//move the objects along velocity
 			objects[i]->addExtraPos(objects[i]->getVelocity());
 
-
 			float slowingfactor = 0.01;
 			//stop objects slowly
 			objects[i]->addVelocity(-objects[i]->getVelocity() * slowingfactor);
 
-
-
-
 			for (int j = i + 1; j < objects.size(); j++) {
 				//collision between spheres
-
 
 				std::vector<Collision_Sphere>* firstSpheres = objects[i]->getSpheres();
 				std::vector<Collision_Sphere>* secondSpheres = objects[j]->getSpheres();
 
 				std::vector<Collision_Box>* firstBoxes = objects[i]->getBoxes();
-				std::vector<Collision_Box>* secondBoxes = objects[j]->getBoxes();
-				
+				std::vector<Collision_Box>* secondBoxes = objects[j]->getBoxes();				
 
 				//i and j objects
 				//lets get individual collision boxes with each other
@@ -264,8 +258,7 @@ namespace ngiv {
 						collision_box_box(&(*secondBoxes)[k], &(*firstBoxes)[k], objects[j], objects[i]);
 					}
 				}
-
-
+					
 
 
 			}			
