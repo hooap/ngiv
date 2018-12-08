@@ -86,6 +86,8 @@ namespace ngiv{
 	
 	bool IScreen::internalupdate(){
 		bool exit = getInput(_inputmanager, _window);
+		_gui.update();
+
 		if (exit) {
 			return true; 
 		}

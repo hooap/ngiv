@@ -515,16 +515,6 @@ namespace ngiv {
 	}
 
 
-	void Renderer_3D::draw(OBJ* m) {
-		std::vector<Mesh>* meshes = m->getMeshes();
-		glm::vec3 pos = m->getPos();
-		for (int x = 0; x < meshes->size(); x++) {
-			_meshes.push_back((*meshes)[x]);
-			_meshes_poss.push_back(pos);		
-			_meshes_scale.push_back(m->getscale());
-		}		
-
-	}
 	void Renderer_3D::drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes,const std::vector<std::vector<glm::vec3>>& poss,glm::vec3 scale) {	
 				for (int i = 0; i < meshes.size(); i++) {
 			for (int j = 0; j < meshes[i].size(); j++) {
@@ -534,6 +524,18 @@ namespace ngiv {
 			}
 		}
 	}
+
+	void Renderer_3D::draw(OBJ* m) {
+		std::vector<Mesh>* meshes = m->getMeshes();
+		glm::vec3 pos = m->getPos();
+		for (int x = 0; x < meshes->size(); x++) {
+			_meshes.push_back((*meshes)[x]);
+			_meshes_poss.push_back(pos);
+			_meshes_scale.push_back(m->getscale());
+		}
+
+	}
+
 	void Renderer_3D::drawCollisionBox(Collision_Object* sp) {
 		glm::vec3 addpos = sp->getExtraPos();
 		std::vector<Collision_Sphere>* spheres = sp->getSpheres();

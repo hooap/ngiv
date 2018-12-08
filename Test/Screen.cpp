@@ -16,26 +16,26 @@ void Screen::init()
 	_cam3d.init(glm::vec3(13, 13, -5), 0.4, 0.2, 60, _width, _height,0.1f ,400.0f);
 	_cam3d.lookat(glm::vec3(5, 0, 0));
 
-	_cam3d.updateMatrix();
 	_3drenderer.init(&_cam3d, _width, _height);
 	_3drenderer.loadSkybox("001");
 	_world.init(0.001);
 
 	//exampleobj = ngiv::ModelLoader::loadModel(glm::vec3(2, 0, 0), "Models//metalboxv2obj//untitled.obj", false, false, 1.0f);
 	
-	floorbox = ngiv::ModelLoader::loadModel(glm::vec3(0, -5, 0), "Models//metalboxv2obj//untitled.obj", true, glm::vec3(100,10,100));
+	//100,10,100
+
+	floorbox = ngiv::ModelLoader::loadModel(glm::vec3(0, -5, 0), "Models//metalboxv2obj//untitled.obj", true, glm::vec3(100, 10, 100));
 	sphere1 = ngiv::ModelLoader::loadModel(glm::vec3(0, 5, 0), "Models//lowpolysphereobj//sphere.obj", true);
 	sphere2 = ngiv::ModelLoader::loadModel(glm::vec3(3, 5, 2), "Models//lowpolysphereobj//sphere.obj", true);
 	
 	ngiv::Collision_Sphere sp1(glm::vec3(0), 1);
 	ngiv::Collision_Sphere sp2(glm::vec3(0), 1);
 		
-	ngiv::Collision_Box fb(glm::vec3(0), floorbox->getCenterPos(), ngiv::Collision_Object::makeCollisionBox(floorbox->getscale()),floorbox->getscale());
+	ngiv::Collision_Box fb(floorbox->getCenterPosRelative(), floorbox->getCenterPosRelative(), ngiv::Collision_Object::makeCollisionBox(floorbox->getscale()),floorbox->getscale());
 
-	_world.add(sphere1->setCollisionObject(sp1));
-	_world.add(sphere2->setCollisionObject(sp2));
-	_world.add(floorbox->setCollisionObject(fb));
-
+	_world.add(sphere1->creatensetCollisionObject(sp1, true));
+	_world.add(sphere2->creatensetCollisionObject(sp2, true));
+	_world.add(floorbox->creatensetCollisionObject(fb, false));
 		
 	//nanosuit = ngiv::ModelLoader::loadModel(glm::vec3(0,0,0), "Models//nanosuit//nanosuit.obj", false, true, 1.0f);
 	//box = ngiv::ModelLoader::loadModel(glm::vec3(5, 12, 5), "Models//metalboxv2obj//untitled.obj", false, true, 1.0f);
@@ -110,6 +110,10 @@ void Screen::checkInput() {
 		b2->addVelocity(glm::vec3(0, 0, -power));
 	}
 
+	if (_inputmanager.isKeyPressed(SDLK_KP_MULTIPLY)) {
+		grav = !grav;
+	}
+
 }
 
 void Screen::updateui() {
@@ -137,7 +141,7 @@ bool Screen::update(float deltatime)
 	
 	updateui();
 	
-	_world.update();
+	_world.update(grav);
 	
 	_cam3d.do_basic_cam_movement(_inputmanager);
 	_cam3d.updateCam(_inputmanager);	
@@ -145,10 +149,9 @@ bool Screen::update(float deltatime)
 	
 	sphere1->updateObject();
 	sphere2->updateObject();
+	floorbox->updateObject();
 
 	checkInput();
-
-	_gui.update();
 	return false;
 }
 
@@ -160,9 +163,9 @@ void Screen::draw()
 	_3drenderer.draw(sphere1);
 	_3drenderer.draw(sphere2);
 
-//	_3drenderer.drawCollisionBox(sphere1->getCollision_Object());
+	_3drenderer.drawCollisionBox(sphere1->getCollision_Object());
 //	_3drenderer.drawCollisionBox(sphere2->getCollision_Object());
-//	_3drenderer.drawCollisionBox(floorbox->getCollision_Object());
+	_3drenderer.drawCollisionBox(floorbox->getCollision_Object());
 
 
 //	_terrain.draw(&_3drenderer);

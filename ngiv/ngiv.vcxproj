@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicLevelEditor.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="glad.c" />
@@ -143,6 +144,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicLevelEditor.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Collision_Box.h" />

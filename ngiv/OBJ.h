@@ -41,50 +41,56 @@ namespace ngiv {
 		void setCenterPos(glm::vec3 centerpos) { this->pos = centerpos - center_of_mass; }
 		glm::vec3 getCenterPos() { return pos + center_of_mass; }
 		std::string directory;
-		glm::vec3 get_center_of_mass() { return center_of_mass; }
+		glm::vec3 getCenterPosRelative() { return center_of_mass; }
 		glm::vec3 getscale() { return scale; }
 		
 
-		Collision_Object* setCollisionObject(Collision_Object collisionObject) {
-			collision_boxes = collisionObject;
+		Collision_Object* createCollisionObject() {
+			collision_boxes = new Collision_Object();
 
-			return &collision_boxes;
+			return collision_boxes;
 		}
-		Collision_Object* setCollisionObject(Collision_Sphere collisionObject) {
-			collision_boxes.setExtraPos(pos);
-			collision_boxes.addSphere(collisionObject);	
-			collision_boxes.setCenterofmass(center_of_mass);
-			pos = collisionObject.getPos();
+		Collision_Object* creatensetCollisionObject(Collision_Sphere collisionObject, bool dynamic) {
+			collision_boxes = new Collision_Object();
+			collision_boxes->setExtraPos(pos);
 
-			return &collision_boxes;
+			collision_boxes->addSphere(collisionObject);	
+			collision_boxes->setCenterofmass(center_of_mass);
+			collision_boxes->setDynamic(dynamic);			
+			return collision_boxes;
 		}
-		Collision_Object* setCollisionObject(Collision_Box collisionObject) {
-			collision_boxes.setExtraPos(getCenterPos());
-			collision_boxes.addBox(collisionObject);
-			collision_boxes.setCenterofmass(center_of_mass);
-			
+		Collision_Object* creatensetCollisionObject(Collision_Box collisionObject, bool dynamic) {
+			collision_boxes = new Collision_Object();
 
-			return &collision_boxes;
+			collision_boxes->setExtraPos(pos);
+
+			collision_boxes->addBox(collisionObject);
+			collision_boxes->setCenterofmass(center_of_mass);
+			collision_boxes->setDynamic(dynamic);
+
+			return collision_boxes;
 		}
 		
-		Collision_Object* getCollision_Object() { return &collision_boxes; }
+		Collision_Object* getCollision_Object() { return collision_boxes; }
 
 		void updateObject() {
-			pos = collision_boxes.getExtraPos();
-			rot = collision_boxes.getRotation();
+			pos = collision_boxes->getExtraPos();
+			rot = collision_boxes->getRotation();
 		}
 		
 		float xdif;
 		float ydif;
 		float zdif;
 	protected:
-		Collision_Object collision_boxes;
-
 		OBJ() {
 			empty = true;
 			pos = glm::vec3(0);
 			rot = glm::vec3(0);
 		};
+
+		Collision_Object* collision_boxes = nullptr;
+
+		
 		
 
 		bool empty = true;

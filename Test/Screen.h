@@ -23,7 +23,7 @@ public:
 	virtual void dispose() override;
 private:
 
-
+	bool grav = false;
 	void checkInput();
 	void updateui();
 

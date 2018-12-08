@@ -35,7 +35,6 @@ namespace ngiv{
 
 		virtual void setscreenPointera(IScreen* a) {	}
 		virtual void setscreenPointerb(IScreen* b) {	}
-		static bool getInput(InputManager& i, Window* w);
 
 
 		virtual void initui() = 0;
@@ -44,13 +43,7 @@ namespace ngiv{
 		
 	protected:
 		bool initialized = false;
-		
-
-		
-		
-		
-					
-		
+		static bool getInput(InputManager& i, Window* w);	
 			
 		InputManager* getinputmanager() { return &_inputmanager; }		
 		

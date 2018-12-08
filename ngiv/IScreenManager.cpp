@@ -12,17 +12,19 @@ namespace ngiv {
 	}
 
 	bool IScreenManager::do_screen_loop() {
+
+		bool exit = active_screen->internalupdate();
+		if (exit) {
+			quitlogic();
+			return true;
+		}
+
+		exit = active_screen->update(0);
+		if (exit) {
+			quitlogic();
+			return true;
+		}
 		
-		bool exit = active_screen->update(0);
-		if (exit) {
-			quitlogic();
-			return true;
-		}
-		exit = active_screen->internalupdate();
-		if (exit) {
-			quitlogic();
-			return true;
-		}
 
 
 

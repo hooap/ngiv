@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "InputManager.h"
 
+
 namespace ngiv {
 
 	class Camera3D
@@ -26,7 +27,7 @@ namespace ngiv {
 			_pitch = glm::degrees(asin(_front.y));
 			_yaw = glm::degrees(atan2(-_front.x, _front.z));
 			_yaw += 90;
-
+			updateMatrix();
 			needUpdate = true; 
 		}
 

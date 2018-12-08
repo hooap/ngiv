@@ -164,33 +164,57 @@ namespace ngiv {
 		bool shouldcamerastop() { return _shouldcamerastop; }
 
 		//get
-		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint texture_body, GLuint texture_titlebar, bool isdynamic, bool canclose, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
-		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint texture_body, std::function<void(NGUI_PANEL*,NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 getpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		
+
+
 		NGUI_TEXT*			 gettext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter);
-		NGUI_PANEL_BUTTON*	 getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func);
+		
+		NGUI_PANEL_BUTTON*	 getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, std::string bodypostfix , ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func);
+		NGUI_PANEL_BUTTON*	 getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func);
+		
 		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name,glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool value, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
+		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name, glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool value, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
+		
 		NGUI_PANEL_EDITBOX*  getpaneleditbox(std::string name, glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func = nullptr);
+		NGUI_PANEL_EDITBOX*  getpaneleditbox(std::string name, glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func = nullptr);
+
 
 
 		//add
-		NGUI_PANEL*			 addpanel(glm::vec4& pos, GLuint texture_body, GLuint texture_titlebar, bool isdynamic,   bool canclose, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
-		NGUI_PANEL*			 addpanel(glm::vec4& pos, GLuint texture_body, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 addpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 addpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		
+
+
 		NGUI_TEXT*			 addtext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter,bool isycenter);
-		NGUI_BUTTON*		 addbutton(std::string t, float tsize,glm::vec4& bdestrect, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func);
+		
+		NGUI_BUTTON*		 addbutton(std::string t, float tsize,glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func);
+		NGUI_BUTTON*		 addbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func);
+		
 		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool value, std::function<void(NGUI_CHECKBOX*)> func);
+		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool value, std::function<void(NGUI_CHECKBOX*)> func);
+
+
+
 		NGUI_EDITBOX*		 addeditbox(glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func = nullptr);
+		NGUI_EDITBOX*		 addeditbox(glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func = nullptr);
 
 		//premeade
 
 		void addPREMADEok(glm::vec4& pos, std::string text);
 		NGUI_PANEL* addPREMADEyesno(glm::vec4& pos, std::string text, std::function<void(NGUI_PANEL_BUTTON*,NGUI_PANEL*)> func = nullptr);
 
-	private:
+
+
 		GLuint _texture_red;
 		GLuint _texture_green;
 		GLuint _texture_blue;
 		GLuint _texture_grey;
 		GLuint _texture_dark_grey;
+	private:
+		
 
 
 		bool _shouldcamerastop = false;

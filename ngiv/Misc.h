@@ -23,6 +23,10 @@ namespace ngiv {
 	inline void o(int d) {
 		std::cout << d << "\n";
 	}
+	inline void o(std::string t, glm::vec3 p) {
+		std::cout << t << "		|" << p.x << "|" << p.y << "|" << p.z <<  "|\n";
+	}
+
 
 	inline void error(std::string error, bool critical) {
 		std::cout << error << std::endl;

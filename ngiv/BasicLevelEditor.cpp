@@ -1,20 +1,23 @@
-#include "Screen_Level_Editor.h"
-#include <NGI\ResourceManager.h>
-#include "Renderer.h"
-#include <NGI\StopFunction.h>
-#include <NGI\IOManager.h>
-#include "SaveLoad.h"
+#include "BasicLevelEditor.h"
+#include "TextureLoader.h"
+#include "Misc.h"
 
-void Screen_Level_Editor::init() {
-	_camera.setposition(glm::vec2(0));
-	
+
+
+void BasicLevelEditor::init() {
+	_cam3d.init(glm::vec3(13, 13, -5), 0.4, 0.2, 60, _width, _height, 0.1f, 400.0f);
+	_cam3d.lookat(glm::vec3(5, 0, 0));
+
+	_3drenderer.init(&_cam3d, _width, _height);
+	_3drenderer.loadSkybox("001");
+
 }
-void Screen_Level_Editor::initui() {
+void BasicLevelEditor::initui() {
 	//screen buttons
 	{
 		//return button
-		ngi::GLTexture returntexture = ngi::ResourceManager::getTexture("Textures/return.png");
-		_gui.addbutton("", 1, glm::vec4(0, 95, 5, 5), ngi::ColorRGBA8(255, 255, 255, 255), ngi::ColorRGBA8(255, 0, 0, 255), std::bind(&Screen_Level_Editor::checkmenubutton, this, std::placeholders::_1), returntexture.id);
+		unsigned int returntexture = ngiv::TextureLoader::LoadTexture("Textures/return.png");
+		_gui.addbutton("", 1, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
 		//
 
 	}
@@ -22,52 +25,52 @@ void Screen_Level_Editor::initui() {
 	//left panel
 	{
 		//panel
-		ngi::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 94), ngi::ColorRGBA8(100, 100, 100, 255));
+		ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 94),"");
 
 		//Free button	
-		ngi::NGUI_PANEL_BUTTON* b1 = _gui.getpanelbutton("Free", 1.0f, glm::vec4(5, 80, 42, 15), ngi::ColorRGBA8(130, 150, 130, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkfreebutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* b1 = _gui.getpanelbutton("Free", 1.0f, glm::vec4(5, 80, 42, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkfreebutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(b1);
 
 		//Move button	
-		ngi::NGUI_PANEL_BUTTON* b2 = _gui.getpanelbutton("Move", 1.0f, glm::vec4(53, 80, 42, 15), ngi::ColorRGBA8(130, 150, 130, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkselectbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* b2 = _gui.getpanelbutton("Move", 1.0f, glm::vec4(53, 80, 42, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkselectbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(b2);
 
 		//create box	
-		ngi::NGUI_PANEL_BUTTON* b3 = _gui.getpanelbutton("Box", 1.0f, glm::vec4(5, 60, 90, 15), ngi::ColorRGBA8(130, 150, 130, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkcreateboxbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* b3 = _gui.getpanelbutton("Box", 1.0f, glm::vec4(5, 60, 90, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcreateboxbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(b3);
 
 		//create spawnpoint
-		ngi::NGUI_PANEL_BUTTON* b4 = _gui.getpanelbutton("SpawnPoint", 1.0f, glm::vec4(5, 40, 90, 15), ngi::ColorRGBA8(130, 150, 130, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkcreatespawnpointbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* b4 = _gui.getpanelbutton("SpawnPoint", 1.0f, glm::vec4(5, 40, 90, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcreatespawnpointbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(b4);
 		
 		//cam reset
-		ngi::NGUI_PANEL_BUTTON* b5 = _gui.getpanelbutton("CamReset", 1.0f, glm::vec4(4, 26, 42, 10), ngi::ColorRGBA8(130, 150, 130, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkcamresetbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* b5 = _gui.getpanelbutton("CamReset", 1.0f, glm::vec4(4, 26, 42, 10), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcamresetbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(b5);
 
 		//debug checkbox
-		_debugcheckbox = _gui.getpanelcheckbox("debugcheckbox", glm::vec4(1, 0.4, 10, 3), ngi::ColorRGBA8(70, 70, 70, 255), ngi::ColorRGBA8(0, 255, 0, 255), true, std::bind(&Screen_Level_Editor::checkdebugcheckbox, this, std::placeholders::_1, std::placeholders::_2));
+		_debugcheckbox = _gui.getpanelcheckbox("debugcheckbox", glm::vec4(1, 0.4, 10, 3), "", "", true, std::bind(&BasicLevelEditor::checkdebugcheckbox, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->checkboxs.push_back(_debugcheckbox);
 		//debug checkbox text
-		ngi::NGUI_TEXT* t1 = _gui.gettext("debug", glm::vec2(25, 1.6), ngi::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
+		ngiv::NGUI_TEXT* t1 = _gui.gettext("debug", glm::vec2(25, 1.6), ngiv::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
 		lpanel->texts.push_back(t1);
 
 		//forced grid checkbox
-		_forcedgridcheckbox = _gui.getpanelcheckbox("forcedgridcheckbox", glm::vec4(1, 5, 10, 3), ngi::ColorRGBA8(70, 70, 70, 255), ngi::ColorRGBA8(0, 255, 0, 255), true, std::bind(&Screen_Level_Editor::checkforcedgridcheckbox, this, std::placeholders::_1, std::placeholders::_2));
+		_forcedgridcheckbox = _gui.getpanelcheckbox("forcedgridcheckbox", glm::vec4(1, 5, 10, 3), "", "", true, std::bind(&BasicLevelEditor::checkforcedgridcheckbox, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->checkboxs.push_back(_forcedgridcheckbox);
 		//forced grid text
-		ngi::NGUI_TEXT* t2 = _gui.gettext("forcedgrid", glm::vec2(25, 6.2), ngi::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
+		ngiv::NGUI_TEXT* t2 = _gui.gettext("forcedgrid", glm::vec2(25, 6.2), ngiv::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
 		lpanel->texts.push_back(t2);
 
 		//clearbutton
-		ngi::NGUI_PANEL_BUTTON* bclear = _gui.getpanelbutton("Clear", 1.0f, glm::vec4(54, 26, 42, 10), ngi::ColorRGBA8(125, 125, 125, 255), ngi::ColorRGBA8(255, 255, 255, 255), std::bind(&Screen_Level_Editor::checkclearbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* bclear = _gui.getpanelbutton("Clear", 1.0f, glm::vec4(54, 26, 42, 10), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkclearbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(bclear);
 		
 		//savepanelopenbutton
-		ngi::NGUI_PANEL_BUTTON* bsave = _gui.getpanelbutton("Save", 1.0f, glm::vec4(54, 2, 42, 10), ngi::ColorRGBA8(125, 125, 125, 255), ngi::ColorRGBA8(0, 255, 0, 255), std::bind(&Screen_Level_Editor::checkpanelsavebutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* bsave = _gui.getpanelbutton("Save", 1.0f, glm::vec4(54, 2, 42, 10), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelsavebutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(bsave);
 
 		//loadpanelopenbutton
-		ngi::NGUI_PANEL_BUTTON* bload = _gui.getpanelbutton("Load", 1.0f, glm::vec4(54, 14, 42, 10), ngi::ColorRGBA8(125, 125, 125, 255), ngi::ColorRGBA8(0, 255, 0, 255), std::bind(&Screen_Level_Editor::checkpanelloadbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* bload = _gui.getpanelbutton("Load", 1.0f, glm::vec4(54, 14, 42, 10), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelloadbutton, this, std::placeholders::_1, std::placeholders::_2));
 		lpanel->buttons.push_back(bload);
 				
 
@@ -75,75 +78,61 @@ void Screen_Level_Editor::initui() {
 
 	//save panel
 	{
-		_savepanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), ngi::ColorRGBA8(200, 200, 200, 255),true,ngi::ColorRGBA8(120,120,120,255),true);
+		_savepanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "","",true,true,true);
 		_savepanel->active = false;
 
-		ngi::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("savefilename", glm::vec4(5, 50, 85, 15), 0.8f, ngi::ColorRGBA8(100, 100, 100, 255), ngi::ColorRGBA8(0, 0, 255, 255), "");
+		ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("savefilename", glm::vec4(5, 50, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
 		_savepanel->editboxs.push_back(e1);
 
 		//save button
-		ngi::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7, glm::vec4(85, 5, 10, 10), ngi::ColorRGBA8(100, 100, 100, 255), ngi::ColorRGBA8(255, 0, 0, 255), std::bind(&Screen_Level_Editor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7, glm::vec4(85, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 		_savepanel->buttons.push_back(pb1);
 	}
 	
 	//load panel
 	{
-		_loadpanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), ngi::ColorRGBA8(200, 200, 200, 255), true, ngi::ColorRGBA8(120, 120, 120, 255), true);
+		_loadpanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true,true,true);
 		_loadpanel->active = false;
 
-		ngi::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("loadfilename", glm::vec4(5, 50, 85, 15), 0.8f, ngi::ColorRGBA8(100, 100, 100, 255), ngi::ColorRGBA8(0, 0, 255, 255), "");
+		ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("loadfilename", glm::vec4(5, 50, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
 		_loadpanel->editboxs.push_back(e1);
 
 		//save button
-		ngi::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7, glm::vec4(85, 5, 10, 10), ngi::ColorRGBA8(100, 100, 100, 255), ngi::ColorRGBA8(255, 0, 0, 255), std::bind(&Screen_Level_Editor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+		ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7, glm::vec4(85, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 		_loadpanel->buttons.push_back(pb1);
 	}
 
 	//resetpanel	
-	_resetpanel = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&Screen_Level_Editor::checkresetpageyes, this, std::placeholders::_1, std::placeholders::_2));
+	_resetpanel = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&BasicLevelEditor::checkresetpageyes, this, std::placeholders::_1, std::placeholders::_2));
 		
 	//loadeven
-	_loadeven = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&Screen_Level_Editor::checkloadevenyes, this, std::placeholders::_1, std::placeholders::_2));
-	
+	_loadeven = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&BasicLevelEditor::checkloadevenyes, this, std::placeholders::_1, std::placeholders::_2));	
 	
 }
-void Screen_Level_Editor::onEntry() {
+void BasicLevelEditor::onEntry() {
 }
-void Screen_Level_Editor::onExit() {
+void BasicLevelEditor::onExit() {
 
 }
-bool Screen_Level_Editor::update(float deltatime) {
-	if (getInput()) return true;
+bool BasicLevelEditor::update(float deltatime) {
 	
-	_uicamera.update();
-	_camera.update();
-	_gui.update();	
-	
-	if (!_gui.shouldcamerastop()) {
-		//resize
-		if (_inputmanager.getMouseWheel() > 0) {
-			float f = _camera.getscale();
-			_camera.setscale(f += 0.1f);
-		}
-		if (_inputmanager.getMouseWheel() < 0) {
-			float f = _camera.getscale();
-			_camera.setscale(f -= 0.1f);
-		}
-
-		if (_inputmanager.isKeyDown(SDLK_w)) {
-			_camera.movetoPos(glm::vec2(0, 2));
-		}
-		if (_inputmanager.isKeyDown(SDLK_s)) {
-			_camera.movetoPos(glm::vec2(0, -2));
-		}
-		if (_inputmanager.isKeyDown(SDLK_a)) {
-			_camera.movetoPos(glm::vec2(-2, 0));
-		}
-		if (_inputmanager.isKeyDown(SDLK_d)) {
-			_camera.movetoPos(glm::vec2(2, 0));
-		}
+	if (_inputmanager.isKeyPressed(SDLK_ESCAPE)) {
+		return true;
 	}
 	
+	
+
+	if (_window->getState() == ngiv::Window_State::FocusOn) {
+		SDL_WarpMouseInWindow(_window->getwindow(), _width / 2, _height / 2);
+	}
+	
+	if (!_gui.shouldcamerastop()) {
+		_cam3d.do_basic_cam_movement(_inputmanager);
+		_cam3d.updateCam(_inputmanager);
+	}
+	
+	/*
+
 	//check for delete
 	if (_inputmanager.isKeyDown(SDL_BUTTON_RIGHT)) {
 		for (int i = 0; i < _con_box.size(); i++){
@@ -332,22 +321,25 @@ bool Screen_Level_Editor::update(float deltatime) {
 	default:
 		break;
 	}
+
+	*/
+
 	
 	// true if player wants to exit
 	return false;
 }
-void Screen_Level_Editor::draw() {
+void BasicLevelEditor::draw() {
 	
-
+	/*
 	if (_selected != nullptr) {
 		
 		switch (_tool)
 		{
 		case Tool::SelectedBox:
-			_debugrenderer.drawbox(glm::vec4(((Box*)_selected)->get_pos(), ((Box*)_selected)->get_dims()), ngi::ColorRGBA8(0, 255, 0, 255), ((Box*)_selected)->get_angle());
+			_debugrenderer.drawbox(glm::vec4(((Box*)_selected)->get_pos(), ((Box*)_selected)->get_dims()), ngiv::ColorRGBA8(0, 255, 0, 255), ((Box*)_selected)->get_angle());
 			break;
 		case Tool::SelectedDot:
-			_debugrenderer.drawCircle(((Dot*)_selected)->get_pos(), ngi::ColorRGBA8(0,100,255,255), ((Dot*)_selected)->get_radius());
+			_debugrenderer.drawCircle(((Dot*)_selected)->get_pos(), ngiv::ColorRGBA8(0,100,255,255), ((Dot*)_selected)->get_radius());
 		default:
 			break;
 		}
@@ -355,13 +347,13 @@ void Screen_Level_Editor::draw() {
 	}
 
 	if (_debugcheckbox->value) {
-		_debugrenderer.drawbox(glm::vec4(0,-10000,0.1f,20000), ngi::ColorRGBA8(0, 255, 0, 255), 0);
-		_debugrenderer.drawbox(glm::vec4(-10000, 0, 20000, 0.1f), ngi::ColorRGBA8(255, 0, 0, 255), 0);
+		_debugrenderer.drawbox(glm::vec4(0,-10000,0.1f,20000), ngiv::ColorRGBA8(0, 255, 0, 255), 0);
+		_debugrenderer.drawbox(glm::vec4(-10000, 0, 20000, 0.1f), ngiv::ColorRGBA8(255, 0, 0, 255), 0);
 
 		//render boxes with debug lines
 		for (int i = 0; i < _con_box.size(); i++) {					
 			Renderer::render_box_normal(_spritebatch, _con_box[i]);
-			_debugrenderer.drawbox(glm::vec4(_con_box[i]->get_pos(), _con_box[i]->get_dims()), ngi::ColorRGBA8(0, 255, 0, 255), _con_box[i]->get_angle());
+			_debugrenderer.drawbox(glm::vec4(_con_box[i]->get_pos(), _con_box[i]->get_dims()), ngiv::ColorRGBA8(0, 255, 0, 255), _con_box[i]->get_angle());
 		}
 
 		//render dots 
@@ -385,35 +377,19 @@ void Screen_Level_Editor::draw() {
 
 	}
 
-	
+	*/
 	
 	
 }
-void Screen_Level_Editor::save() {
-	int r = g_save("Saves\\" + path, _con_box, _con_spawnpoint);
-	
+void BasicLevelEditor::save() {
+	ngiv::o("save");
 }
-void Screen_Level_Editor::load() {
-	int r = g_load("Saves\\" + path, _con_box, _con_spawnpoint);
-	switch (r)
-	{
-	case 0:
-		break;
-	case 1:
-		_gui.addPREMADEok(glm::vec4(30, 40, 30, 30), "Corrupted File");
-		break;
-	case 2:
-		_gui.addPREMADEok(glm::vec4(30, 40, 30, 30), "Version Mismatch");
-		break;
-	case 3:
-		_gui.addPREMADEok(glm::vec4(30, 40, 30, 30), "File Reading Error");
-		break;
-	}
-
+void BasicLevelEditor::load() {
+	ngiv::o("load");
 }
 
 //main
-void Screen_Level_Editor::checkmenubutton(ngi::NGUI_BUTTON* b) {
+void BasicLevelEditor::checkmenubutton(ngiv::NGUI_BUTTON* b) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
 		switchscreen = _menupointer;
@@ -424,7 +400,7 @@ void Screen_Level_Editor::checkmenubutton(ngi::NGUI_BUTTON* b) {
 }
 
 //left panel
-void Screen_Level_Editor::checkcreateboxbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkcreateboxbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
 
@@ -432,17 +408,21 @@ void Screen_Level_Editor::checkcreateboxbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::N
 			delete _selected;
 		}
 
+		ngiv::o("Pressed checkcreateboxbutton button");
+		/*
 		_selected = new Box();
-		((Box*)_selected)->createbox(_mousepos, glm::vec2(50, 50), 0, "Textures/Box.png", ngi::ColorRGBA8(255, 0, 0, 255));
+		((Box*)_selected)->createbox(_mousepos, glm::vec2(50, 50), 0, "Textures/Box.png", ngiv::ColorRGBA8(255, 0, 0, 255));
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 		_tool = Tool::SelectedBox;
 
+		*/
 	}
 
 }
-void Screen_Level_Editor::checkselectbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkselectbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkselectbutton button");
 
 		if (_selected != nullptr) {
 			delete _selected;
@@ -453,8 +433,9 @@ void Screen_Level_Editor::checkselectbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI
 
 
 }
-void Screen_Level_Editor::checkfreebutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkfreebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkfreebutton button");
 
 		if (_selected != nullptr) {
 			delete _selected;
@@ -463,32 +444,39 @@ void Screen_Level_Editor::checkfreebutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_P
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 	}
 }
-void Screen_Level_Editor::checkcreatespawnpointbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkcreatespawnpointbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkcreatespawnpointbutton button");
 
 		if (_selected != nullptr) {
 			delete _selected;
 		}
-
+		/*
 		_selected = new Dot();
-		((Dot*)_selected)->createDot(_mousepos, ngi::ColorRGBA8(0, 0, 255, 255), "Textures/Ball.png", 10.0f, 0);
+		((Dot*)_selected)->createDot(_mousepos, ngiv::ColorRGBA8(0, 0, 255, 255), "Textures/Ball.png", 10.0f, 0);
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 		_tool = Tool::SelectedDot;
+
+		*/
 
 	}
 
 }
-void Screen_Level_Editor::checkclearbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkclearbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed clear button");
+
 		_resetpanel->active = true;
 	}
 
 }
-void Screen_Level_Editor::checkdebugcheckbox(ngi::NGUI_PANEL_CHECKBOX* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkdebugcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p) {
 
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkdebugcheckbox button");
+
 		if (b->value) { b->value = false; }
 		else { b->value = true; }
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
@@ -496,68 +484,75 @@ void Screen_Level_Editor::checkdebugcheckbox(ngi::NGUI_PANEL_CHECKBOX* b, ngi::N
 
 
 }
-void Screen_Level_Editor::checkforcedgridcheckbox(ngi::NGUI_PANEL_CHECKBOX* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkforcedgridcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkforcedgridcheckbox button");
 		if (b->value) { b->value = false; }
 		else { b->value = true; }
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 
 	}
 }
-void Screen_Level_Editor::checkpanelsavebutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkpanelsavebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkpanelsavebutton button");
+
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 		_savepanel->active = 1;
 
 	}
 }
-void Screen_Level_Editor::checkpanelloadbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkpanelloadbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkpanelloadbutton button");
+
 		_inputmanager.releasekey(SDL_BUTTON_LEFT);
 		_loadpanel->active = 1;
 	}
 }
-void Screen_Level_Editor::checkcamresetbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkcamresetbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-		_camera.setposition(glm::vec2(0));
-		_camera.setscale(1);
+		ngiv::o("Pressed CamReset button");
 	}
 }
 
 //save load
-void Screen_Level_Editor::checksaveactionbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checksaveactionbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checksaveactionbutton button");
+
 		path = p->editboxs[0]->text;
 		save();
 		p->active = false;
 	}
 
 }
-void Screen_Level_Editor::checkloadactionbutton(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkloadactionbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
 
-		path = p->editboxs[0]->text;
-		if (!_con_box.empty() || !_con_spawnpoint.empty()) {
-			_loadeven->active = true;
-		}
-		else {
-			load();
-		}
+		
+		ngiv::o("Pressed checkloadactionbutton button");
 
 		p->active = false;
 	}
 }
 
 //areyousurepanel
-void Screen_Level_Editor::checkresetpageyes(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkresetpageyes(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkresetpageyes button");
+		/*
 		_con_box.clear();
 		_con_spawnpoint.clear();
+		*/
+
 		p->active = false;
 	}
 }
-void Screen_Level_Editor::checkloadevenyes(ngi::NGUI_PANEL_BUTTON* b, ngi::NGUI_PANEL* p) {
+void BasicLevelEditor::checkloadevenyes(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
 	if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+		ngiv::o("Pressed checkloadevenyes button");
+
 		load();
 		p->active = false;
 	}

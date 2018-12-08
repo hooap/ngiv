@@ -39,7 +39,7 @@ namespace ngiv {
 		//DO NOT MOVE THE OBJECTS OUTSIDE OF PHYSICS WORLD
 	
 
-		void update();
+		void update(bool gravit);
 
 	private:
 		bool initialized = false;

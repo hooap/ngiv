@@ -10,7 +10,7 @@ namespace ngiv {
 			_pos = pos;
 			_radius = radius;
 		}
-		Collision_Sphere(){	}
+		Collision_Sphere() {	}
 		~Collision_Sphere() {}
 
 		void init(glm::vec3 pos, float radius) {
@@ -20,6 +20,7 @@ namespace ngiv {
 
 		glm::vec3 getPos() { return _pos; }
 		float getRadius() { return _radius; }
+		void setPos(glm::vec3 pos) { _pos = pos; }
 
 
 		Mesh renderMesh;
@@ -36,40 +37,109 @@ namespace ngiv {
 	{
 	public:
 		Collision_Box() {}
-		Collision_Box(glm::vec3 pos, glm::vec3 center, std::vector<glm::vec3> vert, glm::vec3 scale) {
-			this->vert = vert;
-			this->center = center;
-			this->pos = pos;
-			this->scale = scale;
+		Collision_Box(glm::vec3 pos, glm::vec3 center, std::vector<glm::vec3> vert, glm::vec3 scale = glm::vec3(1), glm::vec3 rot = glm::vec3(0)) {
+			init(pos, center, vert, scale, rot);
 		}
 
 		~Collision_Box() {}
 
-		void init(glm::vec3 pos, glm::vec3 center, std::vector<glm::vec3> vert, glm::vec3 scale) {
+		void init(glm::vec3 pos, glm::vec3 center, std::vector<glm::vec3> vert, glm::vec3 scale = glm::vec3(1), glm::vec3 rot = glm::vec3(0)) {
 			this->vert = vert;
 			this->center = center;
 			this->pos = pos;
 			this->scale = scale;
+			this->rot = rot;
+			calculatefaces();
 		}
 
 		glm::vec3 getPos() { return pos; }
 		std::vector<glm::vec3>& getVerticies() { return vert; }
 		glm::vec3 getCenter() { return center; }
 		glm::vec3 getScale() { return scale; }
+		glm::vec3 getRotation() { return rot; }
 
+
+		void setPos(glm::vec3 pos) { this->pos = pos; }
+
+		std::vector<glm::vec3> getfacebyindex(int i) {
+			return vertfaces[i];
+		}
 
 		Mesh renderMesh;
 	private:
+
+
+		/*
+		0 bottom
+		1 front
+		2 right
+		3 back
+		4 left
+		5 up
+		*/
+		//counter clockwise
+		void calculatefaces() {
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[0]);
+			vertfaces.back().push_back(vert[3]);
+			vertfaces.back().push_back(vert[2]);
+			vertfaces.back().push_back(vert[1]);
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[0]);
+			vertfaces.back().push_back(vert[4]);
+			vertfaces.back().push_back(vert[5]);
+			vertfaces.back().push_back(vert[1]);
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[1]);
+			vertfaces.back().push_back(vert[5]);
+			vertfaces.back().push_back(vert[6]);
+			vertfaces.back().push_back(vert[2]);
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[2]);
+			vertfaces.back().push_back(vert[3]);
+			vertfaces.back().push_back(vert[7]);
+			vertfaces.back().push_back(vert[6]);
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[0]);
+			vertfaces.back().push_back(vert[4]);
+			vertfaces.back().push_back(vert[7]);
+			vertfaces.back().push_back(vert[3]);
+			vertfaces.emplace_back();
+			vertfaces.back().push_back(vert[5]);
+			vertfaces.back().push_back(vert[6]);
+			vertfaces.back().push_back(vert[7]);
+			vertfaces.back().push_back(vert[4]);
+		}
+
+		glm::vec3 rot;
 		glm::vec3 scale;
 		glm::vec3 pos;
 		glm::vec3 center;
 		std::vector<glm::vec3> vert;
+		std::vector<std::vector<glm::vec3>> vertfaces;
+
+
+
 	};
 
 
 	class Collision_Object {
 	public:
-		Collision_Object() {}
+		Collision_Object() {
+			_velocity = glm::vec3(0);
+			_rotation = glm::vec3(0);
+			_centerofmass = glm::vec3(0);
+			_extrapos = glm::vec3(0);
+		}
+		Collision_Object(bool dynamic) {
+			_velocity = glm::vec3(0);
+			_rotation = glm::vec3(0);
+			_centerofmass = glm::vec3(0);
+			_extrapos = glm::vec3(0);
+			_dynamic = dynamic;
+		}
+
+		
 
 		void setDynamic(bool dynamic) {
 			_dynamic = dynamic;
@@ -88,7 +158,7 @@ namespace ngiv {
 		void setVelocity(glm::vec3 newVelocity) { _velocity = newVelocity; }
 		void addVelocity(glm::vec3 velocity) { _velocity += velocity; }
 
-		glm::vec3 getExtraPos() {return _extrapos;	}
+		glm::vec3 getExtraPos() { return _extrapos; }
 		void setExtraPos(glm::vec3 newpos) { _extrapos = newpos; }
 		void addExtraPos(glm::vec3 pos) { _extrapos += pos; }
 
@@ -112,7 +182,7 @@ namespace ngiv {
 
 			verts.push_back(glm::vec3(-scaling.x, -scaling.y, -scaling.z));
 			verts.push_back(glm::vec3(scaling.x, -scaling.y, -scaling.z));
-			verts.push_back(glm::vec3(scaling.x, - scaling.y, scaling.z));
+			verts.push_back(glm::vec3(scaling.x, -scaling.y, scaling.z));
 			verts.push_back(glm::vec3(-scaling.x, -scaling.y, scaling.z));
 
 			verts.push_back(glm::vec3(-scaling.x, scaling.y, -scaling.z));
@@ -126,9 +196,7 @@ namespace ngiv {
 
 
 	private:
-
-
-		bool _dynamic = true;
+		bool _dynamic = false;
 		glm::vec3 _extrapos;
 
 
@@ -140,9 +208,9 @@ namespace ngiv {
 		glm::vec3 _centerofmass;
 
 	};
-	
 
 
-	
+
+
 
 }
