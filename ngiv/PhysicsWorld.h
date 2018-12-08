@@ -41,7 +41,17 @@ namespace ngiv {
 
 		void update(bool gravit);
 
+		void clear() {
+			objects.clear();
+		}
+
 	private:
+
+		void collision_sphere_box(Collision_Sphere* s, Collision_Box* b, Collision_Object* o1, Collision_Object* o2);
+		void collision_sphere_sphere(Collision_Sphere* s1, Collision_Sphere* s2, Collision_Object* o1, Collision_Object* o2);
+		void collision_box_box(Collision_Box* b1, Collision_Box* b2, Collision_Object* o1, Collision_Object* o2);
+
+
 		bool initialized = false;
 
 		std::vector<Collision_Object*> objects;

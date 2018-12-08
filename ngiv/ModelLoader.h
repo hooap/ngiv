@@ -9,7 +9,7 @@ namespace ngiv {
 	{
 	public:
 
-		static OBJ* loadModel(glm::vec3 pos, std::string path, bool setPosOnCenter, glm::vec3 scale = glm::vec3(1));
+		static OBJ* loadModel(std::string name,glm::vec3 pos, std::string path, bool setPosOnCenter, glm::vec3 scale = glm::vec3(1));
 	private:
 		
 		static void processNode(OBJ* o,aiNode *node, const aiScene *scene);

@@ -5,10 +5,12 @@
 namespace ngiv {
 
 
-	OBJ* ModelLoader::loadModel(glm::vec3 pos, std::string path, bool setPosOnCenter, glm::vec3 scale) {
+	OBJ* ModelLoader::loadModel(std::string name, glm::vec3 pos, std::string path, bool setPosOnCenter, glm::vec3 scale) {
 		OBJ* model = new OBJ();
 		model->scale = scale;
 		model->empty = false;
+		model->filepath = path;
+		model->name = name;
 		Assimp::Importer importer;
 		const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 

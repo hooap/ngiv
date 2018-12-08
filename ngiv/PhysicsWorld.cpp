@@ -28,14 +28,14 @@ namespace ngiv {
 		glm::vec3 vert0 = verts[0];
 		glm::vec3 vert1 = verts[1];
 		glm::vec3 vert2 = verts[2];
-		glm::vec3 vert3 = verts[3];		
+		glm::vec3 vert3 = verts[3];
 
 
 		glm::vec3 p = vert0 + vert1 + vert2 + vert3;
 		p /= 4.0f;
 		glm::vec3 normal = glm::cross(glm::vec3(vert3 - vert0), glm::vec3(vert1 - vert0));
 
-	
+
 		vert0 = p - vert0;
 		vert1 = p - vert1;
 		vert2 = p - vert2;
@@ -59,7 +59,7 @@ namespace ngiv {
 			if (i != 1) {
 				return glm::vec3(0);
 			}
-		}		
+		}
 
 
 		glm::vec3 distancefromcenters = sphereloc - (p + boxadditionalpos);
@@ -68,7 +68,7 @@ namespace ngiv {
 
 		normal *= (angle * glm::length(distancefromcenters));
 
-		float l = glm::length(normal) - radius;		
+		float l = glm::length(normal) - radius;
 
 		if (l < 0) {
 			return normal;
@@ -76,8 +76,144 @@ namespace ngiv {
 		return glm::vec3(0, 0, 0);
 	}
 
+
+	void PhysicsWorld::collision_sphere_box(Collision_Sphere* s, Collision_Box* b, Collision_Object* o1, Collision_Object* o2) {
+		//check for each side
+
+		glm::vec3 firstp = o1->getExtraPos();
+		glm::vec3 secondp = o2->getExtraPos();
+
+		bool firstdynamic = o1->getDynamic();
+		bool seconddynamic = o2->getDynamic();
+
+
+		float fr = s->getRadius();
+		for (int f = 0; f < 6; f++) {
+			std::vector<glm::vec3> face = b->getfacebyindex(f);
+			glm::vec3 v = getdistancebetweensphereandplane(s->getPos() + firstp, fr, face, secondp + b->getPos(), o2->getRotation() + b->getRotation());
+			
+			if (v != glm::vec3(0, 0, 0)) {
+				//reflect the sphere if its dynamic
+
+				o1->setExtraPos(firstp + glm::normalize(v) * (fr - glm::length(v)));
+
+				glm::vec3 vel1 = o1->getVelocity();
+				glm::vec3 vel2 = o2->getVelocity();
+
+				float v1 = glm::length(vel1);
+				float v2 = glm::length(vel2);
+
+
+				float m1 = 1.0f;
+				float m2 = 1.0f;
+				glm::vec3 mom1 = m1 * vel1;
+				glm::vec3 mom2 = m2 * vel2;
+
+				glm::vec3 lastmom = mom1 + mom2;
+				glm::vec3 tvel = vel1 - vel2;
+
+
+				if (firstdynamic && seconddynamic) {
+					vel1 = glm::reflect(mom1, -v);
+					vel1 *= m1 / m2;
+
+					vel2 = glm::reflect(mom2, -v);
+					vel2 *= m2 / m1;
+
+					vel1 += mom2 - vel2;
+					vel2 += mom1 - vel1;
+
+					vel1 /= m1;
+					vel2 /= m2;
+					o1->setVelocity(vel1);
+					o2->setVelocity(vel2);
+				}
+				else if (firstdynamic) {
+
+					vel1 = glm::reflect(mom1, -v);
+
+					vel1 += mom2 - vel2;
+					vel1 /= m1;
+
+					o1->setVelocity(vel1);
+				}
+				else if (seconddynamic) {
+
+
+				}			   
+				
+
+			}
+			
+		}
+
+	}
+	void PhysicsWorld::collision_sphere_sphere(Collision_Sphere* s1, Collision_Sphere* s2, Collision_Object* o1, Collision_Object* o2) {
+				
+		//check distance between spheres
+		glm::vec3 firstp = o1->getExtraPos();
+		glm::vec3 secondp = o2->getExtraPos();
+
+		glm::vec3 ppf = s1->getPos() + firstp;
+		glm::vec3 pps = s2->getPos() + secondp;
+
+		float distance = glm::length(ppf - pps);
+		float sumradius = s1->getRadius() + s2->getRadius();
+
+		if (distance <= sumradius) {
+			//3d collision
+			std::cout << "COLLISION";
+			//lets get 3d vector of collision
+
+			glm::vec3 vel1 = o1->getVelocity();
+			glm::vec3 vel2 = o2->getVelocity();
+
+			float v1 = glm::length(vel1);
+			float v2 = glm::length(vel2);
+
+			glm::vec3 centerofmass1 = o1->getCenterofmass() + firstp;
+			glm::vec3 centerofmass2 = o2->getCenterofmass() + secondp;
+
+			glm::vec3 normal = centerofmass1 - centerofmass2;
+			normal = glm::normalize(normal);
+			float m1 = 1.0f;
+			float m2 = 1.0f;
+
+			glm::vec3 mom1 = m1 * vel1;
+			glm::vec3 mom2 = m2 * vel2;
+
+			glm::vec3 lastmom = mom1 + mom2;
+
+			glm::vec3 tvel = vel1 - vel2;
+
+			//lets look from object one
+			vel1 = glm::reflect(mom1, -normal);
+			vel1 *= m1 / m2;
+
+			vel2 = glm::reflect(mom2, -normal);
+			vel2 *= m2 / m1;
+
+			vel1 += mom2 - vel2;
+			vel2 += mom1 - vel1;
+
+			vel1 /= m1;
+			vel2 /= m2;
+
+			o1->setVelocity(vel1);
+			o2->setVelocity(vel2);
+		}
+		
+	}
+	void PhysicsWorld::collision_box_box(Collision_Box* b1, Collision_Box* b2, Collision_Object* o1, Collision_Object* o2){
+		//implement this
+
+
+		return;
+	}
+
 	void PhysicsWorld::update(bool gravit) {
 		for (int i = 0; i < objects.size(); i++) {
+
 			//add gravity if dynamic
 			if (gravit) {
 				if (objects[i]->getDynamic()) {
@@ -93,169 +229,45 @@ namespace ngiv {
 			objects[i]->addVelocity(-objects[i]->getVelocity() * slowingfactor);
 
 
+
+
 			for (int j = i + 1; j < objects.size(); j++) {
 				//collision between spheres
 
-				glm::vec3 extrafirstpos = objects[i]->getExtraPos();
-				glm::vec3 extrasecondpos = objects[j]->getExtraPos();
-
-				glm::vec3 extrafirstrot = objects[i]->getRotation();
-				glm::vec3 extrasecondrot = objects[j]->getRotation();
 
 				std::vector<Collision_Sphere>* firstSpheres = objects[i]->getSpheres();
 				std::vector<Collision_Sphere>* secondSpheres = objects[j]->getSpheres();
 
-				bool firstDynamic = objects[i]->getDynamic();
-				bool secondDynamic = objects[j]->getDynamic();
-
-
+				std::vector<Collision_Box>* firstBoxes = objects[i]->getBoxes();
 				std::vector<Collision_Box>* secondBoxes = objects[j]->getBoxes();
+				
 
 				//i and j objects
 				//lets get individual collision boxes with each other
-				for (int k = 0; k < firstSpheres->size(); k++) {
-					Collision_Sphere* first = &(*firstSpheres)[k];
 
-					//check collision between spheres
+				for (int k = 0; k < firstSpheres->size(); k++) {	
+
 					for (int l = 0; l < secondSpheres->size(); l++) {
-
-						Collision_Sphere* second = &(*secondSpheres)[l];
-
-						//check distance between spheres
-
-						glm::vec3 ppf = first->getPos() + extrafirstpos;
-						glm::vec3 pps = second->getPos() + extrasecondpos;
-
-						float distance = glm::length(ppf - pps);
-						float sumradius = first->getRadius() + second->getRadius();
-
-						if (distance <= sumradius) {
-							//3d collision
-							std::cout << "COLLISION";
-							//lets get 3d vector of collision
-
-							glm::vec3 vel1 = objects[i]->getVelocity();
-							glm::vec3 vel2 = objects[j]->getVelocity();
-
-							float v1 = glm::length(vel1);
-							float v2 = glm::length(vel2);
-
-							glm::vec3 centerofmass1 = objects[i]->getCenterofmass() + extrafirstpos;
-							glm::vec3 centerofmass2 = objects[j]->getCenterofmass() + extrasecondpos;
-
-							glm::vec3 normal = centerofmass1 - centerofmass2;
-							normal = glm::normalize(normal);
-							float m1 = 1.0f;
-							float m2 = 1.0f;
-
-							glm::vec3 mom1 = m1 * vel1;
-							glm::vec3 mom2 = m2 * vel2;
-
-							glm::vec3 lastmom = mom1 + mom2;
-
-							glm::vec3 tvel = vel1 - vel2;
-
-							//lets look from object one
-							vel1 = glm::reflect(mom1, -normal);
-							vel1 *= m1 / m2;
-
-							vel2 = glm::reflect(mom2, -normal);
-							vel2 *= m2 / m1;
-
-							vel1 += mom2 - vel2;
-							vel2 += mom1 - vel1;
-
-							vel1 /= m1;
-							vel2 /= m2;
-
-							objects[i]->setVelocity(vel1);
-							objects[j]->setVelocity(vel2);
-						}
+						collision_sphere_sphere( &(*firstSpheres)[k], &(*secondSpheres)[l], objects[i], objects[j]);
 					}
-
-					//collision between spheres and boxes
 					for (int l = 0; l < secondBoxes->size(); l++) {
-						Collision_Box* second = &(*secondBoxes)[l];
-						//check for each side
-
-						float fr = first->getRadius();
-						for (int f = 0; f < 6; f++) {
-							std::vector<glm::vec3> face = second->getfacebyindex(f);
-							glm::vec3 v = getdistancebetweensphereandplane(first->getPos() + extrafirstpos, fr, face, extrasecondpos + second->getPos(), extrasecondrot + second->getRotation());
-
-
-							if (v != glm::vec3(0, 0, 0)) {
-								//reflect the sphere if its dynamic
-
-								objects[i]->setExtraPos(extrafirstpos + glm::normalize(v) * (fr - glm::length(v)));
-
-								glm::vec3 vel1 = objects[i]->getVelocity();
-								glm::vec3 vel2 = objects[j]->getVelocity();
-
-								float v1 = glm::length(vel1);
-								float v2 = glm::length(vel2);
-								
-
-								float m1 = 1.0f;
-								float m2 = 1.0f;
-								glm::vec3 mom1 = m1 * vel1;
-								glm::vec3 mom2 = m2 * vel2;
-
-								glm::vec3 lastmom = mom1 + mom2;
-								glm::vec3 tvel = vel1 - vel2;
-
-
-								if (firstDynamic && secondDynamic) {
-									vel1 = glm::reflect(mom1, -v);
-									vel1 *= m1 / m2;
-
-									vel2 = glm::reflect(mom2, -v);
-									vel2 *= m2 / m1;
-
-									vel1 += mom2 - vel2;
-									vel2 += mom1 - vel1;
-
-									vel1 /= m1;
-									vel2 /= m2;
-									objects[i]->setVelocity(vel1);
-									objects[j]->setVelocity(vel2);
-								}
-								else if (firstDynamic) {
-
-									vel1 = glm::reflect(mom1, -v);
-
-									vel1 += mom2 - vel2;
-									vel1 /= m1;
-
-									objects[i]->setVelocity(vel1);
-								}
-								else if (secondDynamic) {
-
-
-								}
-
-								//lets look from object one
-
-
-
-
-
-
-
-
-
-
-							}
-
-
-
-						}
-
+						collision_sphere_box(&(*firstSpheres)[k], &(*secondBoxes)[l], objects[i], objects[j]);
 					}
-
-
 
 				}
+
+				for (int k = 0; k < firstBoxes->size(); k++) {
+					for (int l = 0; l < secondSpheres->size(); l++) {
+						collision_sphere_box(&(*secondSpheres)[l], &(*firstBoxes)[k], objects[j], objects[i]);
+					}
+					for (int l = 0; l < secondBoxes->size(); l++) {
+						collision_box_box(&(*secondBoxes)[k], &(*firstBoxes)[k], objects[j], objects[i]);
+					}
+				}
+
+
+
+
 			}			
 
 		}

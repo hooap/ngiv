@@ -3,12 +3,15 @@
 #include <time.h>
 #include <ngiv\Collision_Box.h>
 
+
+
 Screen::Screen()
 {
 }
 Screen::~Screen()
 {
 }
+
 
 
 void Screen::init()
@@ -24,9 +27,13 @@ void Screen::init()
 	
 	//100,10,100
 
-	floorbox = ngiv::ModelLoader::loadModel(glm::vec3(0, -5, 0), "Models//metalboxv2obj//untitled.obj", true, glm::vec3(100, 10, 100));
-	sphere1 = ngiv::ModelLoader::loadModel(glm::vec3(0, 5, 0), "Models//lowpolysphereobj//sphere.obj", true);
-	sphere2 = ngiv::ModelLoader::loadModel(glm::vec3(3, 5, 2), "Models//lowpolysphereobj//sphere.obj", true);
+	ngiv::OBJ* floorbox;
+	ngiv::OBJ* sphere1;
+	ngiv::OBJ* sphere2;
+	
+	floorbox = ngiv::ModelLoader::loadModel("floorbox",glm::vec3(0, -5, 0), "Models//metalboxv2obj//untitled.obj", true, glm::vec3(100, 10, 100));
+	sphere1 = ngiv::ModelLoader::loadModel("sphere1",glm::vec3(0, 5, 0), "Models//lowpolysphereobj//sphere.obj", true);
+	sphere2 = ngiv::ModelLoader::loadModel("sphere2",glm::vec3(3, 5, 2), "Models//lowpolysphereobj//sphere.obj", true);
 	
 	ngiv::Collision_Sphere sp1(glm::vec3(0), 1);
 	ngiv::Collision_Sphere sp2(glm::vec3(0), 1);
@@ -36,18 +43,19 @@ void Screen::init()
 	_world.add(sphere1->creatensetCollisionObject(sp1, true));
 	_world.add(sphere2->creatensetCollisionObject(sp2, true));
 	_world.add(floorbox->creatensetCollisionObject(fb, false));
-		
-	//nanosuit = ngiv::ModelLoader::loadModel(glm::vec3(0,0,0), "Models//nanosuit//nanosuit.obj", false, true, 1.0f);
-	//box = ngiv::ModelLoader::loadModel(glm::vec3(5, 12, 5), "Models//metalboxv2obj//untitled.obj", false, true, 1.0f);
 	
+	_container.addObj(floorbox);
+	_container.addObj(sphere1);
+	_container.addObj(sphere2);
 
-
+	
 //	_terrain.init(time(NULL),10.0f, 32);
 	//_terrain.init(1234125, 10.0f, 32);
-//	_terrain.create();
-		
+//	_terrain.create();		
 
 }
+
+
 void Screen::initui()
 {
 	text = _gui.addtext("123456789", glm::vec2(0, 0), ngiv::ColorRGBA8(255, 255, 255, 255), 1, false, false);
@@ -67,8 +75,8 @@ void Screen::onExit()
 void Screen::checkInput() {
 
 	// DEBUG BALL MOVEMENT
-	ngiv::Collision_Object* b1 = sphere1->getCollision_Object();
-	ngiv::Collision_Object* b2 = sphere2->getCollision_Object();
+	ngiv::Collision_Object* b1 = _container.getObjbyName("sphere1")->getCollision_Object();
+	ngiv::Collision_Object* b2 = _container.getObjbyName("sphere2")->getCollision_Object();
 
 	float power = 0.001f;
 	//1
@@ -114,6 +122,13 @@ void Screen::checkInput() {
 		grav = !grav;
 	}
 
+	if (_inputmanager.isKeyPressed(SDLK_KP_PLUS)) {
+		save();
+	}
+	if (_inputmanager.isKeyPressed(SDLK_KP_MINUS)) {
+		load();
+	}
+
 }
 
 void Screen::updateui() {
@@ -144,12 +159,9 @@ bool Screen::update(float deltatime)
 	_world.update(grav);
 	
 	_cam3d.do_basic_cam_movement(_inputmanager);
-	_cam3d.updateCam(_inputmanager);	
-
+	_cam3d.updateCam(_inputmanager);
 	
-	sphere1->updateObject();
-	sphere2->updateObject();
-	floorbox->updateObject();
+	_container.updateall();
 
 	checkInput();
 	return false;
@@ -159,13 +171,9 @@ void Screen::draw()
 {
 	_cam3d.updateMatrix();
 
-	_3drenderer.draw(floorbox);
-	_3drenderer.draw(sphere1);
-	_3drenderer.draw(sphere2);
-
-	_3drenderer.drawCollisionBox(sphere1->getCollision_Object());
-//	_3drenderer.drawCollisionBox(sphere2->getCollision_Object());
-	_3drenderer.drawCollisionBox(floorbox->getCollision_Object());
+	
+	_container.drawall(_3drenderer);
+	_container.drawallcollision(_3drenderer);
 
 
 //	_terrain.draw(&_3drenderer);

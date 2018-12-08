@@ -39,10 +39,16 @@ namespace ngiv {
 		glm::vec3 getPos() { return pos; }	
 		void setPos(glm::vec3 pos) { this->pos = pos; 	}		
 		void setCenterPos(glm::vec3 centerpos) { this->pos = centerpos - center_of_mass; }
+		void setCenterRelative(glm::vec3 centerpos) { center_of_mass = centerpos; }
+
 		glm::vec3 getCenterPos() { return pos + center_of_mass; }
 		std::string directory;
 		glm::vec3 getCenterPosRelative() { return center_of_mass; }
 		glm::vec3 getscale() { return scale; }
+		std::string getfilepath() { return filepath; }
+		void setRot(glm::vec3 r) { rot = r; }
+
+		std::string getName() { return name; }
 		
 
 		Collision_Object* createCollisionObject() {
@@ -73,6 +79,9 @@ namespace ngiv {
 		
 		Collision_Object* getCollision_Object() { return collision_boxes; }
 
+		void setCollisionObject(Collision_Object* cob) { collision_boxes = cob; }
+
+
 		void updateObject() {
 			pos = collision_boxes->getExtraPos();
 			rot = collision_boxes->getRotation();
@@ -82,6 +91,9 @@ namespace ngiv {
 		float ydif;
 		float zdif;
 	protected:
+
+		std::string filepath;
+
 		OBJ() {
 			empty = true;
 			pos = glm::vec3(0);
@@ -93,6 +105,7 @@ namespace ngiv {
 		
 		
 
+		std::string name;
 		bool empty = true;
 		glm::vec3 center_of_mass;
 

@@ -149,6 +149,7 @@
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Collision_Box.h" />
     <ClInclude Include="ColorRGBA8.h" />
+    <ClInclude Include="GameContainer.h" />
     <ClInclude Include="GLSLProgram.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IOManager.h" />
