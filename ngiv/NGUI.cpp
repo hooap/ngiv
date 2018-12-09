@@ -64,16 +64,16 @@ namespace ngiv {
 
 	void NGUI::draw() {
 
-		
+	//NE KADAR KUCUK O KADAR ON	
 		glm::vec2 wh = _camera.getwh();
-		
+
 		//checkbox
 		for (size_t i = 0; i < _checkbox.size(); i++) {
 			if (_checkbox[i]->value) {
-				_rend.draw(_checkbox[i]->destrect, glm::vec4(0, 0, 1, 1), _checkbox[i]->texture_on, 0);
+				_rend.draw(_checkbox[i]->destrect, glm::vec4(0, 0, 1, 1), _checkbox[i]->texture_on, 0 , 1);
 			}
 			else {
-				_rend.draw(_checkbox[i]->destrect, glm::vec4(0, 0, 1, 1), _checkbox[i]->texture_off, 0);
+				_rend.draw(_checkbox[i]->destrect, glm::vec4(0, 0, 1, 1), _checkbox[i]->texture_off, 0 , 1);
 			}
 
 			
@@ -97,22 +97,22 @@ namespace ngiv {
 			}
 
 			
-			_trend.draw(_text_static[i]->text, ratiotopixel(_text_static[i]->pos,(int)wh.x,(int)wh.y), glm::vec2(_text_static[i]->size), _text_static[i]->color_text, jx, jy);
+			_trend.draw(_text_static[i]->text, ratiotopixel(_text_static[i]->pos,(int)wh.x,(int)wh.y), glm::vec2(_text_static[i]->size), _text_static[i]->color_text, 1, jx, jy);
 			//
 		}
 				
 		//buttons
 		for (size_t i = 0; i < _button.size(); i++) {
-			_rend.draw(ratiotopixel(_button[i]->destrect, (int)wh.x, (int)wh.y), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), _button[i]->texture_body, 0.0f);
+			_rend.draw(ratiotopixel(_button[i]->destrect, (int)wh.x, (int)wh.y), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), _button[i]->texture_body, 0.0f, 2);
 			glm::vec2 pos = glm::vec2(_button[i]->destrect.x + _button[i]->destrect.z / 2.0f, _button[i]->destrect.y + _button[i]->destrect.w / 2.0f);
-			_trend.draw(_button[i]->text,ratiotopixel(pos,(int)wh.x,(int)wh.y), glm::vec2(_button[i]->size), _button[i]->color_text, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
+			_trend.draw(_button[i]->text,ratiotopixel(pos,(int)wh.x,(int)wh.y), glm::vec2(_button[i]->size), _button[i]->color_text, 5, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
 		}		
 
 		//editbox
 		for (size_t i = 0; i < _editbox.size(); i++) {
-			_rend.draw(ratiotopixel(_editbox[i]->destrect, (int)wh.x, (int)wh.y), glm::vec4(0, 0, 1, 1), _editbox[i]->texture_body,0);
+			_rend.draw(ratiotopixel(_editbox[i]->destrect, (int)wh.x, (int)wh.y), glm::vec4(0, 0, 1, 1), _editbox[i]->texture_body,0 , 1);
 			glm::vec2 pos = glm::vec2(_editbox[i]->destrect.x + _editbox[i]->destrect.z / 2.0f, _editbox[i]->destrect.y + _editbox[i]->destrect.w / 2.0f);
-			_trend.draw(_editbox[i]->text, ratiotopixel(glm::vec2(_editbox[i]->destrect.x, _editbox[i]->destrect.y + _editbox[i]->destrect.w / 2.0f), (int)wh.x, (int)wh.y), glm::vec2(_editbox[i]->tsize), _editbox[i]->color_text, ratiotopixel(_editbox[i]->destrect.x + _editbox[i]->destrect.z, (int)wh.x), ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
+			_trend.draw(_editbox[i]->text, ratiotopixel(glm::vec2(_editbox[i]->destrect.x, _editbox[i]->destrect.y + _editbox[i]->destrect.w / 2.0f), (int)wh.x, (int)wh.y), glm::vec2(_editbox[i]->tsize), _editbox[i]->color_text, ratiotopixel(_editbox[i]->destrect.x + _editbox[i]->destrect.z, (int)wh.x), 1, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
 		}
 
 		//panel
@@ -121,16 +121,16 @@ namespace ngiv {
 
 			//panelbox					
 			glm::vec4 pp = ratiotopixel(_panel[i]->destrect, (int)wh.x, (int)wh.y);
-			_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->texture_body, 0);
-						
+			_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->texture_body, 0, 10);
+
 			//buttons
 			for (size_t j = 0; j < _panel[i]->buttons.size(); j++) {
 				//button				
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->buttons[j]->destrect, (int)wh.x, (int)wh.y);
-				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->buttons[j]->texture_body,0);
+				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->buttons[j]->texture_body, 0, 15);
 				//text
-				glm::vec2 pos = glm::vec2(bpos.x + bpos.z / 2.0f,bpos.y + bpos.w / 2.0f);
-				_trend.draw(_panel[i]->buttons[j]->text, pos, glm::vec2(_panel[i]->buttons[j]->size), _panel[i]->buttons[j]->color_text, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
+				glm::vec2 pos = glm::vec2(bpos.x + bpos.z / 2.0f, bpos.y + bpos.w / 2.0f);
+				_trend.draw(_panel[i]->buttons[j]->text, pos, glm::vec2(_panel[i]->buttons[j]->size), _panel[i]->buttons[j]->color_text, 25, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
 
 			}
 
@@ -138,10 +138,10 @@ namespace ngiv {
 			for (size_t j = 0; j < _panel[i]->checkboxs.size(); j++) {
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->checkboxs[j]->destrect, (int)wh.x, (int)wh.y);
 				if (_panel[i]->checkboxs[j]->value) {
-					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->checkboxs[j]->texture_on,0);
+					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->checkboxs[j]->texture_on, 0, 2);
 				}
 				else {
-					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->checkboxs[j]->texture_off, 0);
+					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->checkboxs[j]->texture_off, 0, 1);
 				}
 
 
@@ -150,9 +150,9 @@ namespace ngiv {
 			//editbox			
 			for (size_t j = 0; j < _panel[i]->editboxs.size(); j++) {
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->editboxs[j]->destrect, (int)wh.x, (int)wh.y);
-				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->editboxs[j]->texture_body,0);
+				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->editboxs[j]->texture_body, 0, 1);
 				glm::vec2 pos = glm::vec2(bpos.x, bpos.y + bpos.w / 2.0f);
-				_trend.draw(_panel[i]->editboxs[j]->text, pos, glm::vec2(_panel[i]->editboxs[j]->tsize), _panel[i]->editboxs[j]->color_text, bpos.x + bpos.z, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
+				_trend.draw(_panel[i]->editboxs[j]->text, pos, glm::vec2(_panel[i]->editboxs[j]->tsize), _panel[i]->editboxs[j]->color_text, 1, bpos.x + bpos.z, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
 			}
 
 			//text
@@ -172,15 +172,15 @@ namespace ngiv {
 				}
 
 
-				_trend.draw(_panel[i]->texts[j]->text, getdestrectinpanel(_panel[i]->destrect,_panel[i]->texts[j]->pos, (int)wh.x, (int)wh.y), glm::vec2(_panel[i]->texts[j]->size), _panel[i]->texts[j]->color_text, jx, jy);
+				_trend.draw(_panel[i]->texts[j]->text, getdestrectinpanel(_panel[i]->destrect, _panel[i]->texts[j]->pos, (int)wh.x, (int)wh.y), glm::vec2(_panel[i]->texts[j]->size), _panel[i]->texts[j]->color_text, 1, jx, jy);
 				//
 			}
 
 			//panel
 			for (size_t j = 0; j < _panel[i]->panels.size(); j++) {
 				//panelbox					
-				glm::vec4 pp = getdestrectinpanel(_panel[i]->destrect,_panel[i]->panels[j]->destrect, (int)wh.x, (int)wh.y);
-				_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->panels[j]->texture_body, 0);
+				glm::vec4 pp = getdestrectinpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (int)wh.x, (int)wh.y);
+				_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->panels[j]->texture_body, 0, 1);
 
 
 				std::vector<NGUI_PANEL_BUTTON*>* s = &_panel[i]->panels[j]->buttons;
@@ -188,16 +188,21 @@ namespace ngiv {
 				for (size_t m = 0; m < s->size(); m++) {
 					//button				
 					glm::vec4 bpos = getdestrectinpanelpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (*s)[m]->destrect, (int)wh.x, (int)wh.y);
-					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), (*s)[m]->texture_body, 0);
+					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), (*s)[m]->texture_body, 0, 1);
 					//text
 					glm::vec2 pos = glm::vec2(bpos.x + bpos.z / 2.0f, bpos.y + bpos.w / 2.0f);
-					_trend.draw((*s)[m]->text, pos, glm::vec2((*s)[m]->size), (*s)[m]->color_text, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
+					_trend.draw((*s)[m]->text, pos, glm::vec2((*s)[m]->size), (*s)[m]->color_text, 1, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
 				}
 			}
 		}
+
+
+
+		
 	}
 
 	void NGUI::render() {
+
 		_rend.render();
 		_trend.render();
 

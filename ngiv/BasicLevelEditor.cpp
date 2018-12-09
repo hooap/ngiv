@@ -17,7 +17,7 @@ namespace ngiv {
 		{
 			//return button
 			unsigned int returntexture = ngiv::TextureLoader::LoadTexture("UI//return.png");
-			_gui.addbutton("", 1, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
+			_gui.addbutton("S", 3, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
 			//
 
 		}

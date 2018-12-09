@@ -53,7 +53,7 @@ namespace ngiv {
 		
 		if (_rgbaonshader) {
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2DRGBA), (void*)offsetof(Vertex2DRGBA, Vertex2DRGBA::pos));
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2DRGBA), (void*)offsetof(Vertex2DRGBA, Vertex2DRGBA::pos));
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex2DRGBA), (void*)offsetof(Vertex2DRGBA, Vertex2DRGBA::col));
 			glEnableVertexAttribArray(2);
@@ -61,17 +61,16 @@ namespace ngiv {
 		}
 		else {
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void*)offsetof(Vertex2D, Vertex2D::pos));
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void*)offsetof(Vertex2D, Vertex2D::pos));
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void*)offsetof(Vertex2D, Vertex2D::uv));
-			glEnableVertexAttribArray(2);
 		}
 		
 
 		glBindVertexArray(0);		
 	}
 
-	void Renderer_2D::draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle) {
+	void Renderer_2D::draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle, float depth) {
 		if (_vao == 0 || _vbo == 0) {
 			ngiv::error("NGIV::RENDERER_2D::NOTINITALIZED::CANTWORK", true);
 		}
@@ -81,10 +80,10 @@ namespace ngiv {
 		sprites.emplace_back();
 		sprites.back().angle = angle;
 		sprites.back().texture = texture;
-		sprites.back().vertexArray = createVertexArray(destrect, uv);
+		sprites.back().vertexArray = createVertexArray(destrect, uv, -depth / 100.0f);
 	}
 
-	void Renderer_2D::draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle, ngiv::ColorRGBA8 col) {
+	void Renderer_2D::draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle, float depth ,ngiv::ColorRGBA8 col) {
 		if (_vao == 0 || _vbo == 0) {
 			ngiv::error("NGIV::RENDERER_2D::NOTINITALIZED::CANTWORK", true);
 		}
@@ -164,18 +163,21 @@ namespace ngiv {
 	}
 
 
-	std::vector<Vertex2D> Renderer_2D::createVertexArray(const glm::vec4& destRect, const glm::vec4& uv) {
+	std::vector<Vertex2D> Renderer_2D::createVertexArray(const glm::vec4& destRect, const glm::vec4& uv, float depth) {
 		std::vector<Vertex2D> array;
 		Vertex2D v;
 		//bottom left
 		v.pos.x = destRect.x;
 		v.pos.y = destRect.y;
+		v.pos.z = depth;
+
 		v.uv.x = uv.x;
 		v.uv.y = uv.y;		
 		array.emplace_back(v);
 		//bottom right
 		v.pos.x = destRect.x + destRect.z;
 		v.pos.y = destRect.y;
+
 		v.uv.x = uv.x + uv.z;
 		v.uv.y = uv.y;
 		array.emplace_back(v);

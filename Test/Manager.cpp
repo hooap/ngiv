@@ -31,7 +31,7 @@ void Manager::init() {
 	//create screen
 
 	ngiv::BasicLevelEditor* _leveleditor = new ngiv::BasicLevelEditor();
-	_leveleditor->initScreen(width,height,&_window, "Fonts//calibril.ttf", 64);
+	_leveleditor->initScreen(width,height,&_window, "Fonts//calibril.ttf", 32);
 
 	_screen->initScreen(width,height,&_window,"Fonts//calibril.ttf",64);	
 	_screen->setscreenPointer("leveleditor", _leveleditor);

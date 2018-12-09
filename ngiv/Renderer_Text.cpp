@@ -93,17 +93,21 @@ namespace ngiv {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexText), (void*)offsetof(VertexText, VertexText::pos));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexText), (void*)offsetof(VertexText, VertexText::texcoord));
+
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 	}
 
-	void Renderer_Text::draw(std::string text,const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float max_x, Justification xjust, Justification yjust) {
+	void Renderer_Text::draw(std::string text,const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, float max_x,  Justification xjust, Justification yjust) {
 		
-
 		_groups.emplace_back();
+
+		depth = -depth / 100.0f;
 
 		glm::vec2 cpos = pos;
 
@@ -150,9 +154,49 @@ namespace ngiv {
 				 xpos + w, ypos + h,   1.0, 0.0 ,
 				 xpos,     ypos + h,   0.0, 0.0 };
 
-			// take the glyph									
 			_groups.back()._textures.push_back(ch.textureID);
-			_groups.back()._characters.back().insert(_groups.back()._characters.back().end(), vertices, vertices + 24);
+
+			VertexText v;
+			v.pos.x = xpos;
+			v.pos.y = ypos + h;
+			v.pos.z = depth;
+			v.texcoord.x = 0.0f;
+			v.texcoord.y = 0.0f;
+
+			_groups.back()._characters.back().push_back(v);
+
+			v.pos.x = xpos;
+			v.pos.y = ypos;
+			v.texcoord.x = 0.0f;
+			v.texcoord.y = 1.0f;
+			_groups.back()._characters.back().push_back(v);
+
+			v.pos.x = xpos + w;
+			v.pos.y = ypos;
+			v.texcoord.x = 1.0f;
+			v.texcoord.y = 1.0f;
+			_groups.back()._characters.back().push_back(v);
+
+			v.pos.x = xpos + w;
+			v.pos.y = ypos;
+			v.texcoord.x = 1.0f;
+			v.texcoord.y = 1.0f;
+			_groups.back()._characters.back().push_back(v);
+
+			v.pos.x = xpos + w;
+			v.pos.y = ypos + h;
+			v.texcoord.x = 1.0f;
+			v.texcoord.y = 0.0f;
+			_groups.back()._characters.back().push_back(v);
+
+			v.pos.x = xpos;
+			v.pos.y = ypos + h;
+			v.texcoord.x = 0.0f;
+			v.texcoord.y = 0.0f;
+			_groups.back()._characters.back().push_back(v);
+
+			// take the glyph					
+
 			_groups.back()._col = text_color;
 						
 			// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
@@ -161,8 +205,8 @@ namespace ngiv {
 		
 	}
 
-	void Renderer_Text::draw(std::string text, const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, Justification xjust, Justification yjust) {
-		draw(text, pos, scale, text_color, 0, xjust, yjust);
+	void Renderer_Text::draw(std::string text, const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, Justification xjust, Justification yjust) {
+		draw(text, pos, scale, text_color, depth, 0, xjust, yjust);
 	}
 
 
@@ -171,21 +215,20 @@ namespace ngiv {
 		_glsl->use();
 
 		//load data to gpu
-		std::vector<GLfloat> verticies;
+		std::vector<VertexText> verticies;
 	//	verticies.reserve(size);
 		for (size_t i = 0; i < _groups.size(); i++) {
 			for (size_t j = 0; j < _groups[i]._characters.size(); j++) {
 				verticies.insert(verticies.end(), _groups[i]._characters[j].begin(), _groups[i]._characters[j].end());
-			}			
+			}
 		}		
 
 		glUniformMatrix4fv(_glsl->getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getMatrix()[0][0]));
 		
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) *  verticies.size(), verticies.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(VertexText) *  verticies.size(), verticies.data(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
+		
 		
 		glBindVertexArray(VAO);
 		int tc = 0;

@@ -12,7 +12,7 @@ namespace ngiv {
 
 	
 	struct Vertex2D {
-		glm::vec2 pos;
+		glm::vec3 pos; //3 is z depth
 		glm::vec2 uv;
 	};
 	struct Vertex2DRGBA {
@@ -40,8 +40,8 @@ namespace ngiv {
 		void init(Camera2D* cam, bool rgbaonshader,ngiv::GLSLProgram* glsl = nullptr);
 		void dispose();
 
-		void draw(const glm::vec4& destrect,const glm::vec4& uv, GLuint texture, float angle);
-		void draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle, ngiv::ColorRGBA8 col);
+		void draw(const glm::vec4& destrect,const glm::vec4& uv, GLuint texture, float angle, float depth);
+		void draw(const glm::vec4& destrect, const glm::vec4& uv, GLuint texture, float angle, float depth, ngiv::ColorRGBA8 col);
 
 		void render();
 
@@ -56,7 +56,7 @@ namespace ngiv {
 		Camera2D* _cam;
 
 		ngiv::GLSLProgram* _glsl = nullptr;
-		std::vector<Vertex2D> createVertexArray(const glm::vec4& destRect, const glm::vec4& uv);
+		std::vector<Vertex2D> createVertexArray(const glm::vec4& destRect, const glm::vec4& uv, float depth);
 		std::vector<Vertex2DRGBA> createVertexArray(const glm::vec4& destRect, const glm::vec4& uv, ngiv::ColorRGBA8 col);
 
 	};
