@@ -70,19 +70,15 @@ namespace ngiv {
 
 		//GUI FUNCTIONS
 		//main buttons
-		void checkmenubutton(ngiv::NGUI_BUTTON* b);
 
 		//left panel	
-		void checkcreateboxbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-		void checkfreebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-		void checkselectbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-		void checkcreatespawnpointbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-		void checkclearbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
+
+
 		void checkdebugcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p);
 		void checkforcedgridcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p);
 		void checkpanelsavebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
 		void checkpanelloadbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-		void checkcamresetbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
+
 
 		//save load
 		void checksaveactionbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);

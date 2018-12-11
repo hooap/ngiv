@@ -59,6 +59,17 @@ namespace ngiv {
 		lop.w = op.w * t.w / 100;
 		return glm::vec4(lop.x * w / 100.0f, lop.y * h / 100.0f, lop.z * w / 100.0f, lop.w * h / 100.0f);
 	}
+	static glm::vec2 getdestrectinpanelpanel(glm::vec4& mp, glm::vec4& p, glm::vec2& t, int w, int h) {
+		glm::vec4 op;
+		op.x = mp.x + mp.z * p.x / 100;
+		op.y = mp.y + mp.w * p.y / 100;
+		op.z = mp.z * p.z / 100;
+		op.w = mp.w * p.w / 100;
+		glm::vec4 lop;
+		lop.x = op.x + op.z * t.x / 100;
+		lop.y = op.y + op.w * t.y / 100;
+		return glm::vec2(lop.x * w / 100.0f, lop.y * h / 100.0f);
+	}
 
 	
 	class IScreen;
@@ -178,8 +189,8 @@ namespace ngiv {
 		bool shouldcamerastop() { return _shouldcamerastop; }
 
 		//get
-		NGUI_PANEL*			 getpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
-		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 getpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::string titlebar_text = "",  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::string titlebar_text = "", std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
 		
 
 		NGUI_TEXT*			 gettext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter);
@@ -200,8 +211,8 @@ namespace ngiv {
 
 
 		//add
-		NGUI_PANEL*			 addpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
-		NGUI_PANEL*			 addpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 addpanel(glm::vec4& pos, std::string bodypostfix = "", std::string titlebarpostfix = "", bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::string titlebar_text = "", std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
+		NGUI_PANEL*			 addpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false, std::string titlebar_text = "", std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
 		
 
 

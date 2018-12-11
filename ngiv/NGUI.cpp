@@ -241,6 +241,14 @@ namespace ngiv {
 					glm::vec2 pos = glm::vec2(bpos.x + bpos.z / 2.0f, bpos.y + bpos.w / 2.0f);
 					_trend.draw((*s)[m]->text, pos, glm::vec2((*s)[m]->size), (*s)[m]->color_text, 40, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
 				}
+
+				std::vector<NGUI_TEXT*>* ts = &_panel[i]->panels[j]->texts;
+				for (size_t m = 0; m < ts->size(); m++) {
+					
+					glm::vec2 bpos = getdestrectinpanelpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (*ts)[m]->pos, (int)wh.x, (int)wh.y);
+					_trend.draw((*ts)[m]->text, bpos, glm::vec2((*ts)[m]->size), (*ts)[m]->color_text, 40, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
+				}
+
 			}
 		}		
 
@@ -552,13 +560,13 @@ namespace ngiv {
 	}
 
 	//gets
-	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic , bool canclose, bool createtitlebar,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic , bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		if (bodypostfix != "" || titlebarpostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
-		return getpanel(pos, _texture_dark_grey, _texture_red, isdynamic, canclose, createtitlebar, cfunc);
+		return getpanel(pos, _texture_dark_grey, _texture_darker_grey, isdynamic, canclose, createtitlebar, titlebar_text, cfunc);
 	}
-	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -582,17 +590,23 @@ namespace ngiv {
 			//create titlebar
 
 			NGUI_PANEL* ubp = new NGUI_PANEL();
-			ubp->destrect = glm::vec4(0, 85, 100, 15);
+			glm::vec4 titl = glm::vec4(0, 85, 100, 15);
+			ubp->destrect = titl;
 			ubp->active = true;
 			ubp->dynamic = false;
 			ubp->value = false;
+
+			if (titlebar_text != "") {
+				NGUI_TEXT* t = gettext(titlebar_text, glm::vec2(2,50), ngiv::ColorRGBA8(0, 0, 0, 255), 1.0f, false, false);
+				ubp->texts.push_back(t);
+			}
 			
 			ubp->texture_body = titlebar;
 			ubp->cfunc = std::bind(&NGUI::default_dynamicborderfunc, this, std::placeholders::_1, std::placeholders::_2);
 			//create close button
 			if (canclose) {
 				NGUI_PANEL_BUTTON* cb = new NGUI_PANEL_BUTTON();
-				cb->destrect = glm::vec4(85, 5, 10, 90);
+				cb->destrect = glm::vec4(89, 20, 8, 60);
 				cb->texture_body = _texture_red;
 				cb->size = 1;
 				cb->color_text = ngiv::ColorRGBA8(255, 255, 255, 255);
@@ -704,7 +718,7 @@ namespace ngiv {
 		if (bodypostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
-		return getpaneleditbox(name, pos, tsize, _texture_dark_grey, color_text, text, func);
+		return getpaneleditbox(name, pos, tsize, _texture_grey, color_text, text, func);
 	}
 
 	NGUI_DROPDOWN_LIST*		 NGUI::getdropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement) {
@@ -737,17 +751,16 @@ namespace ngiv {
 		}
 		return getdropdownlist(pos, tsize, tcol, _texture_darker_grey, _texture_dark_grey, defaultelement);
 	}
-
-	   	
+		   	
 	//adds
-	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic, bool canclose, bool createtitlebar,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
-		NGUI_PANEL* p = getpanel(pos, bodypostfix, titlebarpostfix, isdynamic, canclose, createtitlebar, cfunc);
+	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+		NGUI_PANEL* p = getpanel(pos, bodypostfix, titlebarpostfix, isdynamic, canclose, createtitlebar,titlebar_text, cfunc);
 		_panel.push_back(p);
 		return p;
 
 	}
-	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
-		NGUI_PANEL* p = getpanel(pos, body, titlebar, isdynamic, canclose, createtitlebar, cfunc);
+	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+		NGUI_PANEL* p = getpanel(pos, body, titlebar, isdynamic, canclose, createtitlebar, titlebar_text, cfunc);
 		_panel.push_back(p);
 		return p;
 	}

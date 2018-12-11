@@ -14,43 +14,16 @@ namespace ngiv {
 	}
 
 	void BasicLevelEditor::initui() {
-		//screen buttons
-		{
-			//return button
-			unsigned int returntexture = ngiv::TextureLoader::LoadTexture("UI//return.png");
-			_gui.addbutton("", 1, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
-			//
-
-
-			
-
-
-		}
-
+		
 		//left panel
 		{
 			//panel
-			ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 94), "");
+			ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 99), "");
 			
-			//Free button	
-			ngiv::NGUI_PANEL_BUTTON* b1 = _gui.getpanelbutton("Free", 1.0f, glm::vec4(5, 80, 42, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkfreebutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(b1);
 
-			//Move button	
-			ngiv::NGUI_PANEL_BUTTON* b2 = _gui.getpanelbutton("Move", 1.0f, glm::vec4(53, 80, 42, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkselectbutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(b2);
+			
 
-			//create box	
-			ngiv::NGUI_PANEL_BUTTON* b3 = _gui.getpanelbutton("Box", 1.0f, glm::vec4(5, 60, 90, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcreateboxbutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(b3);
 
-			//create spawnpoint
-			ngiv::NGUI_PANEL_BUTTON* b4 = _gui.getpanelbutton("SpawnPoint", 1.0f, glm::vec4(5, 40, 90, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcreatespawnpointbutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(b4);
-
-			//cam reset
-			ngiv::NGUI_PANEL_BUTTON* b5 = _gui.getpanelbutton("CamReset", 1.0f, glm::vec4(4, 26, 42, 10), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkcamresetbutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(b5);
 
 			//debug checkbox
 			_debugcheckbox = _gui.getpanelcheckbox("debugcheckbox", glm::vec4(1, 0.4, 10, 3), "", "", true, std::bind(&BasicLevelEditor::checkdebugcheckbox, this, std::placeholders::_1, std::placeholders::_2));
@@ -59,59 +32,60 @@ namespace ngiv {
 			ngiv::NGUI_TEXT* t1 = _gui.gettext("debug", glm::vec2(25, 1.6), ngiv::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
 			lpanel->texts.push_back(t1);
 
+
 			//forced grid checkbox
 			_forcedgridcheckbox = _gui.getpanelcheckbox("forcedgridcheckbox", glm::vec4(1, 5, 10, 3), "", "", true, std::bind(&BasicLevelEditor::checkforcedgridcheckbox, this, std::placeholders::_1, std::placeholders::_2));
 			lpanel->checkboxs.push_back(_forcedgridcheckbox);
 			//forced grid text
 			ngiv::NGUI_TEXT* t2 = _gui.gettext("forcedgrid", glm::vec2(25, 6.2), ngiv::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
 			lpanel->texts.push_back(t2);
-
-			//clearbutton
-			ngiv::NGUI_PANEL_BUTTON* bclear = _gui.getpanelbutton("Clear", 1.0f, glm::vec4(54, 26, 42, 10), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkclearbutton, this, std::placeholders::_1, std::placeholders::_2));
-			lpanel->buttons.push_back(bclear);
+			
 
 			//savepanelopenbutton
-			ngiv::NGUI_PANEL_BUTTON* bsave = _gui.getpanelbutton("Save", 1.0f, glm::vec4(54, 2, 42, 10), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelsavebutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* bsave = _gui.getpanelbutton("Save", 0.9f, glm::vec4(42, 2, 26, 6), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelsavebutton, this, std::placeholders::_1, std::placeholders::_2));
 			lpanel->buttons.push_back(bsave);
 
 			//loadpanelopenbutton
-			ngiv::NGUI_PANEL_BUTTON* bload = _gui.getpanelbutton("Load", 1.0f, glm::vec4(54, 14, 42, 10), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelloadbutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* bload = _gui.getpanelbutton("Load", 0.9f, glm::vec4(72, 2, 26, 6), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelloadbutton, this, std::placeholders::_1, std::placeholders::_2));
 			lpanel->buttons.push_back(bload);
 
 
 		}
-
+			   
 		//save panel
 		{
-			_savepanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true, true, true);
+			_savepanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true, true, true, "Save map");
 			_savepanel->active = false;
 
-			ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("savefilename", glm::vec4(5, 50, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
+			
+			ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("savefilename", glm::vec4(5, 62, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
 			_savepanel->editboxs.push_back(e1);
 
 			//save button
-			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7, glm::vec4(85, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 			_savepanel->buttons.push_back(pb1);
 		}
-
 		//load panel
 		{
-			_loadpanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true, true, true);
+			_loadpanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true, true, true, "Load map");
 			_loadpanel->active = false;
 
-			ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("loadfilename", glm::vec4(5, 50, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
+			ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("loadfilename", glm::vec4(5, 62, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
 			_loadpanel->editboxs.push_back(e1);
 
 			//save button
-			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7, glm::vec4(85, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 			_loadpanel->buttons.push_back(pb1);
 		}
+
 
 		//resetpanel	
 		_resetpanel = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&BasicLevelEditor::checkresetpageyes, this, std::placeholders::_1, std::placeholders::_2));
 
 		//loadeven
 		_loadeven = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&BasicLevelEditor::checkloadevenyes, this, std::placeholders::_1, std::placeholders::_2));
+
+
 
 	}
 	void BasicLevelEditor::onEntry() {
@@ -395,92 +369,10 @@ namespace ngiv {
 	}
 
 	//main
-	void BasicLevelEditor::checkmenubutton(ngiv::NGUI_BUTTON* b) {
-
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("pressed menu button");
-			/*
-			setSwitchScreen("menubutton");
-			*/
-			_inputmanager.releasekey(SDL_BUTTON_LEFT);
-
-		}
-
-	}
 
 	//left panel
-	void BasicLevelEditor::checkcreateboxbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-
-			if (_selected != nullptr) {
-				delete _selected;
-			}
-
-			ngiv::o("Pressed checkcreateboxbutton button");
-			/*
-			_selected = new Box();
-			((Box*)_selected)->createbox(_mousepos, glm::vec2(50, 50), 0, "Textures/Box.png", ngiv::ColorRGBA8(255, 0, 0, 255));
-			_inputmanager.releasekey(SDL_BUTTON_LEFT);
-			_tool = Tool::SelectedBox;
-
-			*/
-		}
-
-	}
-	void BasicLevelEditor::checkselectbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("Pressed checkselectbutton button");
-
-			if (_selected != nullptr) {
-				delete _selected;
-			}
-			_tool = Tool::MoveObject;
-			_inputmanager.releasekey(SDL_BUTTON_LEFT);
-		}
 
 
-	}
-	void BasicLevelEditor::checkfreebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("Pressed checkfreebutton button");
-
-			if (_selected != nullptr) {
-				delete _selected;
-			}
-			_tool = Tool::Free;
-			_inputmanager.releasekey(SDL_BUTTON_LEFT);
-		}
-	}
-	void BasicLevelEditor::checkcreatespawnpointbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("Pressed checkcreatespawnpointbutton button");
-
-			if (_selected != nullptr) {
-				delete _selected;
-			}
-			/*
-			_selected = new Dot();
-			((Dot*)_selected)->createDot(_mousepos, ngiv::ColorRGBA8(0, 0, 255, 255), "Textures/Ball.png", 10.0f, 0);
-			_inputmanager.releasekey(SDL_BUTTON_LEFT);
-			_tool = Tool::SelectedDot;
-
-			*/
-
-		}
-
-	}
-	void BasicLevelEditor::checkclearbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("Pressed clear button");
-
-			_resetpanel->active = true;
-		}
-
-	}
 	void BasicLevelEditor::checkdebugcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p) {
 
 		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
@@ -517,11 +409,6 @@ namespace ngiv {
 
 			_inputmanager.releasekey(SDL_BUTTON_LEFT);
 			_loadpanel->active = 1;
-		}
-	}
-	void BasicLevelEditor::checkcamresetbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
-		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			ngiv::o("Pressed CamReset button");
 		}
 	}
 
