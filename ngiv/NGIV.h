@@ -5,7 +5,7 @@
 #include <SDL\SDL.h>
 #include "Window.h"
 
-#define NGIV_VERSION "0.2"
+#define NGIV_VERSION "0.3"
 
 namespace ngiv {
 	
