@@ -172,9 +172,7 @@ bool Screen::update(float deltatime)
 
 void Screen::draw()
 {
-	_cam3d.updateMatrix();
 
-	
 	_container.drawall(_3drenderer);
 	_container.drawallcollision(_3drenderer);
 

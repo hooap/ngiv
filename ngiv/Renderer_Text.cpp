@@ -104,8 +104,9 @@ namespace ngiv {
 	}
 
 	void Renderer_Text::draw(std::string text,const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, float max_x,  Justification xjust, Justification yjust) {
-		
 		_groups.emplace_back();
+
+		
 
 		depth = -depth / 100.0f;
 
@@ -129,7 +130,6 @@ namespace ngiv {
 		//iterate again and 
 		for (c = text.begin(); c != text.end(); c++)
 		{
-			_groups.back()._characters.emplace_back();
 			size++;
 			Character ch = Characters[*c];
 
@@ -141,6 +141,8 @@ namespace ngiv {
 					return;
 				}
 			}
+
+			_groups.back()._characters.emplace_back();
 
 			GLfloat w = ch.Size.x * scale.x;
 			GLfloat h = ch.Size.y * scale.y;
@@ -203,6 +205,8 @@ namespace ngiv {
 			cpos.x += (ch.Advance >> 6) * scale.x; // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 		
+		
+
 	}
 
 	void Renderer_Text::draw(std::string text, const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, Justification xjust, Justification yjust) {

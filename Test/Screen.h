@@ -19,6 +19,8 @@ public:
 	virtual void draw() override;
 	virtual void render() override;
 
+	ngiv::GameContainer* getContainer() { return &_container; }
+	ngiv::Camera3D* getCam() { return &_cam3d; }
 	
 private:
 	virtual void initui() override;

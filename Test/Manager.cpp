@@ -31,13 +31,23 @@ void Manager::init() {
 	//create screen
 
 	ngiv::BasicLevelEditor* _leveleditor = new ngiv::BasicLevelEditor();
+
+
 	_leveleditor->initScreen(width,height,&_window, "Fonts//calibril.ttf", 32);
 
 	_screen->initScreen(width,height,&_window,"Fonts//calibril.ttf",64);	
 	_screen->setscreenPointer("leveleditor", _leveleditor);
 
 
+
+	_leveleditor->setContainer(_screen->getContainer());
+	_leveleditor->setCam(_screen->getCam());
+	_leveleditor->setscreenPointer("game", _screen);
+	_leveleditor->lateinit();
+
+
 	_screenManager.addScreen(_screen);
+	_screenManager.addScreen(_leveleditor);
 	_screenManager.setActiveScreen(0);
 }
 void Manager::run() {

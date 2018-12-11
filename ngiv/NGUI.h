@@ -40,11 +40,12 @@ namespace ngiv {
 		return glm::vec4(op.x * w / 100.0f, op.y * h / 100.0f, op.z * w / 100.0f, op.w * h / 100.0f);
 	}
 	static glm::vec2 getdestrectinpanel(glm::vec4& p, glm::vec2& b, int w, int h) {
-		glm::vec4 op;
+		glm::vec2 op;
 		op.x = p.x + p.z * b.x / 100;
 		op.y = p.y + p.w * b.y / 100;		
 		return glm::vec2(op.x * w / 100.0f, op.y * h / 100.0f);
 	}
+
 	static glm::vec4 getdestrectinpanelpanel(glm::vec4& mp, glm::vec4& p, glm::vec4& t, int w, int h) {
 		glm::vec4 op;
 		op.x = mp.x + mp.z * p.x / 100;
@@ -101,6 +102,18 @@ namespace ngiv {
 		bool isxcenter;
 		bool isycenter;
 	};
+	struct NGUI_DROPDOWN_LIST
+	{
+		bool open;
+		int selected_index;
+		glm::vec4 destrect;
+		GLuint texture_background;
+		GLuint texture_listbackground;
+		ngiv::ColorRGBA8 color_text;
+		float tsize;
+
+		std::vector<std::string> elements;
+	};
 
 
 	//panel stuff
@@ -112,6 +125,8 @@ namespace ngiv {
 		std::vector<NGUI_PANEL_CHECKBOX*> checkboxs;
 		std::vector<NGUI_PANEL_EDITBOX*> editboxs;
 		std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc;
+		std::vector<NGUI_DROPDOWN_LIST*> dropdowns;
+
 		glm::vec4 destrect;		
 		bool dynamic;		
 		GLuint texture_body;		
@@ -146,8 +161,7 @@ namespace ngiv {
 		GLuint texture_body;
 		ngiv::ColorRGBA8 color_text;
 	};
-		
-
+	   
 	
 	class NGUI
 	{
@@ -168,17 +182,20 @@ namespace ngiv {
 		NGUI_PANEL*			 getpanel(glm::vec4& pos, GLuint bodycolor, GLuint titlebarcolor, bool isdynamic = false, bool canclose = false, bool createtitlebar = false,  std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc = nullptr);
 		
 
-
 		NGUI_TEXT*			 gettext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter);
 		
 		NGUI_PANEL_BUTTON*	 getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, std::string bodypostfix , ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func);
 		NGUI_PANEL_BUTTON*	 getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func);
 		
-		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name,glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool value, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
-		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name, glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool value, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
+		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name,glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
+		NGUI_PANEL_CHECKBOX* getpanelcheckbox(std::string name, glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func);
 		
 		NGUI_PANEL_EDITBOX*  getpaneleditbox(std::string name, glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func = nullptr);
 		NGUI_PANEL_EDITBOX*  getpaneleditbox(std::string name, glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func = nullptr);
+
+		NGUI_DROPDOWN_LIST*  getdropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement = "");
+		NGUI_DROPDOWN_LIST*  getdropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background = "", std::string postfix_texture_listbackground = "", std::string defaultelement = "");
+
 
 
 
@@ -193,13 +210,18 @@ namespace ngiv {
 		NGUI_BUTTON*		 addbutton(std::string t, float tsize,glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func);
 		NGUI_BUTTON*		 addbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func);
 		
-		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool value, std::function<void(NGUI_CHECKBOX*)> func);
-		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool value, std::function<void(NGUI_CHECKBOX*)> func);
+		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func);
+		NGUI_CHECKBOX*		 addcheckbox(glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func);
 
 
 
 		NGUI_EDITBOX*		 addeditbox(glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func = nullptr);
 		NGUI_EDITBOX*		 addeditbox(glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func = nullptr);
+
+		NGUI_DROPDOWN_LIST*  adddropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement = "");
+		NGUI_DROPDOWN_LIST*  adddropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background = "", std::string postfix_texture_listbackground = "", std::string defaultelement = "");
+
+
 
 		//premeade
 
@@ -213,6 +235,7 @@ namespace ngiv {
 		GLuint _texture_blue;
 		GLuint _texture_grey;
 		GLuint _texture_dark_grey;
+		GLuint _texture_darker_grey;
 	private:
 		
 
@@ -236,6 +259,7 @@ namespace ngiv {
 		std::vector<NGUI_PANEL*> _panel;
 		std::vector<NGUI_CHECKBOX*> _checkbox;
 		std::vector<NGUI_EDITBOX*> _editbox;
+		std::vector<NGUI_DROPDOWN_LIST*> _droplist;
 
 		Camera2D _camera;
 		InputManager* _inputmanager = nullptr;

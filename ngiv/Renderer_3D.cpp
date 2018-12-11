@@ -669,6 +669,7 @@ namespace ngiv {
 	
 	void Renderer_3D::renderWithGLSL(GLSLProgram& glsl) {	
 
+		_cam->updateMatrix();
 		//VERTEX
 		std::vector<Vertex3D> vertics;
 		std::vector<Vertex3D> vt;

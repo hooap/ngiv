@@ -21,9 +21,15 @@ namespace ngiv {
 
 		void render() override;
 
+		void lateinit();
+
 		
 		void save();
 		void load();
+
+
+		void setContainer(GameContainer* cont) {_container = cont;	}
+		void setCam(Camera3D* cam) { _cam3d = cam; }
 
 	private:
 		void init() override;
@@ -49,16 +55,16 @@ namespace ngiv {
 		void* _selected = nullptr;
 	public:
 
-		bool _pressingshift = false;
+		bool _enablemouse = false;
 
 		//SCREEN
 
-		ngiv::Camera3D _cam3d;
+		GameContainer *_container = nullptr;
+		ngiv::Camera3D *_cam3d = nullptr;
 		ngiv::Renderer_3D _3drenderer;
 
 
 
-		GameContainer _container;
 
 
 

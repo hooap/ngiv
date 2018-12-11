@@ -5,20 +5,25 @@
 namespace ngiv {
 
 	void BasicLevelEditor::init() {
-		_cam3d.init(glm::vec3(13, 13, -5), 0.4, 0.2, 60, _width, _height, 0.1f, 400.0f);
-		_cam3d.lookat(glm::vec3(5, 0, 0));
-
-		_3drenderer.init(&_cam3d, _width, _height);
-		_3drenderer.loadSkybox("001");
+		
 
 	}
+	void BasicLevelEditor::lateinit() {
+		_3drenderer.init(_cam3d, _width, _height);
+		_3drenderer.loadSkybox("001");
+	}
+
 	void BasicLevelEditor::initui() {
 		//screen buttons
 		{
 			//return button
 			unsigned int returntexture = ngiv::TextureLoader::LoadTexture("UI//return.png");
-			_gui.addbutton("S", 3, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
+			_gui.addbutton("", 1, glm::vec4(0, 95, 5, 5), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkmenubutton, this, std::placeholders::_1));
 			//
+
+
+			
+
 
 		}
 
@@ -26,7 +31,7 @@ namespace ngiv {
 		{
 			//panel
 			ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 94), "");
-
+			
 			//Free button	
 			ngiv::NGUI_PANEL_BUTTON* b1 = _gui.getpanelbutton("Free", 1.0f, glm::vec4(5, 80, 42, 15), "", ngiv::ColorRGBA8(255, 255, 255, 255), std::bind(&BasicLevelEditor::checkfreebutton, this, std::placeholders::_1, std::placeholders::_2));
 			lpanel->buttons.push_back(b1);
@@ -121,16 +126,18 @@ namespace ngiv {
 			return true;
 		}
 
+		if (!_gui.shouldcamerastop() && !_enablemouse) {
+			_cam3d->do_basic_cam_movement(_inputmanager);
+			_cam3d->updateCam(_inputmanager);
+		}
+
 		checkInput();
 
-		if (_window->getState() == ngiv::Window_State::FocusOn && !_pressingshift) {
+		if (_window->getState() == ngiv::Window_State::FocusOn && !_enablemouse) {
 			SDL_WarpMouseInWindow(_window->getwindow(), _width / 2, _height / 2);
 		}
 
-		if (!_gui.shouldcamerastop()) {
-			_cam3d.do_basic_cam_movement(_inputmanager);
-			_cam3d.updateCam(_inputmanager);
-		}
+		
 
 		/*
 
@@ -330,8 +337,7 @@ namespace ngiv {
 		return false;
 	}
 	void BasicLevelEditor::draw() {
-
-	
+			
 		if (_selected != nullptr) {
 
 			switch (_tool)
@@ -347,25 +353,29 @@ namespace ngiv {
 
 
 		if (_debugcheckbox->value) {
-			_container.drawallcollision(_3drenderer);
+			_container->drawallcollision(_3drenderer);
 		}else {
-			_container.drawall(_3drenderer);
+			_container->drawall(_3drenderer);
 		}
+	
 
 		_gui.draw();
-
 	}
 
 	void BasicLevelEditor::checkInput() {
 
 		if (_inputmanager.isKeyPressed(SDLK_QUOTEDBL)) {
-			if (_pressingshift) {
+			if (_enablemouse) {
 				SDL_ShowCursor(false);
 			}
 			else {
 				SDL_ShowCursor(true);
 			}
-			_pressingshift = !_pressingshift;
+			_enablemouse = !_enablemouse;
+		}
+
+		if (_inputmanager.isKeyPressed(SDLK_F6)) {
+			setSwitchScreen("game");
 		}
 		
 
