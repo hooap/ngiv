@@ -20,8 +20,9 @@ namespace ngiv {
 		std::string path;
 		bool isDirectory;
 	};
-
-
+	
+	namespace fs = std::experimental::filesystem;
+	
 	//namespace fs = std::tr2::sys;
 	
 	inline bool filetobuffer(const std::string& filepath, std::vector<unsigned char>& buffer)
@@ -310,14 +311,32 @@ namespace ngiv {
 		*/
 
 
-		inline bool checkFile(const std::string& filename) {
-			std::ifstream ifile(filename.c_str());
-			return (bool)ifile;
-		}
+	inline bool getDirectoryEntries(const char* path, std::vector<DirEntry>& rvEntries) {
+		auto dpath = fs::path(path);
+		// Must be directory
+		if (!fs::is_directory(dpath)) return false;
 
-		inline bool deletefile(std::string path){
-			int code = std::remove(path.c_str());
-			if (code == 0) return 1;
-			return 0;
+		for (auto it = fs::directory_iterator(dpath); it != fs::directory_iterator(); ++it) {
+			rvEntries.emplace_back();
+			rvEntries.back().path = it->path().string();
+			if (is_directory(it->path())) {
+				rvEntries.back().isDirectory = true;
+			}
+			else {
+				rvEntries.back().isDirectory = false;
+			}
 		}
+		return true;
+	}
+
+	inline bool checkFile(const std::string& filename) {
+		std::ifstream ifile(filename.c_str());
+		return (bool)ifile;
+	}
+
+	inline bool deletefile(std::string path){
+		int code = std::remove(path.c_str());
+		if (code == 0) return 1;
+		return 0;
+	}
 }

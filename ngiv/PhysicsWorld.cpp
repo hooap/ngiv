@@ -223,7 +223,7 @@ namespace ngiv {
 			//move the objects along velocity
 			objects[i]->addExtraPos(objects[i]->getVelocity());
 
-			float slowingfactor = 0.01;
+			float slowingfactor = 0.01f;
 			//stop objects slowly
 			objects[i]->addVelocity(-objects[i]->getVelocity() * slowingfactor);
 

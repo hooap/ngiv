@@ -173,7 +173,7 @@ namespace ngiv {
 	}
 
 	void TerrainGenerator::draw(Renderer_3D* rend) {				
-		rend->drawMultipleMesh(meshes,poss,glm::vec3(1.0f));
+		rend->drawMultipleMesh(meshes,poss,glm::vec3(1.0f),true);
 	}
 
 

@@ -38,8 +38,13 @@ namespace ngiv {
 
 		void checkInput();
 
+		void loadmodelpaths();
+
+		std::vector<std::string> _model_paths;
 
 		std::string path;
+
+		ngiv::NGUI_DROPDOWN_LIST* _model_list;
 
 		ngiv::NGUI_PANEL* _savepanel;
 		ngiv::NGUI_PANEL* _loadpanel;
@@ -67,19 +72,19 @@ namespace ngiv {
 
 
 
-
+	private:
 		//GUI FUNCTIONS
-		//main buttons
-
 		//left panel	
+
+		void checkaddbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
+
 
 
 		void checkdebugcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p);
 		void checkforcedgridcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p);
 		void checkpanelsavebutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
 		void checkpanelloadbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-
-
+		
 		//save load
 		void checksaveactionbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
 		void checkloadactionbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
@@ -87,7 +92,6 @@ namespace ngiv {
 		//areyousurepanel
 		void checkresetpageyes(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
 		void checkloadevenyes(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p);
-
 
 	};
 

@@ -41,18 +41,20 @@ namespace ngiv {
 			if (_window == nullptr)
 			{
 				error("SDL Window olusturulamadi", true);
+				return 1;
 			}
 
 			SDL_GLContext glcontext = SDL_GL_CreateContext(_window);
 			if (glcontext == nullptr)
 			{
 				error("GLContext olusturulamadi", true);
+				return 1;
 			}
 
 			if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 			{
 				std::cout << "Failed to initialize GLAD" << std::endl;
-				return -1;
+				return 1;
 			}
 			getwindowsize(width, height);			
 			_width = width;
@@ -74,7 +76,7 @@ namespace ngiv {
 
 		}
 
-		
+		return 0;
 	 }
 	
 	void Window::dispose(){

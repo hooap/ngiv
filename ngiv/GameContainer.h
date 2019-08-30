@@ -175,11 +175,10 @@ namespace ngiv {
 			of.close();
 
 		}
-
-
-		void drawall(ngiv::Renderer_3D& rend) {
+		
+		void drawall(ngiv::Renderer_3D& rend,bool isstatic) {
 			for (int i = 0; i < objs.size(); i++) {
-				rend.draw(objs[i]);
+				rend.draw(objs[i],isstatic);
 			}
 		}
 
@@ -297,12 +296,7 @@ namespace ngiv {
 		}
 
 
-
-
 		std::vector<OBJ*> objs;
-
-
-
 
 	};
 

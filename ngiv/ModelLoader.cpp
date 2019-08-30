@@ -1,39 +1,69 @@
 #include "ModelLoader.h"
 #include "TextureLoader.h"
 #include "Misc.h"
+#include <map>
 
 namespace ngiv {
 
 
 	OBJ* ModelLoader::loadModel(std::string name, glm::vec3 pos, std::string path, bool setPosOnCenter, glm::vec3 scale) {
+		static std::map<std::string, OBJ*> model_container;
+		if (model_container.find(path) != model_container.end()) {
+			OBJ* newmodel = new OBJ();
+			OBJ* loadedmodel = model_container.find(path)->second;
+
+			newmodel->meshes = loadedmodel->meshes;
+			newmodel->name = name;
+			newmodel->center_of_mass = loadedmodel->center_of_mass;
+			newmodel->empty = false;
+			newmodel->filepath = path;
+			newmodel->scale = scale;
+			newmodel->directory = path.substr(0, path.find_last_of('/'));
+
+			if (setPosOnCenter) {
+				newmodel->pos = pos - newmodel->center_of_mass;
+			}
+			else {
+				newmodel->pos = pos;
+			}
+			
+			return newmodel;
+		}
+		
 		OBJ* model = new OBJ();
 		model->scale = scale;
 		model->empty = false;
 		model->filepath = path;
 		model->name = name;
 		Assimp::Importer importer;
+		model->meshes = new std::vector<Mesh>();
+
 		const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::string m = importer.GetErrorString();
-			error("ERROR::ASSIMP::" + m, true);
-			return model;
+			error("ERROR::ASSIMP::" + m, false);
+			return nullptr;
 		}
-		model->directory = path.substr(0, path.find_last_of('/'));
+		model->directory = path.substr(0, path.find_last_of('//'));
+		if (path == model->directory) {
+			model->directory = path.substr(0, path.find_last_of('\\'));
+		}
+
 
 		processNode(model,scene->mRootNode, scene);
 
 		//Calculate a good enough center of mass
-		int x_max = -1,x_min = -1;
-		int y_max = -1, y_min = -1;
-		int z_max = -1, z_min = -1;
+		float x_max = -1,x_min = -1;
+		float y_max = -1, y_min = -1;
+		float z_max = -1, z_min = -1;
 
 		bool first = true;
-		for (int i = 0; i < model->meshes.size(); i++) {
-			for (int j = 0; j < model->meshes[i].vertices.size(); j++) {
-				Vertex3D* c = &model->meshes[i].vertices[j];
-				
+		for (int i = 0; i < model->meshes->size(); i++) {
+			std::vector<Mesh>* v = model->meshes;
+			for (int j = 0; j < (*v)[i].vertices.size(); j++) {
+				Vertex3D* c = &(*v)[i].vertices[j];				
 				if (first) {
 					first = false;
 					x_max = c->Position.x;
@@ -77,7 +107,8 @@ namespace ngiv {
 			model->pos = pos;
 		}
 		
-		
+		importer.FreeScene();
+		model_container.insert(std::make_pair(path, model));
 		return model;
 	}
 
@@ -87,7 +118,7 @@ namespace ngiv {
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-			o->meshes.push_back(processMesh(o, mesh, scene));
+			o->meshes->push_back(processMesh(o, mesh, scene));
 		}
 		// then do the same for each of its children
 		for (unsigned int i = 0; i < node->mNumChildren; i++)

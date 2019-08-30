@@ -1,6 +1,7 @@
 #include "BasicLevelEditor.h"
 #include "TextureLoader.h"
 #include "Misc.h"
+#include "IOManager.h"
 
 namespace ngiv {
 
@@ -13,6 +14,40 @@ namespace ngiv {
 		_3drenderer.loadSkybox("001");
 	}
 
+	void BasicLevelEditor::loadmodelpaths() {
+		std::vector<DirEntry> _dir;
+
+		bool preload = false;
+		getDirectoryEntries("Models//", _dir);
+		for (int i = 0; i < _dir.size(); i++) {
+			std::string p = _dir[i].path;
+
+			std::vector<DirEntry> in_dir;
+			getDirectoryEntries(p.c_str(), in_dir);
+			std::vector<std::string> fs;
+			for (int j = 0; j < in_dir.size(); j++) {
+				std::string innerpath = in_dir[j].path;
+				if (innerpath.substr(innerpath.size() - 4) == ".obj") {					
+					if (preload) {
+						OBJ* to = ModelLoader::loadModel(innerpath, glm::vec3(0), innerpath, false);
+						if (to != nullptr) {
+							_model_list->elements.push_back(p.substr(8));
+							_model_paths.push_back(innerpath);
+						}
+					}
+					else {
+						_model_list->elements.push_back(p.substr(8));
+						_model_paths.push_back(innerpath);
+					}
+
+					
+				}				
+			}
+	
+		}
+
+	}
+
 	void BasicLevelEditor::initui() {
 		
 		//left panel
@@ -21,8 +56,13 @@ namespace ngiv {
 			ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 99), "");
 			
 
-			
 
+			_model_list = _gui.getdropdownlist(glm::vec4(5, 90, 90, 5), 1.0f, ngiv::ColorRGBA8(0, 0, 0, 255));
+			lpanel->dropdowns.push_back(_model_list);
+			loadmodelpaths();
+
+			ngiv::NGUI_PANEL_BUTTON* badd = _gui.getpanelbutton("add", 1.0f, glm::vec4(5, 82, 25, 6), "", ngiv::ColorRGBA8(0, 0, 0, 255), std::bind(&BasicLevelEditor::checkaddbutton, this, std::placeholders::_1, std::placeholders::_2));
+			lpanel->buttons.push_back(badd);
 
 
 			//debug checkbox
@@ -62,7 +102,7 @@ namespace ngiv {
 			_savepanel->editboxs.push_back(e1);
 
 			//save button
-			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Save", 0.7f, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checksaveactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 			_savepanel->buttons.push_back(pb1);
 		}
 		//load panel
@@ -74,7 +114,7 @@ namespace ngiv {
 			_loadpanel->editboxs.push_back(e1);
 
 			//save button
-			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
+			ngiv::NGUI_PANEL_BUTTON* pb1 = _gui.getpanelbutton("Load", 0.7f, glm::vec4(86, 5, 10, 10), "", ngiv::ColorRGBA8(255, 0, 0, 255), std::bind(&BasicLevelEditor::checkloadactionbutton, this, std::placeholders::_1, std::placeholders::_2));
 			_loadpanel->buttons.push_back(pb1);
 		}
 
@@ -329,7 +369,7 @@ namespace ngiv {
 		if (_debugcheckbox->value) {
 			_container->drawallcollision(_3drenderer);
 		}else {
-			_container->drawall(_3drenderer);
+			_container->drawall(_3drenderer,true);
 		}
 	
 
@@ -372,6 +412,12 @@ namespace ngiv {
 
 	//left panel
 
+	void BasicLevelEditor::checkaddbutton(ngiv::NGUI_PANEL_BUTTON* b, ngiv::NGUI_PANEL* p) {
+		if (_inputmanager.isKeyPressed(SDL_BUTTON_LEFT)) {
+			ngiv::o("Pressed checkaddbutton button");
+			_inputmanager.releasekey(SDL_BUTTON_LEFT);
+		}
+	}
 
 	void BasicLevelEditor::checkdebugcheckbox(ngiv::NGUI_PANEL_CHECKBOX* b, ngiv::NGUI_PANEL* p) {
 

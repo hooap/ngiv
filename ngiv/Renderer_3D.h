@@ -17,13 +17,16 @@ namespace ngiv {
 		void init(Camera3D* cam, int width, int height, GLSLProgram* glsl = nullptr);
 		void loadSkybox(std::string path, std::vector<std::string> facenames = std::vector<std::string>());
 
-		void draw(OBJ* m);
+		void redraw_static();
+		int draw(OBJ* m, bool isstatic);
 		void drawCollisionBox(Collision_Object* sp);
-		void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale);
+		void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale, bool isstatic);
 
 
 		void render();
 	private:
+
+		void render_individual(const Mesh& mesh,const glm::mat4& model, int loc, GLSLProgram* glsl, int& indiccounter);
 		bool initialized = false;
 
 
@@ -41,9 +44,20 @@ namespace ngiv {
 		unsigned int rboDepth;
 
 
-		std::vector<Mesh> _meshes;
-		std::vector<glm::vec3> _meshes_poss;
-		std::vector<glm::vec3> _meshes_scale;
+		std::vector<Vertex3D> static_vertics;
+		std::vector<unsigned int> static_indics;
+		std::vector<unsigned int> static_locs;
+		unsigned int static_last_loc;
+
+
+		std::vector<Mesh> _meshes_static_data;
+		std::vector<glm::mat4> _meshes_static_model;
+		std::vector<unsigned int> _meshes_static_id;
+		
+		std::vector<Mesh> _meshes_dynamic_data;
+		std::vector<glm::mat4> _meshes_dynamic_model;
+		std::vector<unsigned int> _meshes_dynamic_id;
+
 
 		std::vector<Mesh> _mesh_strip;
 		std::vector<glm::vec3> _mesh_strip_poss;

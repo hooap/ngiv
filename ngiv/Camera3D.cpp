@@ -50,21 +50,21 @@ namespace ngiv {
 			return;
 		}
 
-		glm::vec2 offset = i.getMouseCoord();	
-		offset = glm::vec2(offset.x - (_width / 2), (_height / 2) - offset.y);
+		glm::vec2 mcoord = i.getMouseCoord();	
+		glm::vec2 offset = glm::vec2(mcoord.x - (_width / 2), (_height / 2) - mcoord.y);
 		
-		float xoffset = offset.x;
-		float yoffset = offset.y;
-		
-		xoffset *= _sensivity;
-		yoffset *= _sensivity;						
+			
 
-		if (!xoffset && !yoffset) {
+		if (!offset.x && !offset.y) {
 			return;
 		}	
 
-		_yaw += xoffset;
-		_pitch += yoffset;
+
+		offset.x *= _sensivity;
+		offset.y *= _sensivity;
+
+		_yaw += offset.x;
+		_pitch += offset.y;
 
 		if (_pitch > 89.0f)
 			_pitch = 89.0f;

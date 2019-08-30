@@ -43,6 +43,12 @@ namespace ngiv {
 			return;
 		}
 
+		void putMouseMiddleofScreen() {
+			if (_window->getState() == ngiv::Window_State::FocusOn) {
+				SDL_WarpMouseInWindow(_window->getwindow(), _window->getWidth() / 2, _window->getHeight() / 2);
+			}
+		}
+
 
 
 		bool do_screen_loop() {

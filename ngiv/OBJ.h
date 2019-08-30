@@ -23,15 +23,16 @@ namespace ngiv {
 		void dispose() {
 			if (!empty) {
 				empty = true;
-				for (int i = 0; i < meshes.size(); i++) {
-					meshes[i].dispose();
+				for (int i = 0; i < meshes->size(); i++) {
+					(*meshes)[i].dispose();
 				}
-				meshes.clear();
+				meshes->clear();
+				delete meshes;
 				pos = glm::vec3(0, 0, 0);
 			}
 		}		
 
-		std::vector<Mesh>* getMeshes() { return &meshes; }
+		const std::vector<Mesh>* getMeshes() { return meshes; }
 
 		glm::vec3* getRotPointer() { return &rot; }
 		glm::vec3 getRot() { return rot; }
@@ -80,8 +81,7 @@ namespace ngiv {
 		Collision_Object* getCollision_Object() { return collision_boxes; }
 
 		void setCollisionObject(Collision_Object* cob) { collision_boxes = cob; }
-
-
+		
 		void updateObject() {
 			pos = collision_boxes->getExtraPos();
 			rot = collision_boxes->getRotation();
@@ -112,7 +112,7 @@ namespace ngiv {
 		glm::vec3 pos;
 		glm::vec3 rot;
 
-		std::vector<Mesh> meshes;
+		std::vector<Mesh>* meshes = nullptr;
 		glm::vec3 scale;
 	};
 	

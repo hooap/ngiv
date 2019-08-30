@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <iostream>
+#include "Window.h"
+#include "Misc.h"
 
 namespace ngiv {
 	class InputManager
@@ -24,6 +26,11 @@ namespace ngiv {
 		void setmousecoord(glm::vec2 pos) { mousecoord = pos; }
 		void setmousewheel(float mwheel) { mousewheel = mwheel; }
 
+		void putMouseMiddleofScreen(ngiv::Window* win) {
+		
+			glm::vec2 p = glm::vec2(win->getWidth() / 2, win->getHeight() / 2);
+			SDL_WarpMouseInWindow(win->getwindow(), p.x, p.y);			
+		}
 
 		float getMouseWheel() { return mousewheel; }
 		char getPressedKeys() {	

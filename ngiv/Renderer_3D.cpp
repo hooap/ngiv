@@ -5,6 +5,7 @@
 #include "IOManager.h"
 #include "TextureLoader.h"
 #include "stb_image.h"
+#include <numeric>
 
 namespace ngiv {
 	
@@ -514,26 +515,109 @@ namespace ngiv {
 		_skyboxtexture = tid;	
 	}
 
+	void Renderer_3D::redraw_static() {
+		std::vector<Vertex3D> vertics;
+		std::vector<unsigned int> indics;
+		std::vector<unsigned int> locs;
+		int loc = 0;
 
-	void Renderer_3D::drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes,const std::vector<std::vector<glm::vec3>>& poss,glm::vec3 scale) {	
-				for (int i = 0; i < meshes.size(); i++) {
-			for (int j = 0; j < meshes[i].size(); j++) {
-				_meshes.push_back(meshes[i][j]);
-				_meshes_poss.push_back(poss[i][j]);
-				_meshes_scale.push_back(scale);
+
+		vertics.reserve(_meshes_static_data.size());
+		std::vector < Vertex3D> v;
+		std::vector<unsigned int> in;
+
+		for (int i = 0; i < _meshes_static_data.size(); i++) {
+			v = _meshes_static_data[i].vertices;
+			vertics.insert(vertics.end(), v.begin(), v.end());
+			in = _meshes_static_data[i].indices;
+			locs.push_back(loc);
+			indics.insert(indics.end(), in.begin(), in.end());
+			loc += in.size();
+		}
+		static_vertics = vertics;
+		static_indics = indics;
+		static_locs = locs;
+		static_last_loc = loc;
+
+	}
+	void Renderer_3D::drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale, bool isstatic) {
+
+
+		int needsize = 0;
+		for (int i = 0; i < meshes.size(); i++) {
+			needsize += meshes[i].size();
+		}
+		if (isstatic) {
+			_meshes_static_data.reserve(_meshes_static_data.size() + needsize);
+			_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
+
+			int c = _meshes_static_id.size();
+			int v = 0;
+			if (!_meshes_static_id.empty())
+				v = _meshes_static_id.back() + 1;
+			_meshes_static_id.resize(_meshes_static_id.size() + needsize);
+			for (int i = 0; i < meshes.size(); i++) {
+				int id = 0 + _meshes_static_data.size();
+				
+				_meshes_static_data.insert(_meshes_static_data.end(), meshes[i].begin(), meshes[i].end());
+				for (int j = 0; j < meshes[i].size(); j++) {
+					glm::mat4 model = glm::mat4(1);
+					model = glm::translate(model, poss[i][j]);
+					model = glm::scale(model, scale);
+					_meshes_static_model.push_back(model);
+				}
+				std::iota(_meshes_static_id._Make_iterator_offset(c), _meshes_static_id._Make_iterator_offset(c + meshes.size()),v);
+				c += meshes.size();
+				v += meshes.size();
+							   
+			}
+			
+		}
+		else {
+
+			_meshes_dynamic_data.reserve(_meshes_dynamic_data.size() + needsize);
+			_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
+
+			for (int i = 0; i < meshes.size(); i++) {
+				int id = 0 + _meshes_dynamic_data.size();
+				_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes[i].begin(), meshes[i].end());
+				for (int j = 0; j < meshes[i].size(); j++) {
+					glm::mat4 model = glm::mat4(1);
+					model = glm::translate(model, poss[i][j]);
+					model = glm::scale(model, scale);
+					_meshes_dynamic_model.push_back(model);
+				}
+				_meshes_dynamic_id.push_back(id);
 			}
 		}
 	}
 
-	void Renderer_3D::draw(OBJ* m) {
-		std::vector<Mesh>* meshes = m->getMeshes();
+	int Renderer_3D::draw(OBJ* m, bool isstatic) {
+
+		const std::vector<Mesh>* meshes = m->getMeshes();
 		glm::vec3 pos = m->getPos();
-		for (int x = 0; x < meshes->size(); x++) {
-			_meshes.push_back((*meshes)[x]);
-			_meshes_poss.push_back(pos);
-			_meshes_scale.push_back(m->getscale());
+		int id;
+		if (isstatic) {
+			id = 0 + _meshes_static_data.size();
+			_meshes_static_data.insert(_meshes_static_data.end(), meshes->begin(), meshes->end());
+			glm::mat4 model = glm::mat4(1);
+			model = glm::translate(model, pos);
+			model = glm::scale(model, m->getscale());
+			_meshes_static_model.push_back(model);
+			_meshes_static_id.push_back(id);
+		}
+		else
+		{
+			id = 0 + _meshes_dynamic_data.size();
+			_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes->begin(), meshes->end());
+			glm::mat4 model = glm::mat4(1);
+			model = glm::translate(model, pos);
+			model = glm::scale(model, m->getscale());
+			_meshes_dynamic_model.push_back(model);
+			_meshes_dynamic_id.push_back(id);
 		}
 
+		return id;
 	}
 
 	void Renderer_3D::drawCollisionBox(Collision_Object* sp) {
@@ -585,7 +669,6 @@ namespace ngiv {
 	//	lightpositions.back() = _cam->getPos();
 		//2 LIGHTING PASS
 
-		glDisable(GL_DEPTH);
 		_shading_glsl.use();
 		_shading_glsl.setInt("gPosition", 0);
 		_shading_glsl.setInt("gNormal", 1);
@@ -612,7 +695,7 @@ namespace ngiv {
 
 			float lightMax = std::fmaxf(std::fmaxf(lightcolors[i].r, lightcolors[i].g), lightcolors[i].b);
 			float radius =
-				(-linear + std::sqrtf(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax)))
+				(-linear + std::sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * lightMax)))
 				/ (2 * quadratic);
 			_shading_glsl.setFloat("lights[" + std::to_string(i) + "].Radius", radius);
 		}
@@ -620,11 +703,8 @@ namespace ngiv {
 		//render a screenwide quad to calculate shading for each pixel
 		renderQuad();
 		_shading_glsl.unuse();
-		glEnable(GL_DEPTH);
-
 
 		//2.5
-
 		//copy content of geometry's depth buffer to default frame buffer's depth buffer
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -671,27 +751,27 @@ namespace ngiv {
 
 		_cam->updateMatrix();
 		//VERTEX
-		std::vector<Vertex3D> vertics;
-		std::vector<Vertex3D> vt;
+		std::vector<Vertex3D> vertics = static_vertics;
 
 		//INDICIES
-		std::vector<unsigned int> indics;
-		std::vector<unsigned int> in;
+		std::vector<unsigned int> indics = static_indics;
+		std::vector<unsigned int> locs = static_locs;
 
-		int num = 0;
-		std::vector<unsigned int> locs;
-		for (int i = 0; i < _meshes.size(); i++) {
-			Mesh* m = &_meshes[i];
+
+		std::vector<unsigned int> in;
+		int num = static_last_loc;
+
+		std::vector<Vertex3D> vt;
+		for (int i = 0; i < _meshes_dynamic_data.size(); i++) {
+			Mesh* m = &_meshes_dynamic_data[i];
 			vt = m->vertices;
 			vertics.insert(vertics.end(), vt.begin(), vt.end());
-
 			in = m->indices;
 			locs.push_back(num);
 			indics.insert(indics.end(), in.begin(), in.end());
 			num += in.size();
 		}
-			
-		
+					
 		//START
 		glBindVertexArray(VAO);
 		glEnable(GL_DEPTH_TEST);
@@ -707,61 +787,69 @@ namespace ngiv {
 		glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
 		glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
 		
+
 		int indicindex = 0;
-		int textcounter = 0;
-
 		//DRAW MESHES
-		glActiveTexture(GL_TEXTURE0);
-		for (int i = 0; i < _meshes.size(); i++) {
-			Mesh* mesh = &_meshes[i];
-
-			glm::mat4 model = glm::mat4(1.0f);
-
-			glm::vec3 p = _meshes_poss[i];
-			model = glm::translate(model, p);
-			model = glm::scale(model, _meshes_scale[i]);
-
-			glUniformMatrix4fv(glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
-
-			//LOAD TEXTURES FOR THIS MESH
-			int difn = 1;
-			int specn = 1;
-
-			for (int x = 0; x < mesh->textures.size(); x++) {
-				glActiveTexture(GL_TEXTURE0 + textcounter);
-
-				std::string name = mesh->textures[x].type;
-				std::string number;
-
-				if (name == "texture_diffuse") {
-					number = std::to_string(difn++);
-				}
-				else if (name == "texture_specular") {
-					number = std::to_string(specn++);
-				}
-				else {
-					ngiv::o("unknown texture");
-				}
-
-				glsl.setInt(name, textcounter++);
-				glBindTexture(GL_TEXTURE_2D, mesh->textures[x].id);
+		int id = 0;
+		int idcounter = 0;
+		for (int i = 0; i < _meshes_static_data.size(); i++) {
+			id = _meshes_static_id[idcounter];
+			int tillid;
+			if (idcounter + 1 != _meshes_static_id.size()) {
+				tillid = _meshes_static_id[idcounter + 1];
 			}
-			glDrawElementsBaseVertex(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, (void*)(locs[i] * sizeof(unsigned int)), indicindex);
-
-			textcounter = 0;
-			indicindex += mesh->vertices.size();
+			else {
+				tillid = _meshes_static_id.size();;
+			}
+			
+			for (int c = id; c < tillid; c++) {
+				render_individual(_meshes_static_data[i], _meshes_static_model[id], locs[i], &glsl, indicindex);			
+				i++;
+			}
+			i--;
+			idcounter++;
 		}
 
-		vertics.clear();
-		indics.clear();
-
-		_meshes.clear();
-		_meshes_poss.clear();
-
 		glBindVertexArray(0);
-
 		glActiveTexture(GL_TEXTURE0);				
 	}
+
+	void Renderer_3D::render_individual(const Mesh& mesh, const glm::mat4& model, int loc, GLSLProgram* glsl, int& indiccounter) {
+		
+		
+		glUniformMatrix4fv(glsl->getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
+
+		//LOAD TEXTURES FOR THIS MESH
+		int difn = 1;
+		int specn = 1;
+
+		int texturecounter = 0;
+		for (int x = 0; x < mesh.textures.size(); x++) {
+			glActiveTexture(GL_TEXTURE0 + texturecounter);
+
+			std::string name = mesh.textures[x].type;
+			std::string number;
+
+			if (name == "texture_diffuse") {
+				number = std::to_string(difn++);
+			}
+			else if (name == "texture_specular") {
+				number = std::to_string(specn++);
+			}
+			else {
+				ngiv::o("unknown texture");
+			}
+
+			glsl->setInt(name, texturecounter++);
+			glBindTexture(GL_TEXTURE_2D, mesh.textures[x].id);
+		}
+		glDrawElementsBaseVertex(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, (void*)(loc * sizeof(unsigned int)), indiccounter);
+				
+		indiccounter += mesh.vertices.size();
+
+	}
+
+
 	void Renderer_3D::renderStrips(GLSLProgram& glsl) {
 		//VERTEX
 		std::vector<Vertex3D> vertics;
