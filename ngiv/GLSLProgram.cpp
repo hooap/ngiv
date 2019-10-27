@@ -22,17 +22,21 @@ namespace ngiv {
 	}
 
 	//Compiles the shaders into a form that your GPU can understand
-	void GLSLProgram::compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+	void GLSLProgram::compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, const std::string& geometryShaderFilePath) {
 		std::string fragsource;
 		std::string vertexsource;
+		std::string geometrysource;
 
-		filetobuffer(vertexShaderFilePath, vertexsource);
-		filetobuffer(fragmentShaderFilePath, fragsource);
-
+		
 		//Vertex and fragment shaders are successfully compiled.
 		//Now time to link them together into a program.
 		//Get a program object.
 		_programID = glCreateProgram();
+
+		filetobuffer(vertexShaderFilePath, vertexsource);
+		filetobuffer(fragmentShaderFilePath, fragsource);
+
+
 
 		//Create the vertex shader object, and store its ID
 		_vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -45,6 +49,17 @@ namespace ngiv {
 		if (_fragmentShaderID == 0) {
 			error("Fragment shader failed to be created!",true);
 		}
+
+		if (geometryShaderFilePath != "") {
+			filetobuffer(geometryShaderFilePath, geometrysource);
+
+			_geometryShaderID = glCreateShader(GL_GEOMETRY_SHADER);
+			if (_geometryShaderID == 0) {
+				error("Geometry shader failed to be created!", true);
+			}
+			compileShader(geometrysource.c_str(), geometryShaderFilePath, _geometryShaderID);
+		}
+		
 
 		//Compile each shader
 		compileShader(vertexsource.c_str(),vertexShaderFilePath,  _vertexShaderID);
@@ -79,6 +94,9 @@ namespace ngiv {
 		//Attach our shaders to our program
 		glAttachShader(_programID, _vertexShaderID);
 		glAttachShader(_programID, _fragmentShaderID);
+		if (_geometryShaderID != 0) {
+			glAttachShader(_programID, _geometryShaderID);
+		}
 
 		//Link our program
 		glLinkProgram(_programID);
@@ -102,6 +120,7 @@ namespace ngiv {
 			//Don't leak shaders either.
 			glDeleteShader(_vertexShaderID);
 			glDeleteShader(_fragmentShaderID);
+			glDeleteShader(_geometryShaderID);
 
 			//print the error log and quit
 			std::printf("%s\n", &(errorLog[0]));
@@ -111,8 +130,17 @@ namespace ngiv {
 		//Always detach shaders after a successful link.
 		glDetachShader(_programID, _vertexShaderID);
 		glDetachShader(_programID, _fragmentShaderID);
+		if (_geometryShaderID) {
+			glDetachShader(_programID, _geometryShaderID);
+			glDeleteShader(_geometryShaderID);
+			_geometryShaderID = 0;
+		}
+
+
 		glDeleteShader(_vertexShaderID);
 		glDeleteShader(_fragmentShaderID);
+		_vertexShaderID = 0;
+		_fragmentShaderID = 0;
 	}
 
 	//Adds an attribute to our shader. SHould be called between compiling and linking.
@@ -177,9 +205,7 @@ namespace ngiv {
 		}
 	}
 	void GLSLProgram::dispose(){
-		if (_programID)	glDeleteProgram(_programID);
-		
-		
+		if (_programID)	glDeleteProgram(_programID);			
 	}
 
 }

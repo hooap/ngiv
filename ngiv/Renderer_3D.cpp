@@ -6,6 +6,7 @@
 #include "TextureLoader.h"
 #include "stb_image.h"
 #include <numeric>
+#include <GLAD/glad.h>
 
 namespace ngiv {
 	
@@ -152,8 +153,8 @@ namespace ngiv {
 					int jj = 0;
 
 
-				float xdegree = 2 * xpercent * M_PI;
-				float ydegree = 2 * ypercent * M_PI;
+				float xdegree = (float)(2 * xpercent * M_PI);
+				float ydegree = (float)(2 * ypercent * M_PI);
 
 				float xt = cos(xdegree);
 				float yt = cos(ydegree);
@@ -330,6 +331,8 @@ namespace ngiv {
 		dispose();
 	}
 
+	
+
 	void Renderer_3D::init(Camera3D* cam, int width, int height, GLSLProgram* glsl) {
 		if(initialized){
 			throw "Already initialized";
@@ -346,49 +349,56 @@ namespace ngiv {
 		}
 
 		ownglsl = true;
-		_shading_glsl.compileShaders("Shaders//defaultShading.vs", "Shaders//defaultShading.fs");
 
+		//coloring glsls
+		_shading_glsl.compileShaders("Shaders//default_3DShading.vs", "Shaders//default_3DShading.fs");
 		_shading_glsl.addAttribute("aPos");
 		_shading_glsl.addAttribute("aTexCoords");
 		_shading_glsl.linkShaders();
 
 
-		//Create g_glsl
-		_g_glsl.compileShaders("Shaders//Gshader.vs", "Shaders//Gshader.fs");
+		//writing data glsls
+		_g_glsl.compileShaders("Shaders//default_Gshader.vs", "Shaders//default_Gshader.fs");
 		_g_glsl.addAttribute("aPos");
 		_g_glsl.addAttribute("aNormal");
 		_g_glsl.addAttribute("aTexCoords");
 		_g_glsl.linkShaders();
 
+		_g_glsl_instanced.compileShaders("Shaders//default_Gshader_instanced.vs", "Shaders//default_Gshader_instanced.fs","Shaders//default_Gshader_instanced.gs");
+		_g_glsl_instanced.addAttribute("aPos");
+		_g_glsl_instanced.addAttribute("aTexCoords");
+		_g_glsl_instanced.addAttribute("aIndex");
+		_g_glsl_instanced.addAttribute("aOffset4y");
+		_g_glsl_instanced.addAttribute("aOffsetxz");
+		_g_glsl_instanced.linkShaders();
+			   		
 
-		//create lightbox_glsl
-		_lightbox_glsl.compileShaders("Shaders//DefaultLightBox.vs", "Shaders//DefaultLightBox.fs");
+
+		// util glsls		
+		_lightbox_glsl.compileShaders("Shaders//default_LightBox.vs", "Shaders//default_LightBox.fs");
 		_lightbox_glsl.addAttribute("aPos");
 		_lightbox_glsl.linkShaders();
 
-		_skybox_glsl.compileShaders("Shaders//defaultSkybox.vs", "Shaders//defaultSkybox.fs");
+		_skybox_glsl.compileShaders("Shaders//default_Skybox.vs", "Shaders//default_Skybox.fs");
 		_skybox_glsl.addAttribute("aPos");
 		_skybox_glsl.linkShaders();
+		//
 
-	//	_basicglsl = new ngiv::GLSLProgram();
-	//	_basicglsl->compileShaders("Shaders//basic3D.vs", "Shaders//basic3D.fs");
-	//	_basicglsl->addAttribute("aPos");
-	//	_basicglsl->addAttribute("aNormal");
-	//	_basicglsl->addAttribute("aTexCoords");
-	//	_basicglsl->linkShaders();
 		
-		//create VAO
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-		
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 		for (int i = 0; i < 1; i++) {
 			lightpositions.push_back(glm::vec3(2, 6, 1));
 			lightcolors.push_back(glm::vec3(1, 1, 1));
 		}
+
+		//create VAO
+		glGenVertexArrays(1, &VAO);		
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &VBO_INS_D);
+		glGenBuffers(1, &VBO_INS_I);
+		glGenBuffers(1, &EBO);
+		
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);		
 				
 		// set the vertex attribute pointers
 		// vertex Positions
@@ -402,10 +412,38 @@ namespace ngiv {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, Vertex3D::TexCoords));	
 		glBindVertexArray(0);
 
+		//CREATE INSTANCED VBO
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::Position));
+		
+		// vertex texture coords
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::TexCoords));
+		//set offset	
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::index));
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_I);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Instance_Offset_Data), (void*) offsetof(Instance_Offset_Data, Instance_Offset_Data::y4offset));
+
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Instance_Offset_Data), (void*) offsetof(Instance_Offset_Data, Instance_Offset_Data::xzoffset));
+
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+
+		glBindVertexArray(0);
+			   
 
 		//get default depth size
-		GLint defaultdepth;
-		glGetIntegerv(GL_DEPTH_BITS, &defaultdepth);
+		GLint defaultdepth = 0;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE,&defaultdepth);
+		o("\ndefault depth : " + (int)defaultdepth);
+		//defaultdepth = 32;
 
 		//Create g_buffer
 
@@ -540,59 +578,25 @@ namespace ngiv {
 		static_last_loc = loc;
 
 	}
-	void Renderer_3D::drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale, bool isstatic) {
 
 
-		int needsize = 0;
-		for (int i = 0; i < meshes.size(); i++) {
-			needsize += meshes[i].size();
-		}
-		if (isstatic) {
-			_meshes_static_data.reserve(_meshes_static_data.size() + needsize);
-			_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
+	//Draw logic
+	void Renderer_3D::draw(OBJ* m) {
 
-			int c = _meshes_static_id.size();
-			int v = 0;
-			if (!_meshes_static_id.empty())
-				v = _meshes_static_id.back() + 1;
-			_meshes_static_id.resize(_meshes_static_id.size() + needsize);
-			for (int i = 0; i < meshes.size(); i++) {
-				int id = 0 + _meshes_static_data.size();
-				
-				_meshes_static_data.insert(_meshes_static_data.end(), meshes[i].begin(), meshes[i].end());
-				for (int j = 0; j < meshes[i].size(); j++) {
-					glm::mat4 model = glm::mat4(1);
-					model = glm::translate(model, poss[i][j]);
-					model = glm::scale(model, scale);
-					_meshes_static_model.push_back(model);
-				}
-				std::iota(_meshes_static_id._Make_iterator_offset(c), _meshes_static_id._Make_iterator_offset(c + meshes.size()),v);
-				c += meshes.size();
-				v += meshes.size();
-							   
-			}
-			
-		}
-		else {
-
-			_meshes_dynamic_data.reserve(_meshes_dynamic_data.size() + needsize);
-			_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
-
-			for (int i = 0; i < meshes.size(); i++) {
-				int id = 0 + _meshes_dynamic_data.size();
-				_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes[i].begin(), meshes[i].end());
-				for (int j = 0; j < meshes[i].size(); j++) {
-					glm::mat4 model = glm::mat4(1);
-					model = glm::translate(model, poss[i][j]);
-					model = glm::scale(model, scale);
-					_meshes_dynamic_model.push_back(model);
-				}
-				_meshes_dynamic_id.push_back(id);
-			}
-		}
+		const std::vector<Mesh>* meshes = m->getMeshes();
+		glm::vec3 pos = m->getPos();
+		int id;
+		
+		id = 0 + _meshes_dynamic_data.size();
+		_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes->begin(), meshes->end());
+		glm::mat4 model = glm::mat4(1);
+		model = glm::translate(model, pos);
+		model = glm::scale(model, m->getscale());
+		_meshes_dynamic_model.push_back(model);
+		_meshes_dynamic_index.push_back(id);
 	}
 
-	int Renderer_3D::draw(OBJ* m, bool isstatic) {
+	int Renderer_3D::addtolist_draw(OBJ* m, bool isstatic) {
 
 		const std::vector<Mesh>* meshes = m->getMeshes();
 		glm::vec3 pos = m->getPos();
@@ -604,7 +608,7 @@ namespace ngiv {
 			model = glm::translate(model, pos);
 			model = glm::scale(model, m->getscale());
 			_meshes_static_model.push_back(model);
-			_meshes_static_id.push_back(id);
+			_meshes_static_index.push_back(id);
 		}
 		else
 		{
@@ -614,11 +618,51 @@ namespace ngiv {
 			model = glm::translate(model, pos);
 			model = glm::scale(model, m->getscale());
 			_meshes_dynamic_model.push_back(model);
-			_meshes_dynamic_id.push_back(id);
+			_meshes_dynamic_index.push_back(id);
 		}
 
 		return id;
 	}
+
+	/*
+	void Renderer_3D::drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale) {
+
+
+		int needsize = 0;
+		for (int i = 0; i < meshes.size(); i++) {
+			needsize += meshes[i].size();
+		}
+		
+		_meshes_dynamic_data.reserve(_meshes_dynamic_data.size() + needsize);
+		_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
+
+		for (int i = 0; i < meshes.size(); i++) {
+			int id = 0 + _meshes_dynamic_data.size();
+			_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes[i].begin(), meshes[i].end());
+			for (int j = 0; j < meshes[i].size(); j++) {
+				glm::mat4 model = glm::mat4(1);
+				model = glm::translate(model, poss[i][j]);
+				model = glm::scale(model, scale);
+				_meshes_dynamic_model.push_back(model);
+			}
+			_meshes_dynamic_index.push_back(id);
+		}
+		
+	}
+	*/
+
+
+	int Renderer_3D::addtolist_drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets) {
+
+		//ASSUMES STATIC
+		_static_meshes_instanced_data.push_back(mesh);
+		_static_meshes_instanced_offsetpos.push_back(posoffsets);			
+				
+	
+		return -1;
+	}
+
+	
 
 	void Renderer_3D::drawCollisionBox(Collision_Object* sp) {
 		glm::vec3 addpos = sp->getExtraPos();
@@ -648,6 +692,41 @@ namespace ngiv {
 			_mesh_strip_poss.push_back(pos + addpos);
 		}				
 	}	
+
+	int Renderer_3D::addtolist_drawCollisionBox(Collision_Object* sp) {
+		glm::vec3 addpos = sp->getExtraPos();
+		std::vector<Collision_Sphere>* spheres = sp->getSpheres();
+		for (int i = 0; i < spheres->size(); i++) {
+			if ((*spheres)[i].renderMesh.vertices.empty()) {
+				(*spheres)[i].renderMesh = getSphereMesh((*spheres)[i].getRadius(), 16, 16);
+			}
+
+			Mesh m = (*spheres)[i].renderMesh;
+			_mesh_strip.push_back(m);
+			glm::vec3 pos = (*spheres)[i].getPos();
+			_mesh_strip_poss.push_back(pos + addpos);
+		}
+
+		//lets draw our box
+		std::vector<Collision_Box>* boxes = sp->getBoxes();
+
+		for (int i = 0; i < boxes->size(); i++) {
+			//lets check if mesh exist and if its not create one for it
+			if ((*boxes)[i].renderMesh.vertices.empty()) {
+				(*boxes)[i].renderMesh = getBoxMesh((*boxes)[i].getVerticies());
+			}
+			Mesh m = (*boxes)[i].renderMesh;
+			_mesh_strip.push_back(m);
+			glm::vec3 pos = (*boxes)[i].getPos();
+			_mesh_strip_poss.push_back(pos + addpos);
+		}
+
+		return -1;
+	}
+
+
+
+	//render logic
 	void Renderer_3D::render() {
 		glDisable(GL_BLEND);
 		glClearColor(0, 0, 0, 1);
@@ -662,8 +741,13 @@ namespace ngiv {
 		if (!_mesh_strip.empty()) {
 			renderStrips(_g_glsl);
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		
 		_g_glsl.unuse();
+		_g_glsl_instanced.use();
+		renderWithGLSLinstanced(_g_glsl_instanced);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		_g_glsl_instanced.unuse();
 
 
 	//	lightpositions.back() = _cam->getPos();
@@ -778,11 +862,11 @@ namespace ngiv {
 
 		//upload VBO
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D), vertics.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D), vertics.data(), GL_STATIC_DRAW);
 
 		//upload EBO
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indics.size() * sizeof(unsigned int), indics.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indics.size() * sizeof(unsigned int), indics.data(), GL_STATIC_DRAW);
 		
 		glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
 		glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
@@ -793,13 +877,13 @@ namespace ngiv {
 		int id = 0;
 		int idcounter = 0;
 		for (int i = 0; i < _meshes_static_data.size(); i++) {
-			id = _meshes_static_id[idcounter];
+			id = _meshes_static_index[idcounter];
 			int tillid;
-			if (idcounter + 1 != _meshes_static_id.size()) {
-				tillid = _meshes_static_id[idcounter + 1];
+			if (idcounter + 1 != _meshes_static_index.size()) {
+				tillid = _meshes_static_index[idcounter + 1];
 			}
 			else {
-				tillid = _meshes_static_id.size();;
+				tillid = _meshes_static_index.size();;
 			}
 			
 			for (int c = id; c < tillid; c++) {
@@ -813,7 +897,7 @@ namespace ngiv {
 		glBindVertexArray(0);
 		glActiveTexture(GL_TEXTURE0);				
 	}
-
+	   	 
 	void Renderer_3D::render_individual(const Mesh& mesh, const glm::mat4& model, int loc, GLSLProgram* glsl, int& indiccounter) {
 		
 		
@@ -848,6 +932,97 @@ namespace ngiv {
 		indiccounter += mesh.vertices.size();
 
 	}
+
+	void Renderer_3D::renderWithGLSLinstanced(GLSLProgram& glsl) {
+		_cam->updateMatrix();
+
+				
+		for (int i = 0; i < _static_meshes_instanced_data.size(); i++) {
+
+			Mesh_I* m = &_static_meshes_instanced_data[i];
+
+			int size = _static_meshes_instanced_offsetpos[i].size();
+
+			std::vector<Vertex3D_Instanced> vertics = _static_meshes_instanced_data[i].vertices;
+			std::vector<unsigned int> indics = _static_meshes_instanced_data[i].indices;
+
+
+			glBindVertexArray(VAO);
+			glEnable(GL_DEPTH_TEST);
+
+			//upload VBO
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
+
+			
+
+
+			//create the buffer;
+			std::vector<Instance_Offset_Data>* data = &_static_meshes_instanced_offsetpos[i];
+
+		
+
+			glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D_Instanced), vertics.data(), GL_DYNAMIC_DRAW);
+
+
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_I);
+
+			glBufferData(GL_ARRAY_BUFFER, data->size() * sizeof(Instance_Offset_Data), data->data(), GL_DYNAMIC_DRAW);
+
+
+			
+
+
+			//upload EBO
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indics.size() * sizeof(unsigned int), indics.data(), GL_DYNAMIC_DRAW);
+
+			glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
+			glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
+
+
+
+			//prepare data
+					   			 		  		  		 	   		
+					
+			int difn = 1;
+			int specn = 1;
+			int texturecounter = 0;
+			for (int x = 0; x < m->textures.size(); x++) {
+				glActiveTexture(GL_TEXTURE0 + texturecounter);
+
+				std::string name = m->textures[x].type;
+				std::string number;
+
+				if (name == "texture_diffuse") {
+					number = std::to_string(difn++);
+				}
+				else if (name == "texture_specular") {
+					number = std::to_string(specn++);
+				}
+				else {
+					ngiv::o("unknown texture");
+				}
+
+				glsl.setInt(name, texturecounter++);
+				glBindTexture(GL_TEXTURE_2D, m->textures[x].id);
+			}
+
+
+
+			glm::mat4 model = glm::mat4();
+			glUniformMatrix4fv(glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
+		 	glDrawElementsInstanced(GL_TRIANGLES, indics.size(), GL_UNSIGNED_INT, NULL, size);
+			
+						
+		}
+
+
+		
+		glBindVertexArray(0);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+
 
 
 	void Renderer_3D::renderStrips(GLSLProgram& glsl) {

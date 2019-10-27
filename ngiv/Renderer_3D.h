@@ -8,6 +8,13 @@
 
 namespace ngiv {	
 
+	struct Instance_Offset_Data {
+		glm::vec4 y4offset;
+		glm::vec2 xzoffset;
+	};
+
+
+
 	class Renderer_3D
 	{
 	public:
@@ -18,9 +25,21 @@ namespace ngiv {
 		void loadSkybox(std::string path, std::vector<std::string> facenames = std::vector<std::string>());
 
 		void redraw_static();
-		int draw(OBJ* m, bool isstatic);
+
+
+		void draw(OBJ* m);
+		int addtolist_draw(OBJ* m, bool isstatic);
+		
+
 		void drawCollisionBox(Collision_Object* sp);
-		void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<std::vector<glm::vec3>>& poss, glm::vec3 scale, bool isstatic);
+		int addtolist_drawCollisionBox(Collision_Object* sp);
+
+		
+	//	void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<glm::vec3>& posoffsets,glm::vec3 scale = glm::vec3(1));
+
+
+		int addtolist_drawMeshInstanced(const Mesh_I& meshes, const std::vector<Instance_Offset_Data>& posoffsets);
+
 
 
 		void render();
@@ -31,10 +50,15 @@ namespace ngiv {
 
 
 		void renderWithGLSL(GLSLProgram& glsl);
+		void renderWithGLSLinstanced(GLSLProgram& glsl);
+
+
 		void renderStrips(GLSLProgram& glsl);
 
 		void dispose();
 		GLuint VAO, VBO, EBO;	
+		GLuint VBO_INS_I;
+		GLuint VBO_INS_D;
 
 		std::vector<glm::vec3> lightpositions;
 		std::vector<glm::vec3> lightcolors;
@@ -52,11 +76,15 @@ namespace ngiv {
 
 		std::vector<Mesh> _meshes_static_data;
 		std::vector<glm::mat4> _meshes_static_model;
-		std::vector<unsigned int> _meshes_static_id;
+		std::vector<unsigned int> _meshes_static_index;
 		
 		std::vector<Mesh> _meshes_dynamic_data;
 		std::vector<glm::mat4> _meshes_dynamic_model;
-		std::vector<unsigned int> _meshes_dynamic_id;
+		std::vector<unsigned int> _meshes_dynamic_index;
+
+		//static instanced
+		std::vector<Mesh_I> _static_meshes_instanced_data;
+		std::vector<std::vector<Instance_Offset_Data>> _static_meshes_instanced_offsetpos;
 
 
 		std::vector<Mesh> _mesh_strip;
@@ -64,11 +92,15 @@ namespace ngiv {
 
 		Camera3D* _cam;
 
-		GLSLProgram _shading_glsl;
+		//MAIN GLSL
 		GLSLProgram _g_glsl;
+		GLSLProgram _g_glsl_instanced;
+
+
+		//utils and coloring
+		GLSLProgram _shading_glsl;
 		GLSLProgram _lightbox_glsl;
 		GLSLProgram _skybox_glsl;
-		GLSLProgram _basicglsl;
 		
 		unsigned int _skyboxtexture = 0;
 
@@ -78,6 +110,8 @@ namespace ngiv {
 		int _width;
 		int _height;
 	};
+
+
 
 
 }

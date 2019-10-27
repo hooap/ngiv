@@ -1,5 +1,7 @@
 #include "Noise.h"
 
+#include "Misc.h"
+
 namespace ngiv {
 
 	void PerlinNoise1D(int nCount, std::vector<float> *fSeed, int nOctaves, float fBias, std::vector<float> *fOutput)
@@ -14,6 +16,11 @@ namespace ngiv {
 			for (int o = 0; o < nOctaves; o++)
 			{
 				int nPitch = nCount >> o;
+				if (nPitch == 0) {
+				//	error("pitch is zero",true);
+				}
+
+
 				int nSample1 = (x / nPitch) * nPitch;
 				int nSample2 = (nSample1 + nPitch) % nCount;
 
@@ -27,13 +34,15 @@ namespace ngiv {
 			}
 
 			// Scale to seed range
-			fOutput->push_back((float)fNoise / (float)fScaleAcc);
+			fOutput->push_back(fNoise / fScaleAcc);
 		}
 	}
 
-	void PerlinNoise2D(int nWidth, int nHeight, std::vector<float> *fSeed, int nOctaves, float fBias, std::vector<std::vector<float>>* fOutput)
+	std::vector<std::vector<float>>* PerlinNoise2D(int nWidth, int nHeight, std::vector<float> *fSeed, int nOctaves, float fBias)
 	{
-		fOutput->emplace_back();
+
+		std::vector<std::vector<float>>* fOutput = new std::vector<std::vector<float>>(nWidth,std::vector<float>(nHeight,0.0f));
+				
 		// Used 1D Perlin Noise
 		for (int x = 0; x < nWidth; x++)
 		{
@@ -63,17 +72,18 @@ namespace ngiv {
 					fScale = fScale / fBias;
 				}
 
-				// Scale to seed range
-				fOutput->back().push_back((float)fNoise / (float)fScaleAcc);
-			}
-			fOutput->emplace_back();
+
+				(*fOutput)[y][x] = (float)fNoise / (float)fScaleAcc;				
+			}			
 		}
 
+
+		return fOutput;
 	}
 	
 	std::vector<float>* getRandomVec(int seed, int size) {
 		static std::vector<float>* randvec = new std::vector<float>();
-		randvec->clear();
+		randvec->reserve(size);
 		for (int i = 0; i < size; i++) {
 			randvec->push_back((float)rand() / (float)RAND_MAX);
 		}
@@ -92,9 +102,9 @@ namespace ngiv {
 	std::vector<std::vector<float>>* Noise::get2DNoise(int seed,int width,int height, float fBias, int nOctaves) {
 		srand(seed);
 		std::vector<float>* fNoiseSeed2D = getRandomVec(seed, width * height);
-		std::vector<std::vector<float>>* fPerlinNoise2D = new std::vector<std::vector<float>>();
+		std::vector<std::vector<float>>* fPerlinNoise2D = NULL;
 
-		PerlinNoise2D(width,height, fNoiseSeed2D, nOctaves, fBias, fPerlinNoise2D);
+		fPerlinNoise2D = PerlinNoise2D(width,height, fNoiseSeed2D, nOctaves, fBias);
 		return fPerlinNoise2D;
 	}
 	

@@ -17,6 +17,8 @@ namespace ngiv {
 			isalreadyinitialized = true;
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+			
+
 		}
 
 		if (printInfo) {

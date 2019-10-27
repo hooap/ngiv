@@ -3,6 +3,7 @@
 
 namespace ngiv {
 
+	
 
 	class TerrainGenerator
 	{
@@ -10,28 +11,30 @@ namespace ngiv {
 		TerrainGenerator();
 		~TerrainGenerator();
 
-		void init(int seed, float multiplier, int maxDistance);
-		void create();
+		void init(int seed, float multiplier, float meshsizeMultiplier, int maxDistance);
+		void create(int octaves = 0);
 		
 		void updateDrawPoss();
-		void draw(Renderer_3D* rend);
+		void set_draw(Renderer_3D* rend);
 		void update();
 
 
-		glm::vec3 getAdditionalPos() { return pos; }
-		std::vector<Mesh*> getMeshes() { return meshpointers; }
+//		glm::vec3 getAdditionalPos() { return pos; }
+		//std::vector<Mesh*> getMeshes() { return meshpointers; }
 		
 	private:
 
-		void createSquareMeshWithHeight(int x, int z, glm::vec4 heights);
-		void createMeshNormals(int width, int height);
-
+		void createmainmesh();
+		void createMeshPositionWithHeight(int x, int z, glm::vec4 heights);
 
 		
-		std::vector<std::vector<glm::vec3>> poss;
-		std::vector<Mesh*> meshpointers;
-		std::vector<std::vector<Mesh>> meshes;
-		glm::vec3 pos;
+		std::vector<Instance_Offset_Data> offsetpos;
+		Mesh_I mesh;
+
+
+		float meshsizeMultiplier = 1.0f;
+
+//		glm::vec3 pos;
 
 		int _maxDistance;
 		int _seed;

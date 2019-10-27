@@ -22,10 +22,11 @@ namespace ngiv {
 			ownglsl = true;
 			_glsl = new ngiv::GLSLProgram();
 			if (_rgbaonshader) {
-				_glsl->compileShaders("Shaders//default2DRGBA.vs", "Shaders//default2DRGBA.fs");
+				assert("RGBA SHADER NOT IMPLEMENTED");
+				_glsl->compileShaders("Shaders//default2DRGBA.vs", "Shaders//default2DRGBA.fs");				
 			}
 			else {
-				_glsl->compileShaders("Shaders//default2D.vs", "Shaders//default2D.fs");
+				_glsl->compileShaders("Shaders//default_2D.vs", "Shaders//default_2D.fs");
 			}
 			
 			_glsl->addAttribute("VertexPos");

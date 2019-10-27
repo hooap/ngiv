@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <iostream>
 #include <glm\glm.hpp>
+#include <string>
 
 namespace ngiv {
 

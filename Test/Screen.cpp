@@ -2,7 +2,7 @@
 #include <ngiv\ModelLoader.h>
 #include <time.h>
 #include <ngiv\Collision_Box.h>
-
+#include <ngiv/Misc.h>
 
 
 Screen::Screen()
@@ -16,8 +16,8 @@ Screen::~Screen()
 
 void Screen::init()
 {
-	_cam3d.init(glm::vec3(13, 13, -5), 0.4, 0.2f, 60.0f, _width, _height,0.1f ,400.0f);
-	_cam3d.lookat(glm::vec3(5, 0, 0));
+	_cam3d.init(glm::vec3(13.0f, 13.0f, -5.0f), 0.4f, 0.2f, 60.0f, _width, _height,0.1f ,400.0f);
+	_cam3d.lookat(glm::vec3(5.0f, 0.0f, 0.0f));
 
 	_3drenderer.init(&_cam3d, _width, _height);
 	_3drenderer.loadSkybox("001");
@@ -45,20 +45,22 @@ void Screen::init()
 //	_world.add(floorbox->creatensetCollisionObject(fb, false));
 	
 //	_container.addObj(floorbox);
-	_container.addObj(sphere1);
-	_container.addObj(sphere2);
+//	_container.addObj(sphere1);
+//	_container.addObj(sphere2);
 
 	
-	_terrain.init(time(NULL),10.0f, 32);
+	_terrain.init((int)time(NULL),200.0f, 2.0f,512);
 	//_terrain.init(1234125, 10.0f, 32);
 	_terrain.create();		
 
 
 	//draw
-	_container.drawall(_3drenderer,true);
+//	_container.drawall(_3drenderer,true);
 //	_container.drawallcollision(_3drenderer);
-	_terrain.draw(&_3drenderer);
-	_3drenderer.redraw_static();
+//	_terrain.draw(&_3drenderer);
+//	_3drenderer.redraw_static();
+
+	_terrain.set_draw(&_3drenderer);
 
 }
 
@@ -70,7 +72,7 @@ void Screen::initui()
 
 void Screen::onEntry()
 {
-	SDL_ShowCursor(true);
+	SDL_ShowCursor(false);
 	
 }
 
@@ -81,6 +83,14 @@ void Screen::onExit()
 
 void Screen::checkInput() {
 
+	if (_inputmanager.isKeyDown(SDLK_LSHIFT)) {
+		_cam3d.setSpeed(_cam3d.getSpeed() + 0.1f);
+	}
+	if (_inputmanager.isKeyDown(SDLK_LCTRL)) {
+		_cam3d.setSpeed(_cam3d.getSpeed() - 0.1f);
+	}
+
+	return;
 	// DEBUG BALL MOVEMENT
 	ngiv::Collision_Object* b1 = _container.getObjbyName("sphere1")->getCollision_Object();
 	ngiv::Collision_Object* b2 = _container.getObjbyName("sphere2")->getCollision_Object();
@@ -124,6 +134,11 @@ void Screen::checkInput() {
 	if (_inputmanager.isKeyDown(SDLK_n)) {
 		b2->addVelocity(glm::vec3(0, 0, -power));
 	}
+	if (_inputmanager.isKeyDown(SDLK_o)) {
+
+	}
+
+
 
 	if (_inputmanager.isKeyPressed(SDLK_KP_MULTIPLY)) {
 		grav = !grav;
@@ -191,8 +206,6 @@ bool Screen::update(float deltatime)
 
 void Screen::draw()
 {
-
-	
 
 	_gui.draw();	
 }

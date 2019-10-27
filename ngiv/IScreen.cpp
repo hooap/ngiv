@@ -66,7 +66,7 @@ namespace ngiv{
 					i.releasekey(evnt.button.button);
 					break;
 				case SDL_MOUSEWHEEL:
-					i.setmousewheel(evnt.wheel.y);
+					i.setmousewheel((float)evnt.wheel.y);
 					break;				
 				}
 			}

@@ -72,13 +72,27 @@ namespace ngiv {
 	}
 
 	
+	__declspec(align(16)) struct NGUI_ELEMENT_BASE {
+
+		void* operator new(size_t i)
+		{
+			return _mm_malloc(i, 16);
+		}
+
+		void operator delete(void* p)
+		{
+			_mm_free(p);
+		}
+
+	};
+
 	class IScreen;
 	struct NGUI_PANEL_BUTTON;
 	struct NGUI_PANEL_CHECKBOX;
 	struct NGUI_PANEL_EDITBOX;
 
 
-	struct NGUI_EDITBOX {
+	struct NGUI_EDITBOX : NGUI_ELEMENT_BASE {
 		bool active;
 		std::string text;
 		float tsize;
@@ -87,16 +101,14 @@ namespace ngiv {
 		ngiv::ColorRGBA8 color_text;
 		std::function<void(NGUI_EDITBOX*)> func;				
 	};
-	struct NGUI_CHECKBOX
-	{
+	struct NGUI_CHECKBOX : NGUI_ELEMENT_BASE {
 		bool value;
 		glm::vec4 destrect;
 		GLuint texture_on;
 		GLuint texture_off;
 		std::function<void(NGUI_CHECKBOX*)> func;		
 	};
-	struct NGUI_BUTTON
-	{
+	struct NGUI_BUTTON : NGUI_ELEMENT_BASE {
 		std::string text;
 		float size;
 		glm::vec4 destrect;
@@ -104,8 +116,7 @@ namespace ngiv {
 		ngiv::ColorRGBA8 color_text;
 		std::function<void(NGUI_BUTTON*)> func;		
 	};
-	struct NGUI_TEXT
-	{
+	struct NGUI_TEXT : NGUI_ELEMENT_BASE {
 		std::string text;
 		float size;
 		glm::vec2 pos;
@@ -113,8 +124,7 @@ namespace ngiv {
 		bool isxcenter;
 		bool isycenter;
 	};
-	struct NGUI_DROPDOWN_LIST
-	{
+	struct NGUI_DROPDOWN_LIST : NGUI_ELEMENT_BASE	{
 		bool open;
 		int selected_index;
 		glm::vec4 destrect;
@@ -128,8 +138,7 @@ namespace ngiv {
 
 
 	//panel stuff
-	struct NGUI_PANEL
-	{
+	struct NGUI_PANEL : NGUI_ELEMENT_BASE {
 		std::vector<NGUI_PANEL*> panels;
 		std::vector<NGUI_TEXT*> texts;
 		std::vector<NGUI_PANEL_BUTTON*> buttons;
@@ -144,8 +153,7 @@ namespace ngiv {
 		bool active;
 		int value;
 	};
-	struct NGUI_PANEL_BUTTON
-	{
+	struct NGUI_PANEL_BUTTON : NGUI_ELEMENT_BASE	{
 		bool gotomainpanel;
 		std::string text;
 		float size;
@@ -154,8 +162,7 @@ namespace ngiv {
 		GLuint texture_body;
 		ngiv::ColorRGBA8 color_text;
 	};
-	struct NGUI_PANEL_CHECKBOX
-	{
+	struct NGUI_PANEL_CHECKBOX : NGUI_ELEMENT_BASE	{
 		std::string name;
 		bool value;
 		glm::vec4 destrect;		
@@ -163,7 +170,7 @@ namespace ngiv {
 		GLuint texture_off;
 		GLuint texture_on;
 	};
-	struct NGUI_PANEL_EDITBOX {
+	struct NGUI_PANEL_EDITBOX : NGUI_ELEMENT_BASE {
 		bool active;
 		std::string text;
 		float tsize;

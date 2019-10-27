@@ -120,7 +120,7 @@ namespace ngiv {
 				for (size_t j = 0; j < num; j++) {
 					glm::vec4 dropdestrect = _droplist[i]->destrect;
 					dropdestrect = glm::vec4(dropdestrect.x, dropdestrect.y - (dropdestrect.w * (j + 1)) , dropdestrect.z, dropdestrect.w);
-					_rend.draw(ratiotopixel(dropdestrect,wh.x,wh.y), glm::vec4(0, 0, 1, 1), _droplist[i]->texture_listbackground, 0, 1);
+					_rend.draw(ratiotopixel(dropdestrect,wh.x,wh.y), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), _droplist[i]->texture_listbackground, 0.0f, 1.0f);
 					_trend.draw(_droplist[i]->elements[j], ratiotopixel(glm::vec2(dropdestrect.x, dropdestrect.y + (dropdestrect.w / 2.0f) ), wh.x, wh.y), glm::vec2(_droplist[i]->tsize), _droplist[i]->color_text, 5, ratiotopixel(_droplist[i]->destrect.x + _droplist[i]->destrect.z, (int)wh.x), ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
 				}
 

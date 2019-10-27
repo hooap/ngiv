@@ -176,15 +176,15 @@ namespace ngiv {
 
 		}
 		
-		void drawall(ngiv::Renderer_3D& rend,bool isstatic) {
+		void draw_setalways(ngiv::Renderer_3D& rend,bool isstatic) {
 			for (int i = 0; i < objs.size(); i++) {
-				rend.draw(objs[i],isstatic);
+				rend.addtolist_draw(objs[i], isstatic);
 			}
 		}
 
-		void drawallcollision(ngiv::Renderer_3D& rend) {
+		void draw_setcollisionalways(ngiv::Renderer_3D& rend) {
 			for (int i = 0; i < objs.size(); i++) {
-				rend.drawCollisionBox(objs[i]->getCollision_Object());
+				rend.addtolist_drawCollisionBox(objs[i]->getCollision_Object());
 			}
 		}
 
@@ -206,6 +206,9 @@ namespace ngiv {
 					return objs[i];
 				}
 			}
+
+			throw "OBJECT DOESNT EXIST";
+
 			return NULL;
 		}
 

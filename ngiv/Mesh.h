@@ -15,8 +15,16 @@ namespace ngiv {
 		glm::vec3 Position;
 		glm::vec3 Normal;
 		glm::vec2 TexCoords;
-
 	};
+
+	struct Vertex3D_Instanced
+	{
+		glm::vec3 Position;
+		glm::vec2 TexCoords;
+		float index;		
+	};
+
+
 
 	struct Texture {
 		unsigned int id;
@@ -58,5 +66,42 @@ namespace ngiv {
 
 					
 	};
+
+
+	class Mesh_I
+	{
+	public:
+		Mesh_I(std::vector<Vertex3D_Instanced> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
+			this->vertices = vertices;
+			this->indices = indices;
+			this->textures = textures;
+		}
+
+		Mesh_I() {}
+		~Mesh_I() {
+			dispose();
+		}
+
+		void dispose() {
+
+		}
+
+		void init(std::vector<Texture> textures, std::vector<unsigned int> indices, std::vector<Vertex3D_Instanced> vertices) {
+			this->textures = textures;
+			this->indices = indices;
+			this->vertices = vertices;
+		}
+
+		std::vector<Texture> textures;
+		std::vector<unsigned int> indices;
+		std::vector<Vertex3D_Instanced> vertices;
+
+		/*  Render data  */
+		unsigned int VAO;
+		unsigned int VBO, EBO;
+
+
+	};
+
 
 }

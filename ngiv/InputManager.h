@@ -29,7 +29,7 @@ namespace ngiv {
 		void putMouseMiddleofScreen(ngiv::Window* win) {
 		
 			glm::vec2 p = glm::vec2(win->getWidth() / 2, win->getHeight() / 2);
-			SDL_WarpMouseInWindow(win->getwindow(), p.x, p.y);			
+			SDL_WarpMouseInWindow(win->getwindow(), (int)p.x, (int)p.y);			
 		}
 
 		float getMouseWheel() { return mousewheel; }

@@ -40,30 +40,36 @@ namespace ngiv {
 
 			if (_window == nullptr)
 			{
-				error("SDL Window olusturulamadi", true);
-				return 1;
+				error("SDL Window olusturulamadi", true); 1;
 			}
 
+
+			
+
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 			SDL_GLContext glcontext = SDL_GL_CreateContext(_window);
+			//SDL_GLContext glcontext = SDL_GL_CreateContext(_window);
+			
+			
+
+			
 			if (glcontext == nullptr)
 			{
-				error("GLContext olusturulamadi", true);
-				return 1;
+				error("GLContext olusturulamadi", true); 1;
 			}
 
 			if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 			{
-				std::cout << "Failed to initialize GLAD" << std::endl;
-				return 1;
+				error("GLContext olusturulamadi", true);
 			}
 			getwindowsize(width, height);			
 			_width = width;
 			_height = height;
 			glViewport(0, 0, _width, _height);
 
-			//std::cout << "OpenGL Version:" << glGetString(GL_VERSION) << std::endl;
+			std::cout << "OpenGL Version:" << glGetString(GL_VERSION) << std::endl;
 			
-
 			//VSYNC
 			SDL_GL_SetSwapInterval(is_vsync_on);
 
@@ -73,7 +79,6 @@ namespace ngiv {
 
 			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // NORMALÝ BU // en üstteki rengi gösterir
 			// glBlendFunc(GL_SRC_ALPHA, GL_ONE); // bu ise renkleri toplar
-
 		}
 
 		return 0;

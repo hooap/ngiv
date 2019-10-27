@@ -17,7 +17,7 @@ namespace ngiv {
 	{
 	}
 
-	void Camera3D::init(glm::vec3 pos, float camSpeed, float sensitivity, float fov, float width, float height, float zNear, float zFar) {
+	void Camera3D::init(glm::vec3 pos, float camSpeed, float sensitivity, float fov, int width, int height, float zNear, float zFar) {
 		
 		_sensivity = sensitivity;
 		_fov = fov;
@@ -25,8 +25,8 @@ namespace ngiv {
 
 
 		_pos = pos;		
-		_width = width;
-		_height = height;
+		_width = (float)width;
+		_height = (float)height;
 		
 		_zNear = zNear;
 		_zfar = zFar;

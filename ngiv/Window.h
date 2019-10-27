@@ -6,6 +6,8 @@
 
 namespace ngiv {
 
+
+
 	/*
 	SDL_WINDOW_FULLSCREEN; = 1
 	SDL_WINDOW_OPENGL; = 2

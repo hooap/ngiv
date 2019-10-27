@@ -367,9 +367,9 @@ namespace ngiv {
 
 
 		if (_debugcheckbox->value) {
-			_container->drawallcollision(_3drenderer);
+			_container->draw_setcollisionalways(_3drenderer);
 		}else {
-			_container->drawall(_3drenderer,true);
+			_container->draw_setalways(_3drenderer,true);
 		}
 	
 

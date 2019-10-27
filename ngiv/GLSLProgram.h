@@ -5,13 +5,16 @@
 
 namespace ngiv {
 	
+	
+
+
 	class GLSLProgram
 	{
 	public:
 		GLSLProgram();
 		~GLSLProgram();
 
-		void compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
+		void compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, const std::string& geometryShaderFilePath = "");
 
 		void compileShadersfromsource(const char* vertexsource, const char* fragmentsource);
 
@@ -27,6 +30,10 @@ namespace ngiv {
 
 		void setVec3(std::string name, glm::vec3 val) {
 			glUniform3fv(getUniformLocation(name), 1, &val[0]);
+		}
+
+		void setVec2(std::string name, glm::vec2 val) {
+			glUniform2fv(getUniformLocation(name), 1, &val[0]);
 		}
 
 		void setFloat(std::string name, float val) {
@@ -51,6 +58,7 @@ namespace ngiv {
 
 		GLuint _vertexShaderID;
 		GLuint _fragmentShaderID;
+		GLuint _geometryShaderID = 0;
 	};
 
 }

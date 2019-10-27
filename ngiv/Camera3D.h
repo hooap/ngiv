@@ -14,7 +14,7 @@ namespace ngiv {
 		Camera3D();
 		~Camera3D();
 
-		void init(glm::vec3 pos, float camspeed, float sensitivity, float fov, float width, float height, float zNear, float zFar);
+		void init(glm::vec3 pos, float camspeed, float sensitivity, float fov, int width, int height, float zNear, float zFar);
 
 		void updateCam(InputManager& i);
 		void updateMatrix();
@@ -43,7 +43,7 @@ namespace ngiv {
 
 		void setPos(glm::vec3 pos) { _pos = pos; needUpdate = true; }		
 		void setFront(glm::vec3 pos) { _front = pos; needUpdate = true; }
-		float setSpeed(float speed) { _speed = speed; }
+		void setSpeed(float speed) { _speed = speed; }
 		
 
 		
