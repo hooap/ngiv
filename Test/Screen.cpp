@@ -3,7 +3,7 @@
 #include <time.h>
 #include <ngiv\Collision_Box.h>
 #include <ngiv/Misc.h>
-
+#include <ngiv/Renderer_Text.h>
 
 Screen::Screen()
 {
@@ -16,11 +16,16 @@ Screen::~Screen()
 
 void Screen::init()
 {
+
 	_cam3d.init(glm::vec3(13.0f, 13.0f, -5.0f), 0.4f, 0.2f, 60.0f, _width, _height,0.1f ,400.0f);
 	_cam3d.lookat(glm::vec3(5.0f, 0.0f, 0.0f));
 
 	_3drenderer.init(&_cam3d, _width, _height);
 	_3drenderer.loadSkybox("001");
+
+
+	
+
 	_world.init(0.001f);
 
 	//exampleobj = ngiv::ModelLoader::loadModel(glm::vec3(2, 0, 0), "Models//metalboxv2obj//untitled.obj", false, false, 1.0f);
