@@ -21,6 +21,11 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+Test/Debug/
+Test/Release/
+ngiv/Debug/
+ngiv/Release/
+
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -50,7 +55,6 @@ artifacts/
 *_i.h
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
