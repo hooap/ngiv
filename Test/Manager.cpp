@@ -23,7 +23,7 @@ void Manager::init() {
 	else if (fullscreen == 2) {
 		flags += 4097;
 	}
-	_window.create("Tech Demo", width, height, flags, false);
+	_window.create("Tech Demo", width, height, flags, _vsync);
 
 	Screen *_screen = new Screen();
 

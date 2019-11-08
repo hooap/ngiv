@@ -33,7 +33,7 @@ namespace ngiv {
 		}
 
 	private:
-		int _screenwidth, _screenheight;
+		int _screenwidth = 0, _screenheight = 0;
 		float _scale;
 		bool need = true;
 		glm::mat4 _orthomatrix;
