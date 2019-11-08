@@ -6,7 +6,7 @@
 #include "Window.h"
 
 
-#define NGIV_VERSION "0.3"
+#define NGIV_VERSION "0.4"
 
 namespace ngiv {
 
