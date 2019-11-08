@@ -1,9 +1,9 @@
 #pragma once
-#include <ngiv\IScreen.h>
-#include <ngiv\OBJ.h>
-#include <ngiv\Renderer_3D.h>
-#include <ngiv\PhysicsWorld.h>
-#include <ngiv\TerrainGenerator.h>
+#include <ngiv/IScreen.h>
+#include <ngiv/OBJ.h>
+#include <ngiv/Renderer_3D.h>
+#include <ngiv/PhysicsWorld.h>
+#include <ngiv/TerrainGenerator.h>
 #include <ngiv/GameContainer.h>
 
 
@@ -21,7 +21,7 @@ public:
 
 	ngiv::GameContainer* getContainer() { return &_container; }
 	ngiv::Camera3D* getCam() { return &_cam3d; }
-	
+
 private:
 	virtual void initui() override;
 	virtual void init() override;
@@ -49,7 +49,7 @@ private:
 
 //	ngiv::OBJ* nanosuit;
 //	ngiv::OBJ* box;
-	
+
 
 	ngiv::Renderer_3D _3drenderer;
 	ngiv::PhysicsWorld _world;

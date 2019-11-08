@@ -1,6 +1,6 @@
 #include "Manager.h"
 
-#include <ngiv\NGIV.h>
+#include <ngiv/NGIV.h>
 #include <ngiv/BasicLevelEditor.h>
 
 Manager::Manager()
@@ -35,7 +35,7 @@ void Manager::init() {
 
 	_leveleditor->initScreen(width,height,&_window, "Fonts//calibril.ttf", 32);
 
-	_screen->initScreen(width,height,&_window,"Fonts//calibril.ttf",64);	
+	_screen->initScreen(width,height,&_window,"Fonts//calibril.ttf",64);
 	_screen->setscreenPointer("leveleditor", _leveleditor);
 
 

@@ -1,15 +1,16 @@
 #include "Renderer_3D.h"
 #include "Misc.h"
 #include <functional>
-#include <SDL\SDL_keycode.h>
+#include <SDL/SDL_keycode.h>
 #include "IOManager.h"
 #include "TextureLoader.h"
 #include "stb_image.h"
 #include <numeric>
 #include <GLAD/glad.h>
+#include <math.h>
 
 namespace ngiv {
-	
+
 	// -----------------------------------------renderQuad() renders a 1x1 XY quad in NDC
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO;
@@ -32,7 +33,7 @@ namespace ngiv {
 			indicies.push_back(0);
 			indicies.push_back(3);
 			indicies.push_back(2);
-			
+
 
 			// setup plane VAO
 			glGenVertexArrays(1, &quadVAO);
@@ -41,7 +42,7 @@ namespace ngiv {
 
 			glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-			
+
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(1);
@@ -63,22 +64,22 @@ namespace ngiv {
 		{
 			float vertices[] = {
 				// back face
-				-1.0f, -1.0f, -1.0f, 
-				1.0f,  1.0f, -1.0f, 
-				1.0f, -1.0f, -1.0f,  
+				-1.0f, -1.0f, -1.0f,
 				1.0f,  1.0f, -1.0f,
-				-1.0f, -1.0f, -1.0f,  
-				-1.0f,  1.0f, -1.0f, 
+				1.0f, -1.0f, -1.0f,
+				1.0f,  1.0f, -1.0f,
+				-1.0f, -1.0f, -1.0f,
+				-1.0f,  1.0f, -1.0f,
 
 						// front face
-						-1.0f, -1.0f,  1.0f, 
-						1.0f, -1.0f,  1.0f, 
-						1.0f,  1.0f,  1.0f, 
-						1.0f,  1.0f,  1.0f,  
-						-1.0f,  1.0f,  1.0f, 
-						-1.0f, -1.0f,  1.0f, 
+						-1.0f, -1.0f,  1.0f,
+						1.0f, -1.0f,  1.0f,
+						1.0f,  1.0f,  1.0f,
+						1.0f,  1.0f,  1.0f,
+						-1.0f,  1.0f,  1.0f,
+						-1.0f, -1.0f,  1.0f,
 						// left face
-						-1.0f,  1.0f,  1.0f, 
+						-1.0f,  1.0f,  1.0f,
 						-1.0f,  1.0f, -1.0f,
 						-1.0f, -1.0f, -1.0f,
 						-1.0f, -1.0f, -1.0f,
@@ -86,40 +87,40 @@ namespace ngiv {
 						-1.0f,  1.0f,  1.0f,
 								// right face
 								1.0f,  1.0f,  1.0f,
-								1.0f, -1.0f, -1.0f, 
-								1.0f,  1.0f, -1.0f,     
-								1.0f, -1.0f, -1.0f,  
-								1.0f,  1.0f,  1.0f, 
-								1.0f, -1.0f,  1.0f,  
+								1.0f, -1.0f, -1.0f,
+								1.0f,  1.0f, -1.0f,
+								1.0f, -1.0f, -1.0f,
+								1.0f,  1.0f,  1.0f,
+								1.0f, -1.0f,  1.0f,
 																					// bottom face
-							-1.0f, -1.0f, -1.0f, 
-							1.0f, -1.0f, -1.0f, 
-							1.0f, -1.0f,  1.0f,  
-							1.0f, -1.0f,  1.0f,  
-							-1.0f, -1.0f,  1.0f, 
-							-1.0f, -1.0f, -1.0f, 
+							-1.0f, -1.0f, -1.0f,
+							1.0f, -1.0f, -1.0f,
+							1.0f, -1.0f,  1.0f,
+							1.0f, -1.0f,  1.0f,
+							-1.0f, -1.0f,  1.0f,
+							-1.0f, -1.0f, -1.0f,
 																					// top face
-						-1.0f,  1.0f, -1.0f,  
-						1.0f,  1.0f , 1.0f,  
-						1.0f,  1.0f, -1.0f, 
-						1.0f,  1.0f,  1.0f,  
-						-1.0f,  1.0f, -1.0f, 
-						-1.0f,  1.0f,  1.0f,        
+						-1.0f,  1.0f, -1.0f,
+						1.0f,  1.0f , 1.0f,
+						1.0f,  1.0f, -1.0f,
+						1.0f,  1.0f,  1.0f,
+						-1.0f,  1.0f, -1.0f,
+						-1.0f,  1.0f,  1.0f,
 };
 			glGenVertexArrays(1, &cubeVAO);
-			glGenBuffers(1, &cubeVBO);			
+			glGenBuffers(1, &cubeVBO);
 
 			glBindVertexArray(cubeVAO);
-			
+
 			glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);	
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
 			// link vertex attributes
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 			glBindVertexArray(0);
 
-		}		
+		}
 		// render Cube
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -130,13 +131,13 @@ namespace ngiv {
 	Mesh getSphereMesh(float radius, unsigned int rings, unsigned int sectors)
 	{
 		static std::map<std::pair<float, float>, Mesh> map;
-		
+
 		auto it = map.find(std::make_pair(rings,sectors));
 		if (it != map.end()) {
 			return it->second;
 		}
 		Mesh m;
-		
+
 		std::vector<Vertex3D> verticies;
 
 		for (int i = 0; i < rings; i++) {
@@ -162,18 +163,18 @@ namespace ngiv {
 
 				float y = yt;
 				float left = 1 - pow(y, 2);
-				
+
 				float x = left * xt;
 				float z = left * zt;
-								
+
 				vertex.Position.y = y* radius;
 				vertex.Position.x = x* radius;
 				vertex.Position.z = z* radius;
 				m.vertices.push_back(vertex);
 			}
-		}				
+		}
 		map.insert(std::make_pair(std::make_pair(rings, sectors), m));
-		return m;	
+		return m;
 	}
 	Mesh getBoxMesh(glm::vec3 scale) {
 		static glm::vec3 lastscale = glm::vec3(0);
@@ -184,7 +185,7 @@ namespace ngiv {
 		}
 
 		//last scale is not equal to this scale so lets look in to the map
-		static std::map<std::pair<float,std::pair<float,float>>, Mesh> map;		
+		static std::map<std::pair<float,std::pair<float,float>>, Mesh> map;
 
 		auto it = map.find(std::make_pair(scale.x, std::make_pair(scale.y, scale.z)));
 		if (it != map.end()) {
@@ -200,7 +201,7 @@ namespace ngiv {
 
 
 		Vertex3D v0,v1,v2,v3,v4,v5,v6,v7;
-				
+
 		{
 			v0.Position = glm::vec3(-scale.x, -scale.y, -scale.z);
 			v1.Position = glm::vec3(scale.x, -scale.y, -scale.z);
@@ -212,7 +213,7 @@ namespace ngiv {
 			v6.Position = glm::vec3(scale.x, scale.y, scale.z);
 			v7.Position = glm::vec3(-scale.x, scale.y, scale.z);
 		}
-		
+
 		{
 			//alt
 			verticies.push_back(v0);
@@ -257,7 +258,7 @@ namespace ngiv {
 			verticies.push_back(v6);
 			verticies.push_back(v7);
 		}
-		
+
 		std::vector<Texture> t;
 		std::vector<unsigned int> i;
 		newm.init(t, i, verticies);
@@ -269,7 +270,7 @@ namespace ngiv {
 	Mesh getBoxMesh(std::vector<glm::vec3> vert) {
 		static glm::vec3 lastscale = glm::vec3(0);
 		static Mesh m;
-		
+
 		//box doesnt exist lets create
 		Mesh newm;
 
@@ -289,7 +290,7 @@ namespace ngiv {
 			v7.Position = vert[7];
 		}
 
-		{			
+		{
 			verticies.push_back(v0);
 			verticies.push_back(v1);
 			verticies.push_back(v3);
@@ -319,10 +320,10 @@ namespace ngiv {
 
 		std::vector<Texture> t;
 		std::vector<unsigned int> i;
-		newm.init(t, i, verticies);		
+		newm.init(t, i, verticies);
 		return newm;
 	}
-	
+
 	Renderer_3D::Renderer_3D()
 	{
 	}
@@ -331,7 +332,7 @@ namespace ngiv {
 		dispose();
 	}
 
-	
+
 
 	void Renderer_3D::init(Camera3D* cam, int width, int height, GLSLProgram* glsl) {
 		if(initialized){
@@ -341,7 +342,7 @@ namespace ngiv {
 
 		_width = width;
 		_height = height;
-		
+
 		_cam = cam;
 
 		if (glsl != nullptr) {
@@ -371,10 +372,10 @@ namespace ngiv {
 		_g_glsl_instanced.addAttribute("aOffset4y");
 		_g_glsl_instanced.addAttribute("aOffsetxz");
 		_g_glsl_instanced.linkShaders();
-			   		
 
 
-		// util glsls		
+
+		// util glsls
 		_lightbox_glsl.compileShaders("Shaders//default_LightBox.vs", "Shaders//default_LightBox.fs");
 		_lightbox_glsl.addAttribute("aPos");
 		_lightbox_glsl.linkShaders();
@@ -384,22 +385,22 @@ namespace ngiv {
 		_skybox_glsl.linkShaders();
 		//
 
-		
+
 		for (int i = 0; i < 1; i++) {
 			lightpositions.push_back(glm::vec3(2, 6, 1));
 			lightcolors.push_back(glm::vec3(1, 1, 1));
 		}
 
 		//create VAO
-		glGenVertexArrays(1, &VAO);		
+		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &VBO_INS_D);
 		glGenBuffers(1, &VBO_INS_I);
 		glGenBuffers(1, &EBO);
-		
+
 		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);		
-				
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 		// set the vertex attribute pointers
 		// vertex Positions
 		glEnableVertexAttribArray(0);
@@ -409,7 +410,7 @@ namespace ngiv {
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, Vertex3D::Normal));
 		// vertex texture coords
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, Vertex3D::TexCoords));	
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, Vertex3D::TexCoords));
 		glBindVertexArray(0);
 
 		//CREATE INSTANCED VBO
@@ -417,11 +418,11 @@ namespace ngiv {
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::Position));
-		
+
 		// vertex texture coords
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::TexCoords));
-		//set offset	
+		//set offset
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::index));
 
@@ -436,7 +437,7 @@ namespace ngiv {
 		glVertexAttribDivisor(4, 1);
 
 		glBindVertexArray(0);
-			   
+
 
 		//get default depth size
 		GLint defaultdepth = 0;
@@ -467,7 +468,7 @@ namespace ngiv {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-				
+
 		// - color + specular color buffer
 		glGenTextures(1, &gAlbedoSpec);
 		glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
@@ -475,8 +476,8 @@ namespace ngiv {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
-		// - tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-		
+		// - tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+
 		//DEAL WITH DEPTH BUFFER
 		glGenRenderbuffers(1, &rboDepth);
 		glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
@@ -505,11 +506,15 @@ namespace ngiv {
 		// finally check if framebuffer is complete
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "Framebuffer not complete!" << std::endl;
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	void Renderer_3D::loadSkybox(std::string path, std::vector<std::string> facenames) {
 		if (facenames.empty()) {
+
+        #ifdef __linux__
+        path = ".//" + path;
+        #endif // __linux__
 
 			std::vector<std::string> defaultfaces = {
 			"right.jpg",
@@ -522,14 +527,14 @@ namespace ngiv {
 			facenames = defaultfaces;
 		}
 
-		path = "Skybox\\" + path;
-		int width, height, nrChannels;	
+		path = "Skybox//" + path;
+		int width, height, nrChannels;
 		unsigned int tid;
 		glGenTextures(1, &tid);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, tid);
 
 		for (int i = 0; i < facenames.size(); i++) {
-			unsigned char *data = stbi_load((path  + "\\" + facenames[i]).c_str(), &width, &height, &nrChannels, 0);
+			unsigned char *data = stbi_load((path  + "//" + facenames[i]).c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -550,7 +555,7 @@ namespace ngiv {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-		_skyboxtexture = tid;	
+		_skyboxtexture = tid;
 	}
 
 	void Renderer_3D::redraw_static() {
@@ -586,7 +591,7 @@ namespace ngiv {
 		const std::vector<Mesh>* meshes = m->getMeshes();
 		glm::vec3 pos = m->getPos();
 		int id;
-		
+
 		id = 0 + _meshes_dynamic_data.size();
 		_meshes_dynamic_data.insert(_meshes_dynamic_data.end(), meshes->begin(), meshes->end());
 		glm::mat4 model = glm::mat4(1);
@@ -632,7 +637,7 @@ namespace ngiv {
 		for (int i = 0; i < meshes.size(); i++) {
 			needsize += meshes[i].size();
 		}
-		
+
 		_meshes_dynamic_data.reserve(_meshes_dynamic_data.size() + needsize);
 		_meshes_dynamic_model.reserve(_meshes_dynamic_model.size() + needsize);
 
@@ -647,7 +652,7 @@ namespace ngiv {
 			}
 			_meshes_dynamic_index.push_back(id);
 		}
-		
+
 	}
 	*/
 
@@ -656,13 +661,13 @@ namespace ngiv {
 
 		//ASSUMES STATIC
 		_static_meshes_instanced_data.push_back(mesh);
-		_static_meshes_instanced_offsetpos.push_back(posoffsets);			
-				
-	
+		_static_meshes_instanced_offsetpos.push_back(posoffsets);
+
+
 		return -1;
 	}
 
-	
+
 
 	void Renderer_3D::drawCollisionBox(Collision_Object* sp) {
 		glm::vec3 addpos = sp->getExtraPos();
@@ -690,8 +695,8 @@ namespace ngiv {
 			_mesh_strip.push_back(m);
 			glm::vec3 pos = (*boxes)[i].getPos();
 			_mesh_strip_poss.push_back(pos + addpos);
-		}				
-	}	
+		}
+	}
 
 	int Renderer_3D::addtolist_drawCollisionBox(Collision_Object* sp) {
 		glm::vec3 addpos = sp->getExtraPos();
@@ -735,13 +740,13 @@ namespace ngiv {
 		//1 GEOMETRY PASS
 		_g_glsl.use();
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		renderWithGLSL(_g_glsl);
 
 		if (!_mesh_strip.empty()) {
 			renderStrips(_g_glsl);
 		}
-		
+
 		_g_glsl.unuse();
 		_g_glsl_instanced.use();
 		renderWithGLSLinstanced(_g_glsl_instanced);
@@ -779,7 +784,7 @@ namespace ngiv {
 
 			float lightMax = std::fmaxf(std::fmaxf(lightcolors[i].r, lightcolors[i].g), lightcolors[i].b);
 			float radius =
-				(-linear + std::sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * lightMax)))
+				(-linear + sqrtf(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * lightMax)))
 				/ (2 * quadratic);
 			_shading_glsl.setFloat("lights[" + std::to_string(i) + "].Radius", radius);
 		}
@@ -795,7 +800,7 @@ namespace ngiv {
 		glBlitFramebuffer(0, 0, _width, _height, 0, 0, _width, _height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		
+
 		glDepthFunc(GL_LEQUAL);
 		//2.7 lets render skybox
 		_skybox_glsl.use();
@@ -824,14 +829,14 @@ namespace ngiv {
 			glUniformMatrix4fv(_lightbox_glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
 			_lightbox_glsl.setVec3("lightColor", lightcolors[i]);
 			renderCube();
-		}		
+		}
 		_lightbox_glsl.unuse();
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
-	void Renderer_3D::renderWithGLSL(GLSLProgram& glsl) {	
+
+	void Renderer_3D::renderWithGLSL(GLSLProgram& glsl) {
 
 		_cam->updateMatrix();
 		//VERTEX
@@ -855,7 +860,7 @@ namespace ngiv {
 			indics.insert(indics.end(), in.begin(), in.end());
 			num += in.size();
 		}
-					
+
 		//START
 		glBindVertexArray(VAO);
 		glEnable(GL_DEPTH_TEST);
@@ -867,10 +872,10 @@ namespace ngiv {
 		//upload EBO
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indics.size() * sizeof(unsigned int), indics.data(), GL_STATIC_DRAW);
-		
+
 		glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
 		glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
-		
+
 
 		int indicindex = 0;
 		//DRAW MESHES
@@ -885,9 +890,9 @@ namespace ngiv {
 			else {
 				tillid = _meshes_static_index.size();;
 			}
-			
+
 			for (int c = id; c < tillid; c++) {
-				render_individual(_meshes_static_data[i], _meshes_static_model[id], locs[i], &glsl, indicindex);			
+				render_individual(_meshes_static_data[i], _meshes_static_model[id], locs[i], &glsl, indicindex);
 				i++;
 			}
 			i--;
@@ -895,12 +900,12 @@ namespace ngiv {
 		}
 
 		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);				
+		glActiveTexture(GL_TEXTURE0);
 	}
-	   	 
+
 	void Renderer_3D::render_individual(const Mesh& mesh, const glm::mat4& model, int loc, GLSLProgram* glsl, int& indiccounter) {
-		
-		
+
+
 		glUniformMatrix4fv(glsl->getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
 
 		//LOAD TEXTURES FOR THIS MESH
@@ -928,7 +933,7 @@ namespace ngiv {
 			glBindTexture(GL_TEXTURE_2D, mesh.textures[x].id);
 		}
 		glDrawElementsBaseVertex(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, (void*)(loc * sizeof(unsigned int)), indiccounter);
-				
+
 		indiccounter += mesh.vertices.size();
 
 	}
@@ -936,7 +941,7 @@ namespace ngiv {
 	void Renderer_3D::renderWithGLSLinstanced(GLSLProgram& glsl) {
 		_cam->updateMatrix();
 
-				
+
 		for (int i = 0; i < _static_meshes_instanced_data.size(); i++) {
 
 			Mesh_I* m = &_static_meshes_instanced_data[i];
@@ -953,13 +958,13 @@ namespace ngiv {
 			//upload VBO
 			glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
 
-			
+
 
 
 			//create the buffer;
 			std::vector<Instance_Offset_Data>* data = &_static_meshes_instanced_offsetpos[i];
 
-		
+
 
 			glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D_Instanced), vertics.data(), GL_DYNAMIC_DRAW);
 
@@ -969,7 +974,7 @@ namespace ngiv {
 			glBufferData(GL_ARRAY_BUFFER, data->size() * sizeof(Instance_Offset_Data), data->data(), GL_DYNAMIC_DRAW);
 
 
-			
+
 
 
 			//upload EBO
@@ -982,8 +987,8 @@ namespace ngiv {
 
 
 			//prepare data
-					   			 		  		  		 	   		
-					
+
+
 			int difn = 1;
 			int specn = 1;
 			int texturecounter = 0;
@@ -1012,12 +1017,12 @@ namespace ngiv {
 			glm::mat4 model = glm::mat4();
 			glUniformMatrix4fv(glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
 		 	glDrawElementsInstanced(GL_TRIANGLES, indics.size(), GL_UNSIGNED_INT, NULL, size);
-			
-						
+
+
 		}
 
 
-		
+
 		glBindVertexArray(0);
 		glActiveTexture(GL_TEXTURE0);
 	}
@@ -1028,25 +1033,25 @@ namespace ngiv {
 	void Renderer_3D::renderStrips(GLSLProgram& glsl) {
 		//VERTEX
 		std::vector<Vertex3D> vertics;
-		std::vector<Vertex3D> vt;			
-		
+		std::vector<Vertex3D> vt;
+
 		for (int i = 0; i < _mesh_strip.size(); i++) {
 			Mesh* m = &_mesh_strip[i];
 			vt = m->vertices;
-			vertics.insert(vertics.end(), vt.begin(), vt.end());									
+			vertics.insert(vertics.end(), vt.begin(), vt.end());
 		}
 		//START
 		glBindVertexArray(VAO);
 
 		//upload VBO
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D), vertics.data(), GL_DYNAMIC_DRAW);			
+		glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D), vertics.data(), GL_DYNAMIC_DRAW);
 
 		glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
 		glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
 
 		glLineWidth(8);
-		
+
 		unsigned int c = 0;
 		//DRAW MESHES
 		for (int i = 0; i < _mesh_strip.size(); i++) {
@@ -1056,8 +1061,8 @@ namespace ngiv {
 			glm::vec3 p = _mesh_strip_poss[i];
 			model = glm::translate(model, p);
 			glUniformMatrix4fv(glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
-			//LOAD TEXTURES FOR THIS MESH			
-						
+			//LOAD TEXTURES FOR THIS MESH
+
 			glDrawArrays(GL_LINE_STRIP, c,mesh->vertices.size());
 			c += mesh->vertices.size();
 		}
@@ -1065,7 +1070,7 @@ namespace ngiv {
 		vertics.clear();
 		_mesh_strip.clear();
 		_mesh_strip_poss.clear();
-		
+
 		glBindVertexArray(0);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -1088,10 +1093,10 @@ namespace ngiv {
 
 			_g_glsl.dispose();
 			_shading_glsl.dispose();
-			_lightbox_glsl.dispose();			
+			_lightbox_glsl.dispose();
 		}
 
-		
+
 
 	}
 

@@ -1,11 +1,11 @@
 #pragma once
-#include <GLAD\glad.h>
+#include <GLAD/glad.h>
 #include <string>
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 namespace ngiv {
-	
-	
+
+
 
 
 	class GLSLProgram
@@ -42,7 +42,7 @@ namespace ngiv {
 		void setInt(std::string name, int val) {
 			glUniform1i(getUniformLocation(name), val);
 		}
-			
+
 
 		void use();
 		void unuse();
@@ -51,7 +51,7 @@ namespace ngiv {
 	private:
 
 		int _numAttributes;
-				
+
 		void compileShader(const char* source, std::string name, GLuint id);
 
 		GLuint _programID;

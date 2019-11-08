@@ -24,11 +24,11 @@ namespace ngiv {
 			_texture_green = ngiv::TextureLoader::LoadTexture("UI//green.jpg");
 			_texture_blue = ngiv::TextureLoader::LoadTexture("UI//blue.jpg");
 			_texture_grey = ngiv::TextureLoader::LoadTexture("UI//grey.jpg");
-			_texture_dark_grey = ngiv::TextureLoader::LoadTexture("UI//dark_grey.jpg");		
+			_texture_dark_grey = ngiv::TextureLoader::LoadTexture("UI//dark_grey.jpg");
 			_texture_darker_grey = ngiv::TextureLoader::LoadTexture("UI//darker_grey.jpg");
 
-			
-			
+
+
 			_inputmanager = im;
 			_camera.init(width, heigth);
 			_camera.setposition(glm::vec2(width / 2, heigth / 2));
@@ -38,9 +38,9 @@ namespace ngiv {
 		else {
 			ngiv::o("NGIV::UI::init::already");
 		}
-	}		
+	}
 	void NGUI::destroy() {
-		
+
 		_button.clear();
 		_text_static.clear();
 		_panel.clear();
@@ -49,12 +49,12 @@ namespace ngiv {
 		_rend.dispose();
 		_trend.dispose();
 		INITIALIZED = false;
-		
+
 	}
 
 	void NGUI::draw() {
 
-	//NE KADAR KUCUK O KADAR ON	
+	//NE KADAR KUCUK O KADAR ON
 		glm::vec2 wh = _camera.getwh();
 
 		//checkbox
@@ -64,18 +64,18 @@ namespace ngiv {
 			}
 			else {
 				_rend.draw(_checkbox[i]->destrect, glm::vec4(0, 0, 1, 1), _checkbox[i]->texture_off, 0 , 1);
-			}			
+			}
 		}
-	
+
 		//static text
 		for (size_t i = 0; i < _text_static.size(); i++) {
 			ngiv::Justification jx, jy;
 
 			if (_text_static[i]->isxcenter) {
 				jx = ngiv::Justification::MIDDLE;
-			}					
+			}
 			else {
-				jx = ngiv::Justification::LEFTORBOTTOM;				
+				jx = ngiv::Justification::LEFTORBOTTOM;
 			}
 			if (_text_static[i]->isycenter) {
 				jy = ngiv::Justification::MIDDLE;
@@ -84,11 +84,11 @@ namespace ngiv {
 				jy = ngiv::Justification::LEFTORBOTTOM;
 			}
 
-			
+
 			_trend.draw(_text_static[i]->text, ratiotopixel(_text_static[i]->pos,(int)wh.x,(int)wh.y), glm::vec2(_text_static[i]->size), _text_static[i]->color_text, 1, jx, jy);
 			//
 		}
-				
+
 		//buttons
 		for (size_t i = 0; i < _button.size(); i++) {
 			_rend.draw(ratiotopixel(_button[i]->destrect, (int)wh.x, (int)wh.y), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), _button[i]->texture_body, 0.0f, 2);
@@ -96,7 +96,7 @@ namespace ngiv {
 			if (_button[i]->text != "") {
 				_trend.draw(_button[i]->text, ratiotopixel(pos, (int)wh.x, (int)wh.y), glm::vec2(_button[i]->size), _button[i]->color_text, 5, ngiv::Justification::MIDDLE, ngiv::Justification::MIDDLE);
 			}
-		}		
+		}
 
 		//editbox
 		for (size_t i = 0; i < _editbox.size(); i++) {
@@ -126,7 +126,7 @@ namespace ngiv {
 
 
 
-			}		
+			}
 
 
 		}
@@ -135,14 +135,14 @@ namespace ngiv {
 		for (size_t i = 0; i < _panel.size(); i++) {
 			if (!_panel[i]->active) continue;
 
-			//panelbox					
+			//panelbox
 			glm::vec4 pp = ratiotopixel(_panel[i]->destrect, (int)wh.x, (int)wh.y);
 			_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->texture_body, 0, 10);
 
 
 			//buttons
 			for (size_t j = 0; j < _panel[i]->buttons.size(); j++) {
-				//button				
+				//button
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->buttons[j]->destrect, (int)wh.x, (int)wh.y);
 				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->buttons[j]->texture_body, 0, 15);
 				//text
@@ -151,7 +151,7 @@ namespace ngiv {
 
 			}
 
-			//checkbox			
+			//checkbox
 			for (size_t j = 0; j < _panel[i]->checkboxs.size(); j++) {
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->checkboxs[j]->destrect, (int)wh.x, (int)wh.y);
 				if (_panel[i]->checkboxs[j]->value) {
@@ -164,7 +164,7 @@ namespace ngiv {
 
 			}
 
-			//editbox			
+			//editbox
 			for (size_t j = 0; j < _panel[i]->editboxs.size(); j++) {
 				glm::vec4 bpos = getdestrectinpanel(_panel[i]->destrect, _panel[i]->editboxs[j]->destrect, (int)wh.x, (int)wh.y);
 				_rend.draw(bpos, glm::vec4(0, 0, 1, 1), _panel[i]->editboxs[j]->texture_body, 0, 15);
@@ -206,7 +206,7 @@ namespace ngiv {
 				if (_panel[i]->dropdowns[j]->selected_index != -1) {
 					_trend.draw(_panel[i]->dropdowns[j]->elements[_panel[i]->dropdowns[j]->selected_index], p, glm::vec2(_panel[i]->dropdowns[j]->tsize), _panel[i]->dropdowns[j]->color_text, 20, max_x, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
 				}
-				
+
 				if (_panel[i]->dropdowns[j]->open) {
 					//todo scrolling
 					int num = _panel[i]->dropdowns[j]->elements.size();
@@ -219,14 +219,14 @@ namespace ngiv {
 					}
 
 				}
-				
+
 
 			}
 
 
 			//panel
 			for (size_t j = 0; j < _panel[i]->panels.size(); j++) {
-				//panelbox					
+				//panelbox
 				glm::vec4 pp = getdestrectinpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (int)wh.x, (int)wh.y);
 				_rend.draw(pp, glm::vec4(0, 0, 1, 1), _panel[i]->panels[j]->texture_body, 0, 30);
 
@@ -234,7 +234,7 @@ namespace ngiv {
 				std::vector<NGUI_PANEL_BUTTON*>* s = &_panel[i]->panels[j]->buttons;
 				//button
 				for (size_t m = 0; m < s->size(); m++) {
-					//button				
+					//button
 					glm::vec4 bpos = getdestrectinpanelpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (*s)[m]->destrect, (int)wh.x, (int)wh.y);
 					_rend.draw(bpos, glm::vec4(0, 0, 1, 1), (*s)[m]->texture_body, 0,35);
 					//text
@@ -244,15 +244,15 @@ namespace ngiv {
 
 				std::vector<NGUI_TEXT*>* ts = &_panel[i]->panels[j]->texts;
 				for (size_t m = 0; m < ts->size(); m++) {
-					
+
 					glm::vec2 bpos = getdestrectinpanelpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (*ts)[m]->pos, (int)wh.x, (int)wh.y);
 					_trend.draw((*ts)[m]->text, bpos, glm::vec2((*ts)[m]->size), (*ts)[m]->color_text, 40, ngiv::Justification::LEFTORBOTTOM, ngiv::Justification::MIDDLE);
 				}
 
 			}
-		}		
+		}
 
-		
+
 	}
 
 	void NGUI::render() {
@@ -273,7 +273,7 @@ namespace ngiv {
 		if (_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {
 			clicked = true;
 		}
-		
+
 		//panel update
 		for (size_t i = 0; i < _panel.size(); i++) {
 			if (!_panel[i]->active) continue;
@@ -287,7 +287,7 @@ namespace ngiv {
 				}
 
 				bool f = false;
-				//check and call cfunc			
+				//check and call cfunc
 				p = getdestrectinpanel(_panel[i]->destrect, _panel[i]->panels[j]->destrect, (int)wh.x, (int)wh.y);
 				if (mpos.x > p.x) {
 					if (mpos.x < p.x + p.z) {
@@ -329,7 +329,7 @@ namespace ngiv {
 
 
 			}
-			
+
 			//buttons
 			for (size_t j = 0; j < _panel[i]->buttons.size(); j++) {
 				p = getdestrectinpanel(_panel[i]->destrect, _panel[i]->buttons[j]->destrect, (int)wh.x, (int)wh.y);
@@ -360,7 +360,7 @@ namespace ngiv {
 				}
 			}
 
-			//editbox			
+			//editbox
 			for (size_t j = 0; j < _panel[i]->editboxs.size(); j++) {
 				if (_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {
 					_panel[i]->editboxs[j]->active = false;
@@ -467,11 +467,11 @@ namespace ngiv {
 					}
 				}
 			}
-			
-			
+
+
 		}
 
-		//editbox update		
+		//editbox update
 		for (size_t i = 0; i < _editbox.size(); i++) {
 			if (_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {
 				_editbox[i]->active = false;
@@ -496,9 +496,9 @@ namespace ngiv {
 				cam = true;
 			}
 		}
-		
+
 		//dropdownlist update
-		for (size_t i = 0; i < _droplist.size(); i++) {		
+		for (size_t i = 0; i < _droplist.size(); i++) {
 
 			if (clicked) {
 				glm::vec4 porig = ratiotopixel(_droplist[i]->destrect,wh.x,wh.y);
@@ -539,7 +539,7 @@ namespace ngiv {
 							}
 						}
 					}
-				}				
+				}
 
 				if (!onButton) {
 					_droplist[i]->open = false;
@@ -548,10 +548,10 @@ namespace ngiv {
 
 
 			}
-					   			 
+
 		}
 
-	
+
 
 
 		if (cam == false) {
@@ -560,13 +560,13 @@ namespace ngiv {
 	}
 
 	//gets
-	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic , bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::getpanel(const glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic , bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		if (bodypostfix != "" || titlebarpostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
 		return getpanel(pos, _texture_dark_grey, _texture_darker_grey, isdynamic, canclose, createtitlebar, titlebar_text, cfunc);
 	}
-	NGUI_PANEL*				 NGUI::getpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::getpanel(const glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -600,7 +600,7 @@ namespace ngiv {
 				NGUI_TEXT* t = gettext(titlebar_text, glm::vec2(2,50), ngiv::ColorRGBA8(0, 0, 0, 255), 1.0f, false, false);
 				ubp->texts.push_back(t);
 			}
-			
+
 			ubp->texture_body = titlebar;
 			ubp->cfunc = std::bind(&NGUI::default_dynamicborderfunc, this, std::placeholders::_1, std::placeholders::_2);
 			//create close button
@@ -623,8 +623,8 @@ namespace ngiv {
 
 		return p;
 	}
-	
-	NGUI_TEXT*		         NGUI::gettext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter) {
+
+	NGUI_TEXT*		         NGUI::gettext(std::string t,const glm::vec2& pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -639,14 +639,14 @@ namespace ngiv {
 		p->isycenter = isycenter;
 		return p;
 	}
-	
-	NGUI_PANEL_BUTTON*		 NGUI::getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
+
+	NGUI_PANEL_BUTTON*		 NGUI::getpanelbutton(std::string t, float tsize,const glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
 		if (bodypostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
-		}		
+		}
 		return getpanelbutton(t, tsize, bdestrect, _texture_darker_grey, color_text, func);
 	}
-	NGUI_PANEL_BUTTON*		 NGUI::getpanelbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
+	NGUI_PANEL_BUTTON*		 NGUI::getpanelbutton(std::string t, float tsize,const glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -658,15 +658,15 @@ namespace ngiv {
 		p->size = tsize;
 		p->destrect = bdestrect;
 
-		
+
 		p->texture_body = bodycolor;
 		p->color_text = color_text;
 		p->func = func;
 		p->gotomainpanel = false;
 		return p;
 	}
-	
-	NGUI_PANEL_CHECKBOX*	 NGUI::getpanelcheckbox(std::string name, glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func) {
+
+	NGUI_PANEL_CHECKBOX*	 NGUI::getpanelcheckbox(std::string name,const glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -679,17 +679,17 @@ namespace ngiv {
 		p->texture_off = texture_off;
 		p->texture_on = texture_on;
 		p->value = dvalue;
-		p->func = func;		
+		p->func = func;
 		return p;
 	}
-	NGUI_PANEL_CHECKBOX*	 NGUI::getpanelcheckbox(std::string name, glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func) {
+	NGUI_PANEL_CHECKBOX*	 NGUI::getpanelcheckbox(std::string name,const glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_PANEL_CHECKBOX*, NGUI_PANEL*)> func) {
 		if (texture_off_postfix != "" || texture_on_postfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
-		}		
+		}
 		return getpanelcheckbox(name, pos, _texture_red, _texture_green, dvalue, func);
 	}
-		
-	NGUI_PANEL_EDITBOX*		 NGUI::getpaneleditbox(std::string name, glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func) {
+
+	NGUI_PANEL_EDITBOX*		 NGUI::getpaneleditbox(std::string name,const glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -710,18 +710,18 @@ namespace ngiv {
 		}
 
 		p->text = text;
-				
+
 		return p;
 
 	}
-	NGUI_PANEL_EDITBOX*		 NGUI::getpaneleditbox(std::string name, glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func) {
+	NGUI_PANEL_EDITBOX*		 NGUI::getpaneleditbox(std::string name,const glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_PANEL_EDITBOX*, NGUI_PANEL*)> func) {
 		if (bodypostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
 		return getpaneleditbox(name, pos, tsize, _texture_grey, color_text, text, func);
 	}
 
-	NGUI_DROPDOWN_LIST*		 NGUI::getdropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement) {
+	NGUI_DROPDOWN_LIST*		 NGUI::getdropdownlist(const glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -745,39 +745,39 @@ namespace ngiv {
 		list->tsize = tsize;
 		return list;
 	}
-	NGUI_DROPDOWN_LIST*		 NGUI::getdropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background, std::string postfix_texture_listbackground, std::string defaultelement) {
+	NGUI_DROPDOWN_LIST*		 NGUI::getdropdownlist(const glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background, std::string postfix_texture_listbackground, std::string defaultelement) {
 		if (postfix_texture_background != "" || postfix_texture_listbackground != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
 		return getdropdownlist(pos, tsize, tcol, _texture_darker_grey, _texture_dark_grey, defaultelement);
 	}
-		   	
+
 	//adds
-	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::addpanel(const glm::vec4& pos, std::string bodypostfix, std::string titlebarpostfix, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		NGUI_PANEL* p = getpanel(pos, bodypostfix, titlebarpostfix, isdynamic, canclose, createtitlebar,titlebar_text, cfunc);
 		_panel.push_back(p);
 		return p;
 
 	}
-	NGUI_PANEL*				 NGUI::addpanel(glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
+	NGUI_PANEL*				 NGUI::addpanel(const glm::vec4& pos, GLuint body, GLuint titlebar, bool isdynamic, bool canclose, bool createtitlebar, std::string titlebar_text, std::function<void(NGUI_PANEL*, NGUI_PANEL*)> cfunc) {
 		NGUI_PANEL* p = getpanel(pos, body, titlebar, isdynamic, canclose, createtitlebar, titlebar_text, cfunc);
 		_panel.push_back(p);
 		return p;
 	}
-	
-	NGUI_TEXT*				 NGUI::addtext(std::string t, glm::vec2 pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter) {
+
+	NGUI_TEXT*				 NGUI::addtext(std::string t,const glm::vec2& pos, ngiv::ColorRGBA8 color_text, float size, bool isxcenter, bool isycenter) {
 		NGUI_TEXT* p = gettext(t, pos, color_text, size, isxcenter, isycenter);
 		_text_static.push_back(p);
 		return p;
 	}
-	
-	NGUI_BUTTON*			 NGUI::addbutton(std::string t, float tsize,glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func) {
+
+	NGUI_BUTTON*			 NGUI::addbutton(std::string t, float tsize,const glm::vec4& bdestrect, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func) {
 		if (bodypostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
-		return addbutton(t, tsize, bdestrect, _texture_dark_grey, color_text, func);		
+		return addbutton(t, tsize, bdestrect, _texture_dark_grey, color_text, func);
 	}
-	NGUI_BUTTON*			 NGUI::addbutton(std::string t, float tsize, glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func) {
+	NGUI_BUTTON*			 NGUI::addbutton(std::string t, float tsize,const glm::vec4& bdestrect, GLuint bodycolor, ngiv::ColorRGBA8 color_text, std::function<void(NGUI_BUTTON*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -794,8 +794,8 @@ namespace ngiv {
 		_button.push_back(p);
 		return p;
 	}
-	
-	NGUI_CHECKBOX*			 NGUI::addcheckbox(glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func) {
+
+	NGUI_CHECKBOX*			 NGUI::addcheckbox(const glm::vec4& pos, GLuint texture_off, GLuint texture_on, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -807,18 +807,18 @@ namespace ngiv {
 		p->texture_off = texture_off;
 		p->texture_on = texture_on;
 		p->value = dvalue;
-		p->func = func;		
+		p->func = func;
 		_checkbox.push_back(p);
 		return p;
 	}
-	NGUI_CHECKBOX*			 NGUI::addcheckbox(glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func) {
+	NGUI_CHECKBOX*			 NGUI::addcheckbox(const glm::vec4& pos, std::string texture_off_postfix, std::string texture_on_postfix, bool dvalue, std::function<void(NGUI_CHECKBOX*)> func) {
 		if (texture_off_postfix != "" || texture_on_postfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
 		return addcheckbox(pos, _texture_red, _texture_green, dvalue, func);
 	}
-	
-	NGUI_EDITBOX*			 NGUI::addeditbox(glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func) {
+
+	NGUI_EDITBOX*			 NGUI::addeditbox(const glm::vec4& pos, float tsize, GLuint texture_body, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func) {
 		if (!INITIALIZED) {
 			ngiv::o("NGUI not initialized");
 			return nullptr;
@@ -836,33 +836,33 @@ namespace ngiv {
 		else {
 			p->func = func;
 		}
-		p->text = text;		
+		p->text = text;
 		_editbox.push_back(p);
 		return p;
 
 	}
-	NGUI_EDITBOX*			 NGUI::addeditbox(glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func) {
+	NGUI_EDITBOX*			 NGUI::addeditbox(const glm::vec4& pos, float tsize, std::string bodypostfix, ngiv::ColorRGBA8 color_text, std::string text, std::function<void(NGUI_EDITBOX*)> func) {
 		if (bodypostfix != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
-		}		
+		}
 		return addeditbox(pos, tsize, _texture_dark_grey, color_text, text, func);
 	}
 
-	NGUI_DROPDOWN_LIST*		 NGUI::adddropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement) {
+	NGUI_DROPDOWN_LIST*		 NGUI::adddropdownlist(const glm::vec4& pos, float tsize, ColorRGBA8 tcol, GLuint texture_background, GLuint texture_listbackground, std::string defaultelement) {
 		NGUI_DROPDOWN_LIST* l = getdropdownlist(pos, tsize, tcol, _texture_darker_grey, _texture_dark_grey, defaultelement);
 		_droplist.push_back(l);
 		return l;
 	}
-	NGUI_DROPDOWN_LIST*		 NGUI::adddropdownlist(glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background, std::string postfix_texture_listbackground, std::string defaultelement) {
+	NGUI_DROPDOWN_LIST*		 NGUI::adddropdownlist(const glm::vec4& pos, float tsize, ColorRGBA8 tcol, std::string postfix_texture_background, std::string postfix_texture_listbackground, std::string defaultelement) {
 		if (postfix_texture_background != "" || postfix_texture_listbackground != "") {
 			assert("LOADING THEMES NOT SUPPORTED");
 		}
 		return adddropdownlist(pos, tsize, tcol, _texture_darker_grey, _texture_dark_grey, defaultelement);
 	}
-	   	  	
+
 
 	//premades
-	void			NGUI::addPREMADEok(glm::vec4& pos, std::string text) {
+	void			NGUI::addPREMADEok(const glm::vec4& pos, std::string text) {
 		NGUI_PANEL* p = addpanel(pos, _texture_grey,_texture_red); // SECOND ONE IS NOT USED ITS THERE BECAUSE LAZINESS TO FIX IT
 		NGUI_PANEL_BUTTON* b1 = getpanelbutton("Ok", 1, glm::vec4(30, 5, 40, 20), _texture_dark_grey, ngiv::ColorRGBA8(0, 0, 0, 255), std::bind(&NGUI::default_okfunc, this, std::placeholders::_1, std::placeholders::_2));
 		p->buttons.push_back(b1);
@@ -870,7 +870,7 @@ namespace ngiv {
 		NGUI_TEXT* t1 = gettext(text, glm::vec2(50, 75), ngiv::ColorRGBA8(0, 0, 0, 255), 1, true, true);
 		p->texts.push_back(t1);
 	}
-	NGUI_PANEL*		NGUI::addPREMADEyesno(glm::vec4& pos, std::string text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
+	NGUI_PANEL*		NGUI::addPREMADEyesno(const glm::vec4& pos, std::string text, std::function<void(NGUI_PANEL_BUTTON*, NGUI_PANEL*)> func) {
 		NGUI_PANEL* p = addpanel(pos, _texture_grey,_texture_red);// SECOND ONE IS NOT USED ITS THERE BECAUSE LAZINESS TO FIX IT
 
 		if (func == nullptr) {
@@ -888,13 +888,13 @@ namespace ngiv {
 
 		return p;
 	}
-	
-	void NGUI::default_editboxfunc(NGUI_EDITBOX* e) {		
+
+	void NGUI::default_editboxfunc(NGUI_EDITBOX* e) {
 		if(_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {
 			_inputmanager->releasekey(SDL_BUTTON_LEFT);
 			e->active = true;
 		}
-		
+
 		if (e->active) {
 			_shouldcamerastop = true;
 			char in = _inputmanager->getPressedKeys();
@@ -903,12 +903,12 @@ namespace ngiv {
 			if (_inputmanager->isKeyPressed(SDLK_BACKSPACE)) {
 				if (e->text.size() > 0) {
 					e->text.pop_back();
-				}				
+				}
 			}
 
 			//its a key so add it to text
 			if(in >= 33 && in <= 126){
-				
+
 				e->text.push_back(in);
 			}
 
@@ -951,17 +951,17 @@ namespace ngiv {
 		}
 	}
 	void NGUI::default_panelfunc(NGUI_PANEL* p, NGUI_PANEL* mp) {
-		
+
 	}
 	void NGUI::default_dynamicborderfunc(NGUI_PANEL* p, NGUI_PANEL* mp) {
-	
+
 		glm::vec2 f = pixeltoratio(_inputmanager->getMouseCoord(), (int)_camera.getwh().x, (int)_camera.getwh().y);
 		static glm::vec2 lf = f;
-		
-		if (_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {			
+
+		if (_inputmanager->isKeyPressed(SDL_BUTTON_LEFT)) {
 			p->value = true;
 		}
-		if (p->value) {			
+		if (p->value) {
 			glm::vec2 fark = f - lf;
 			mp->destrect = glm::vec4(mp->destrect.x + fark.x,mp->destrect.y - fark.y, mp->destrect.z, mp->destrect.w);
 
@@ -992,7 +992,7 @@ namespace ngiv {
 			_inputmanager->releasekey(SDL_BUTTON_LEFT);
 		}
 	}
-	
+
 
 }
 

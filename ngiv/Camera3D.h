@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "InputManager.h"
@@ -21,19 +21,19 @@ namespace ngiv {
 
 
 		void do_basic_cam_movement(InputManager& i);
-		void lookat(glm::vec3 pos) { 
+		void lookat(glm::vec3 pos) {
 			_front = pos - _pos;
-			_front = glm::normalize(_front);	
+			_front = glm::normalize(_front);
 			_pitch = glm::degrees(asin(_front.y));
 			_yaw = glm::degrees(atan2(-_front.x, _front.z));
 			_yaw += 90;
 			updateMatrix();
-			needUpdate = true; 
+			needUpdate = true;
 		}
 
 
 		glm::mat4 getView() { return _view; };
-		glm::mat4 getProjection() { return _projection; };		
+		glm::mat4 getProjection() { return _projection; };
 
 		glm::vec3 getPos() { return _pos; }
 		glm::vec3 getFront() { return _front; }
@@ -41,18 +41,18 @@ namespace ngiv {
 		float getSpeed() { return _speed; }
 
 
-		void setPos(glm::vec3 pos) { _pos = pos; needUpdate = true; }		
+		void setPos(glm::vec3 pos) { _pos = pos; needUpdate = true; }
 		void setFront(glm::vec3 pos) { _front = pos; needUpdate = true; }
 		void setSpeed(float speed) { _speed = speed; }
-		
 
-		
 
-	
 
-		
+
+
+
+
 		bool needUpdate = false;
-		
+
 	private:
 		float _zNear;
 		float _zfar;

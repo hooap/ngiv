@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Screen.h"
-#include <ngiv\IScreenManager.h>
-#include <ngiv\Window.h>
+#include <ngiv/IScreenManager.h>
+#include <ngiv/Window.h>
 
 class Manager
 {

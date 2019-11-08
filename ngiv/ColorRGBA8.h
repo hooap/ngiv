@@ -1,5 +1,5 @@
 #pragma once
-#include <GLAD\glad.h>
+#include <GLAD/glad.h>
 
 namespace ngiv {
 	class ColorRGBA8{
@@ -16,7 +16,7 @@ namespace ngiv {
 			b = 0;
 			a = 0;
 		}
-		
+
 		GLubyte r;
 		GLubyte g;
 		GLubyte b;

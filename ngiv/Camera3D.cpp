@@ -1,7 +1,7 @@
 #include "Camera3D.h"
 #include "Misc.h"
-#include <SDL\SDL_keycode.h>
-#include <SDL\SDL_events.h>
+#include <SDL/SDL_keycode.h>
+#include <SDL/SDL_events.h>
 
 namespace ngiv {
 
@@ -9,7 +9,7 @@ namespace ngiv {
 	{
 		_pos = glm::vec3(0.0f, 0.0f, 0.0f);
 		_front = glm::vec3(0.0f, 0.0f, 1.0f);
-		_up = glm::vec3(0.0f, 1.0f, 0.0f);		
+		_up = glm::vec3(0.0f, 1.0f, 0.0f);
 	}
 
 
@@ -18,25 +18,25 @@ namespace ngiv {
 	}
 
 	void Camera3D::init(glm::vec3 pos, float camSpeed, float sensitivity, float fov, int width, int height, float zNear, float zFar) {
-		
+
 		_sensivity = sensitivity;
 		_fov = fov;
 		_speed = camSpeed;
 
 
-		_pos = pos;		
+		_pos = pos;
 		_width = (float)width;
 		_height = (float)height;
-		
+
 		_zNear = zNear;
 		_zfar = zFar;
 		_view = glm::lookAt(_pos, _pos + _front, _up);
 		_projection = glm::perspective(glm::radians(fov), (float)_width / (float)_height, _zNear, _zfar);
-		needUpdate = true;	
+		needUpdate = true;
 
 	}
 
-	void Camera3D::updateCam(InputManager& i) {	
+	void Camera3D::updateCam(InputManager& i) {
 
 		static bool first = true;
 		static bool second = false;
@@ -44,20 +44,20 @@ namespace ngiv {
 			first = false;
 			second = true;
 			return;
-		}	
+		}
 		if (second) {
 			second = false;
 			return;
 		}
 
-		glm::vec2 mcoord = i.getMouseCoord();	
+		glm::vec2 mcoord = i.getMouseCoord();
 		glm::vec2 offset = glm::vec2(mcoord.x - (_width / 2), (_height / 2) - mcoord.y);
-		
-			
+
+
 
 		if (!offset.x && !offset.y) {
 			return;
-		}	
+		}
 
 
 		offset.x *= _sensivity;
@@ -73,15 +73,15 @@ namespace ngiv {
 
 		glm::vec3 front;
 
-	
+
 		front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 		front.y = sin(glm::radians(_pitch));
 		front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 		_front = glm::normalize(front);
 
-		needUpdate = true;		
+		needUpdate = true;
 
-		
+
 
 	}
 
@@ -89,9 +89,9 @@ namespace ngiv {
 		if (needUpdate) {
 			_view = glm::lookAt(_pos, _pos + _front, _up);
 			_projection = glm::perspective(glm::radians(_fov), (float)_width / (float)_height, _zNear, _zfar);
-			
+
 			needUpdate = false;
-		}	
+		}
 	}
 
 	void Camera3D::do_basic_cam_movement(InputManager & i)

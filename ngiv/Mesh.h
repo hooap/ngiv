@@ -1,10 +1,10 @@
 #pragma once
 
 #include <vector>
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include "GLSLProgram.h"
-#include <assimp\Importer.hpp>
+#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <sstream>
@@ -21,7 +21,7 @@ namespace ngiv {
 	{
 		glm::vec3 Position;
 		glm::vec2 TexCoords;
-		float index;		
+		float index;
 	};
 
 
@@ -31,31 +31,31 @@ namespace ngiv {
 		std::string type;
 		aiString path;
 	};
-	
+
 	class Mesh
 	{
 	public:
 		Mesh(std::vector<Vertex3D> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
 			this->vertices = vertices;
 			this->indices = indices;
-			this->textures = textures;		
+			this->textures = textures;
 		}
 
 		Mesh() {}
 		~Mesh(){
 			dispose();
 		}
-		
+
 		void dispose() {
 
 		}
-	
+
 		void init(std::vector<Texture> textures, std::vector<unsigned int> indices, std::vector<Vertex3D> vertices) {
 			this->textures = textures;
 			this->indices = indices;
 			this->vertices = vertices;
 		}
-			
+
 		std::vector<Texture> textures;
 		std::vector<unsigned int> indices;
 		std::vector<Vertex3D> vertices;
@@ -64,7 +64,7 @@ namespace ngiv {
 		unsigned int VAO;
 		unsigned int VBO, EBO;
 
-					
+
 	};
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 namespace ngiv {
 
@@ -139,7 +139,7 @@ namespace ngiv {
 			_dynamic = dynamic;
 		}
 
-		
+
 
 		void setDynamic(bool dynamic) {
 			_dynamic = dynamic;

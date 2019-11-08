@@ -36,7 +36,7 @@ namespace ngiv {
 		std::vector<std::vector<VertexText>> _characters;
 	};
 
-	
+
 
 
 	class Renderer_Text
@@ -51,9 +51,9 @@ namespace ngiv {
 		void dispose();
 
 		void draw(std::string text,const glm::vec2& pos,const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, float max_x = 0, Justification xjust = Justification::LEFTORBOTTOM, Justification yjust = Justification::LEFTORBOTTOM);
-		
+
 		void draw(std::string text, const glm::vec2& pos, const glm::vec2& scale, ngiv::ColorRGBA8 text_color, float depth, Justification xjust = Justification::LEFTORBOTTOM, Justification yjust = Justification::LEFTORBOTTOM);
-		
+
 		void render();
 
 		glm::vec2 dojustification(glm::vec2 pos, glm::vec2 dims, float yscale, Justification xjust, Justification yjust);
@@ -68,10 +68,10 @@ namespace ngiv {
 		Camera2D* _cam;
 
 		FT_Library ft;
-		
+
 		std::vector<Text_Group> _groups;
 		std::map<GLchar, Character> Characters;
-						
+
 	};
 
 }

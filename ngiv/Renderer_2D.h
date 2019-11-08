@@ -1,6 +1,6 @@
 #pragma once
-#include <glm\glm.hpp>
-#include <GLAD\glad.h>
+#include <glm/glm.hpp>
+#include <GLAD/glad.h>
 
 #include <vector>
 
@@ -10,7 +10,7 @@
 
 namespace ngiv {
 
-	
+
 	struct Vertex2D {
 		glm::vec3 pos; //3 is z depth
 		glm::vec2 uv;

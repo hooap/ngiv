@@ -2,7 +2,7 @@
 
 #include "GLSLProgram.h"
 #include "Mesh.h"
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include "ColorRGBA8.h"
 #include "Collision_Box.h"
 
@@ -17,7 +17,7 @@ namespace ngiv {
 			dispose();
 			empty = true;
 		}
-		
+
 		bool isEmpty() { return empty; }
 
 		void dispose() {
@@ -30,15 +30,15 @@ namespace ngiv {
 				delete meshes;
 				pos = glm::vec3(0, 0, 0);
 			}
-		}		
+		}
 
 		const std::vector<Mesh>* getMeshes() { return meshes; }
 
 		glm::vec3* getRotPointer() { return &rot; }
 		glm::vec3 getRot() { return rot; }
 		glm::vec3* getPosPointer() { return &pos; }
-		glm::vec3 getPos() { return pos; }	
-		void setPos(glm::vec3 pos) { this->pos = pos; 	}		
+		glm::vec3 getPos() { return pos; }
+		void setPos(glm::vec3 pos) { this->pos = pos; 	}
 		void setCenterPos(glm::vec3 centerpos) { this->pos = centerpos - center_of_mass; }
 		void setCenterRelative(glm::vec3 centerpos) { center_of_mass = centerpos; }
 
@@ -50,7 +50,7 @@ namespace ngiv {
 		void setRot(glm::vec3 r) { rot = r; }
 
 		std::string getName() { return name; }
-		
+
 
 		Collision_Object* createCollisionObject() {
 			collision_boxes = new Collision_Object();
@@ -61,9 +61,9 @@ namespace ngiv {
 			collision_boxes = new Collision_Object();
 			collision_boxes->setExtraPos(pos);
 
-			collision_boxes->addSphere(collisionObject);	
+			collision_boxes->addSphere(collisionObject);
 			collision_boxes->setCenterofmass(center_of_mass);
-			collision_boxes->setDynamic(dynamic);			
+			collision_boxes->setDynamic(dynamic);
 			return collision_boxes;
 		}
 		Collision_Object* creatensetCollisionObject(Collision_Box collisionObject, bool dynamic) {
@@ -77,16 +77,16 @@ namespace ngiv {
 
 			return collision_boxes;
 		}
-		
+
 		Collision_Object* getCollision_Object() { return collision_boxes; }
 
 		void setCollisionObject(Collision_Object* cob) { collision_boxes = cob; }
-		
+
 		void updateObject() {
 			pos = collision_boxes->getExtraPos();
 			rot = collision_boxes->getRotation();
 		}
-		
+
 		float xdif;
 		float ydif;
 		float zdif;
@@ -102,8 +102,8 @@ namespace ngiv {
 
 		Collision_Object* collision_boxes = nullptr;
 
-		
-		
+
+
 
 		std::string name;
 		bool empty = true;
@@ -115,7 +115,7 @@ namespace ngiv {
 		std::vector<Mesh>* meshes = nullptr;
 		glm::vec3 scale;
 	};
-	
-	
+
+
 
 }

@@ -1,8 +1,15 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <string.h>
 #include <fstream>
+
+
+#ifdef _WIN32
 #include <filesystem>
+#endif // _WIN32
+#include <experimental/filesystem>
+
 
 #include <iostream>
 
@@ -20,11 +27,11 @@ namespace ngiv {
 		std::string path;
 		bool isDirectory;
 	};
-	
+
 	namespace fs = std::experimental::filesystem;
-	
+
 	//namespace fs = std::tr2::sys;
-	
+
 	inline bool filetobuffer(const std::string& filepath, std::vector<unsigned char>& buffer)
 	{
 		std::ifstream file(filepath, std::ios::binary);
@@ -78,7 +85,7 @@ namespace ngiv {
 		f.open(filename, std::ios_base::binary);
 		if (f.fail()) {
 			perror(filename);
-			
+
 		}
 
 		f.seekg(0, f.end);
@@ -114,7 +121,7 @@ namespace ngiv {
 			return file;
 		}
 
-		
+
 
 		while (std::getline(f, line)) {
 			file->push_back(line + "\n");
@@ -170,7 +177,7 @@ namespace ngiv {
 		f.open(filename, std::ios_base::binary);
 		if (f.fail()) {
 			perror(filename);
-			
+
 		}
 
 
@@ -193,11 +200,11 @@ namespace ngiv {
 		f.open(filename, std::ios_base::binary);
 		if (f.fail()) {
 			perror(filename);
-			
+
 		}
 
 		for (size_t i = 0; i < fileindex->size(); i++) {
-			f << (*fileindex)[i];			
+			f << (*fileindex)[i];
 		}
 
 		f.close();
@@ -207,7 +214,7 @@ namespace ngiv {
 		f.open(filename, std::ios_base::binary);
 		if (f.fail()) {
 			perror(filename);
-			
+
 		}
 		if (fileindex == NULL) {
 			f << "";
@@ -221,7 +228,7 @@ namespace ngiv {
 			}
 		}
 
-		
+
 
 
 
@@ -237,7 +244,7 @@ namespace ngiv {
 		else {
 			f.open(filename, std::ios_base::binary);
 		}
-		
+
 		if (f.fail()) {
 			perror(filename);
 		}
@@ -248,8 +255,8 @@ namespace ngiv {
 
 		return;
 	}
-	
-		
+
+
 	/*
 		inline bool getDirectoryEntries(const char* path, std::vector<DirEntry>& rvEntries) {
 			auto dpath = fs::path(path);
@@ -283,11 +290,11 @@ namespace ngiv {
 			fs::copy(fs::path(npath), fs::path(ntopath),a);
 			if (a.value() != 0) {
 				return 0;
-			} 
+			}
 			return 1;
 		}
 		inline bool copyall(std::string npath, std::string ntopath) {
-			
+
 			std::vector<DirEntry> dirs;
 			getDirectoryEntries(npath.c_str(), dirs);
 			if (!copy(npath, ntopath)) return 0;
@@ -306,7 +313,7 @@ namespace ngiv {
 				}
 			}
 			return 1;
-			
+
 		}
 		*/
 

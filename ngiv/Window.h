@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL/SDL.h>
 #include <string>
-#include <GLAD\glad.h>
+#include <GLAD/glad.h>
 
 
 namespace ngiv {
@@ -17,20 +17,20 @@ namespace ngiv {
 	SDL_WINDOW_RESIZABLE; = 32
 	SDL_WINDOW_FULLSCREEN_DESKTOP = 4097
 	*/
-	
+
 	enum class Window_State{FocusOn,FocusOff};
-	
-	class Window 
+
+	class Window
 	{
 	public:
 		enum class WindowType {FULLSCREEN,WINDOWED};
 
 		Window();
 		~Window();
-		
+
 		bool create(const std::string tabname, int& width, int& height, Uint32 comingflags , bool is_vsync_on);
 		void dispose();
-				
+
 		void setFullscreen();
 		void setWindowed();
 

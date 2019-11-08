@@ -1,6 +1,6 @@
 #pragma once
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace ngiv {
 
@@ -32,12 +32,12 @@ namespace ngiv {
 			need = true;
 		}
 
-	private:		
+	private:
 		int _screenwidth, _screenheight;
 		float _scale;
 		bool need = true;
 		glm::mat4 _orthomatrix;
-		glm::mat4 _cameramatrix;		
+		glm::mat4 _cameramatrix;
 		glm::vec2 _position;
 	};
 
