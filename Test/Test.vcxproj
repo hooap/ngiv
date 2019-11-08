@@ -69,20 +69,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>D:\Visual Studio Projects\_deps\lib\Debug;D:\Visual Studio Projects\NGIV\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Visual Studio Projects\_deps\include\;D:\Visual Studio Projects\NGIV;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/../_deps/lib/Debug;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>D:\Visual Studio Projects\_deps\lib\Release;D:\Visual Studio Projects\NGIV\Release;$(LibraryPath)</LibraryPath>
-    <IncludePath>D:\Visual Studio Projects\_deps\include;D:\Visual Studio Projects\NGIV;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/../_deps/lib/Release;$(SolutionDir)/Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\Visual Studio Projects\_deps\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Visual Studio Projects\_deps\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/../_deps/lib/Release;$(SolutionDir)/Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Visual Studio Projects\_deps\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Visual Studio Projects\_deps\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/../_deps/lib/Debug;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,6 +104,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2d.lib;SDL2_mixer.lib;assimp.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,7 +120,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2.lib;SDL2main.lib;SDL2_mixer.lib;assimp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2.lib;SDL2_mixer.lib;assimp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,6 +134,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2.lib;SDL2_mixer.lib;assimp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

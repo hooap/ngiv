@@ -21,7 +21,7 @@ private:
 private:
 	int width = 1024;
 	int height = 768;
-	bool fullscreen = true;
+	bool fullscreen = false;
 	bool _vsync = false;
 };
 

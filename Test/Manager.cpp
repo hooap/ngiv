@@ -17,10 +17,8 @@ void Manager::init() {
 	ngiv::init(true);
 
 	Uint32 flags = 6;
-	if (fullscreen == 1) {
-		flags += 1;
-	}
-	else if (fullscreen == 2) {
+	
+	if (fullscreen) {
 		flags += 4097;
 	}
 	_window.create("Tech Demo", width, height, flags, _vsync);
