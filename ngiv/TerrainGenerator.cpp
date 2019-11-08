@@ -114,7 +114,7 @@ namespace ngiv {
 		int height = _maxDistance;
 		if (octaves == 0) {
 			// we want most octaves
-			octaves = log2(width);
+			octaves = log2((double)width);
 		}
 
 		std::vector<std::vector<float>>* noise = ngiv::Noise::get2DNoise(_seed, width, height, 2.0f, octaves);

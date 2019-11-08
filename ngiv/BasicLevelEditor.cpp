@@ -1,6 +1,5 @@
 #include "BasicLevelEditor.h"
 #include "TextureLoader.h"
-#include "Misc.h"
 #include "IOManager.h"
 
 namespace ngiv {

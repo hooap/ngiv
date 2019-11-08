@@ -16,15 +16,6 @@
 
 namespace ngiv {
 
-    #if defined(_MSC_VER)
-    #define ALIGNED_(x) __declspec(align(x))
-    #else
-    #if defined(__GNUC__)
-    #define ALIGNED_(x) __attribute__ ((aligned(x)))
-    #endif
-    #endif
-
-    #define ALIGNED_TYPE_(t,x) typedef t ALIGNED_(x)
 
 
 	static glm::vec4 ratiotopixel(const glm::vec4& p, int w, int h) {
@@ -83,7 +74,7 @@ namespace ngiv {
 	}
 
 
-	struct NGUI_ELEMENT_BASE {
+	ALIGNED_(16) struct NGUI_ELEMENT_BASE {
 		void* operator new(size_t i)
 		{
 			return _mm_malloc(i, 16);

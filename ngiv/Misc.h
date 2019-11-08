@@ -44,6 +44,18 @@ inline char _getch(void)
 
 namespace ngiv {
 
+
+#if defined(_MSC_VER)
+#define ALIGNED_(x) __declspec(align(x))
+#else
+#if defined(__GNUC__)
+#define ALIGNED_(x) __attribute__ ((aligned(x)))
+#endif
+#endif
+
+#define ALIGNED_TYPE_(t,x) typedef t ALIGNED_(x)
+
+
 	inline void stop() {
         _getch();
 

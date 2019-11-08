@@ -51,7 +51,7 @@ OBJ* ModelLoader::loadModel(std::string name, glm::vec3 pos, std::string path, b
         error("ERROR::ASSIMP::" + m, false);
         return nullptr;
     }
-    model->directory = path.substr(0, path.find_last_of('//'));
+    model->directory = path.substr(0, path.find_last_of('/'));
     if (path == model->directory)
     {
         model->directory = path.substr(0, path.find_last_of('\\'));

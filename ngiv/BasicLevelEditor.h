@@ -5,6 +5,7 @@
 #include "Camera3D.h"
 #include "Renderer_3D.h"
 #include "GameContainer.h"
+#include "Misc.h"
 
 namespace ngiv
 {
