@@ -70,19 +70,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/include/_deps/lib/Debug;$(LibraryPath)</LibraryPath>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/include/_deps/lib/Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/include/_deps/lib/Debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/include/_deps/lib/Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,7 +141,7 @@
     <ClCompile Include="BasicLevelEditor.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="glad.cpp" />
     <ClCompile Include="GLSLProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="IScreen.cpp" />

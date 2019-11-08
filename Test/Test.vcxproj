@@ -69,20 +69,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(SolutionDir)/../_deps/lib/Debug;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)../_deps/lib/$(Configuration);$(SolutionDir)$(Configuration)/$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(SolutionDir)/../_deps/lib/Release;$(SolutionDir)/Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)../_deps/lib/$(Configuration);$(SolutionDir)$(Configuration)/$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/lib/Release;$(SolutionDir)/Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)../_deps/lib/$(Configuration);$(SolutionDir)$(Configuration)/$(Platform);$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)/../_deps/include;$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/../_deps/lib/Debug;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)../_deps/lib/$(Configuration);$(SolutionDir)$(Configuration)/$(Platform);$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(SolutionDir).objs/$(ProjectName)/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,6 +114,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2d.lib;SDL2_mixer.lib;assimp.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,6 +130,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2.lib;SDL2_mixer.lib;assimp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,6 +145,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>ngiv.lib;opengl32.lib;SDL2.lib;SDL2_mixer.lib;assimp.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
