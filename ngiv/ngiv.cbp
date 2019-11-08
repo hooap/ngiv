@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ngiv" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug x64">
+				<Option output="../Debug/ngiv" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option deps_output="../Debug/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-Wall" />
+					<Add directory="D:/Visual Studio Projects/_deps/include/" />
+					<Add directory="$(IncludePath)/" />
+				</Compiler>
+			</Target>
+			<Target title="Release x64">
+				<Option output="../Release/ngiv" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release/" />
+				<Option deps_output="../Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O1" />
+					<Add option="-Wall" />
+					<Add directory="D:/Visual Studio Projects/_deps/include/" />
+					<Add directory="$(IncludePath)/" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="winmm.lib" />
+					<Add library="comctl32.lib" />
+					<Add library="kernel32.lib" />
+					<Add library="user32.lib" />
+					<Add library="gdi32.lib" />
+					<Add library="winspool.lib" />
+					<Add library="comdlg32.lib" />
+					<Add library="advapi32.lib" />
+					<Add library="shell32.lib" />
+					<Add library="ole32.lib" />
+					<Add library="oleaut32.lib" />
+					<Add library="uuid.lib" />
+					<Add library="odbc32.lib" />
+					<Add library="odbccp32.lib" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="../Release/ngiv" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Release/" />
+				<Option deps_output="../Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O1" />
+					<Add option="-Wall" />
+					<Add directory="D:/Visual Studio Projects/_deps/include/" />
+					<Add directory="$(IncludePath)/" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="winmm.lib" />
+					<Add library="comctl32.lib" />
+					<Add library="kernel32.lib" />
+					<Add library="user32.lib" />
+					<Add library="gdi32.lib" />
+					<Add library="winspool.lib" />
+					<Add library="comdlg32.lib" />
+					<Add library="advapi32.lib" />
+					<Add library="shell32.lib" />
+					<Add library="ole32.lib" />
+					<Add library="oleaut32.lib" />
+					<Add library="uuid.lib" />
+					<Add library="odbc32.lib" />
+					<Add library="odbccp32.lib" />
+					<Add directory="D:/Visual Studio Projects/_deps/lib/Release/" />
+					<Add directory="$(LibraryPath)/" />
+				</Linker>
+			</Target>
+			<Target title="Debug Win32">
+				<Option output="../Debug/ngiv" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Debug/" />
+				<Option deps_output="../Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add directory="D:/Visual Studio Projects/_deps/include/" />
+					<Add directory="$(IncludePath)/" />
+					<Add directory="../../depend/include" />
+				</Compiler>
+				<Linker>
+					<Add directory="D:/Visual Studio Projects/_deps/lib/Debug/" />
+					<Add directory="$(LibraryPath)/" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="../../depend/include" />
+		</Compiler>
+		<Unit filename="BasicLevelEditor.cpp" />
+		<Unit filename="BasicLevelEditor.h" />
+		<Unit filename="Camera2D.cpp" />
+		<Unit filename="Camera2D.h" />
+		<Unit filename="Camera3D.cpp" />
+		<Unit filename="Camera3D.h" />
+		<Unit filename="Collision_Box.h" />
+		<Unit filename="ColorRGBA8.h" />
+		<Unit filename="GLSLProgram.cpp" />
+		<Unit filename="GLSLProgram.h" />
+		<Unit filename="GameContainer.h" />
+		<Unit filename="IOManager.h" />
+		<Unit filename="IScreen.cpp" />
+		<Unit filename="IScreen.h" />
+		<Unit filename="IScreenManager.h" />
+		<Unit filename="InputManager.cpp" />
+		<Unit filename="InputManager.h" />
+		<Unit filename="Mesh.h" />
+		<Unit filename="Misc.h" />
+		<Unit filename="ModelLoader.cpp" />
+		<Unit filename="ModelLoader.h" />
+		<Unit filename="NGIV.h" />
+		<Unit filename="NGUI.cpp" />
+		<Unit filename="NGUI.h" />
+		<Unit filename="Noise.cpp" />
+		<Unit filename="Noise.h" />
+		<Unit filename="OBJ.h" />
+		<Unit filename="PhysicsWorld.cpp" />
+		<Unit filename="PhysicsWorld.h" />
+		<Unit filename="Renderer_2D.cpp" />
+		<Unit filename="Renderer_2D.h" />
+		<Unit filename="Renderer_3D.cpp" />
+		<Unit filename="Renderer_3D.h" />
+		<Unit filename="Renderer_Text.cpp" />
+		<Unit filename="Renderer_Text.h" />
+		<Unit filename="TerrainGenerator.cpp" />
+		<Unit filename="TerrainGenerator.h" />
+		<Unit filename="TextureLoader.cpp" />
+		<Unit filename="TextureLoader.h" />
+		<Unit filename="Window.cpp" />
+		<Unit filename="Window.h" />
+		<Unit filename="glad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="stb_image.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

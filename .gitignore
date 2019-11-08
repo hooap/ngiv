@@ -25,7 +25,8 @@ Test/Debug/
 Test/Release/
 ngiv/Debug/
 ngiv/Release/
-
+Test/.objs/
+ngiv/.objs/
 
 # Visual Studio 2015 cache/options directory
 .vs/
