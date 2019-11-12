@@ -17,14 +17,14 @@ Screen::~Screen()
 void Screen::init()
 {
 
-	_cam3d.init(glm::vec3(13.0f, 13.0f, -5.0f), 0.4f, 0.2f, 60.0f, _width, _height,0.1f ,400.0f);
+	_cam3d.init(glm::vec3(13.0f, 13.0f, -5.0f), 0.4f, 0.2f, 60.0f, _width, _height,0.1f ,2000.0f);
 	_cam3d.lookat(glm::vec3(5.0f, 0.0f, 0.0f));
 
 	_3drenderer.init(&_cam3d, _width, _height);
 	_3drenderer.loadSkybox("001");
 
 
-	
+
 
 	_world.init(0.001f);
 
@@ -54,10 +54,13 @@ void Screen::init()
 //	_container.addObj(sphere2);
 
 
-	_terrain.init((int)time(NULL),200.0f, 2.0f,512);
-	//_terrain.init(1234125, 10.0f, 32);
+	//_terrain.init((int)time(NULL),200.0f, 8.0f,512);
+	_terrain.init(1234125,32.0f, 1.0f, 64, glm::vec3(0));
 	_terrain.create();
 
+
+    _terrain2.init(1234125,32.0f, 1.0f, 32, glm::vec3(0,-25,0));
+    _terrain2.create();
 
 	//draw
 //	_container.drawall(_3drenderer,true);
@@ -66,6 +69,7 @@ void Screen::init()
 //	_3drenderer.redraw_static();
 
 	_terrain.set_draw(&_3drenderer);
+	_terrain2.set_draw(&_3drenderer);
 
 }
 

@@ -12,7 +12,7 @@ public:
     TerrainGenerator();
     ~TerrainGenerator();
 
-    void init(int seed, float multiplier, float meshsizeMultiplier, int maxDistance);
+    void init(int seed, float multiplier, float meshsizeMultiplier, int maxDistance,const glm::vec3& pos_offset);
     void create(int octaves = 0);
 
     void updateDrawPoss();
@@ -24,6 +24,7 @@ public:
     //std::vector<Mesh*> getMeshes() { return meshpointers; }
 
 private:
+    glm::vec3 _pos;
 
     void createmainmesh();
     void createMeshPositionWithHeight(int x, int z, glm::vec4 heights);
