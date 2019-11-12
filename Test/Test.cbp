@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug x64">
 				<Option output="../Debug/Test" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug/" />
+				<Option object_output="../.objs/Test/Debug/x64/" />
 				<Option deps_output="../Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -28,7 +28,7 @@
 			</Target>
 			<Target title="Release x64">
 				<Option output="../Release/Test" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Release/" />
+				<Option object_output="../.objs/Test/Release/x64/" />
 				<Option deps_output="../Release/" />
 				<Option external_deps=";" />
 				<Option type="1" />
@@ -49,7 +49,7 @@
 			</Target>
 			<Target title="Release Win32">
 				<Option output="../Release/Test" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Release/" />
+				<Option object_output="../.objs/Test/Release/x32/" />
 				<Option deps_output="../Release/" />
 				<Option external_deps="../Release/libngiv.a;" />
 				<Option type="1" />
@@ -70,7 +70,7 @@
 			</Target>
 			<Target title="Debug Win32">
 				<Option output="../Debug/Test" prefix_auto="1" extension_auto="1" />
-				<Option object_output="Debug/" />
+				<Option object_output="../.objs/Test/Debug/x32/" />
 				<Option deps_output="../Debug/" />
 				<Option external_deps="../Debug/libngiv.a;" />
 				<Option type="1" />
