@@ -92,14 +92,32 @@ void Screen::onExit()
 
 void Screen::checkInput() {
 
-	if (_inputmanager.isKeyDown(SDLK_LSHIFT)) {
+	if (_inputmanager.isKeyPressed(SDLK_LSHIFT)) {
 		_cam3d.setSpeed(_cam3d.getSpeed() + 0.1f);
 	}
-	if (_inputmanager.isKeyDown(SDLK_LCTRL)) {
+	if (_inputmanager.isKeyPressed(SDLK_LCTRL)) {
 		_cam3d.setSpeed(_cam3d.getSpeed() - 0.1f);
 	}
 
+
+	if (_inputmanager.isKeyPressed(SDLK_KP_MULTIPLY)) {
+		grav = !grav;
+	}
+
+	if (_inputmanager.isKeyPressed(SDLK_KP_PLUS)) {
+		save();
+	}
+	if (_inputmanager.isKeyPressed(SDLK_KP_MINUS)) {
+		load();
+	}
+	if (_inputmanager.isKeyPressed(SDLK_F6)) {
+		setSwitchScreen("leveleditor");
+	}
+
 	return;
+
+
+
 	// DEBUG BALL MOVEMENT
 	ngiv::Collision_Object* b1 = _container.getObjbyName("sphere1")->getCollision_Object();
 	ngiv::Collision_Object* b2 = _container.getObjbyName("sphere2")->getCollision_Object();
@@ -143,25 +161,10 @@ void Screen::checkInput() {
 	if (_inputmanager.isKeyDown(SDLK_n)) {
 		b2->addVelocity(glm::vec3(0, 0, -power));
 	}
-	if (_inputmanager.isKeyDown(SDLK_o)) {
-
-	}
+	
 
 
-
-	if (_inputmanager.isKeyPressed(SDLK_KP_MULTIPLY)) {
-		grav = !grav;
-	}
-
-	if (_inputmanager.isKeyPressed(SDLK_KP_PLUS)) {
-		save();
-	}
-	if (_inputmanager.isKeyPressed(SDLK_KP_MINUS)) {
-		load();
-	}
-	if (_inputmanager.isKeyPressed(SDLK_F6)) {
-		setSwitchScreen("leveleditor");
-	}
+	
 
 }
 

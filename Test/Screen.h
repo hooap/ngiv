@@ -31,12 +31,14 @@ private:
 
 
 	void save() {
-		_container.savetofile("savefile.txt");
+		ngiv::o("log: save");
+		_container.savetofile(_savepath + "savefile.txt");
 	}
 	void load() {
+		ngiv::o("log: load");
 		_container.clear_delete();
 		_world.clear();
-		_container.loadfromfile("savefile.txt");
+		_container.loadfromfile(_savepath + "savefile.txt");
 		_container.addalltoWorld(_world);
 	}
 
@@ -50,6 +52,8 @@ private:
 //	ngiv::OBJ* nanosuit;
 //	ngiv::OBJ* box;
 
+	std::string _savefilename = "savefile.txt";
+	std::string _savepath = "Saves/";
 
 	ngiv::Renderer_3D _3drenderer;
 	ngiv::PhysicsWorld _world;

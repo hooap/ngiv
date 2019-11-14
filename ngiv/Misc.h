@@ -61,7 +61,7 @@ namespace ngiv {
 
 	}
 	inline void o(std::string t) {
-		std::cout << t.c_str();
+		std::cout << t.c_str() << "\n";
 	}
 	inline void o(glm::vec4 p) {
 		std::cout << "|" << p.x << "|" << p.y << "|" << p.z << "|" << p.w <<  "|\n";
