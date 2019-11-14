@@ -6,7 +6,7 @@
 #include <vector>
 #include "Collision_Box.h"
 
-namespace ngiv {	
+namespace ngiv {
 
 	struct Instance_Offset_Data {
 		glm::vec4 y4offset;
@@ -29,16 +29,17 @@ namespace ngiv {
 
 		void draw(OBJ* m);
 		int addtolist_draw(OBJ* m, bool isstatic);
-		
+
 
 		void drawCollisionBox(Collision_Object* sp);
 		int addtolist_drawCollisionBox(Collision_Object* sp);
 
-		
+
 	//	void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<glm::vec3>& posoffsets,glm::vec3 scale = glm::vec3(1));
 
 
-		int addtolist_drawMeshInstanced(const Mesh_I& meshes, const std::vector<Instance_Offset_Data>& posoffsets);
+		int addtolist_drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
+		void drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
 
 
 
@@ -56,13 +57,13 @@ namespace ngiv {
 		void renderStrips(GLSLProgram& glsl);
 
 		void dispose();
-		GLuint VAO, VBO, EBO;	
+		GLuint VAO, VBO, EBO;
 		GLuint VBO_INS_I;
 		GLuint VBO_INS_D;
 
 		std::vector<glm::vec3> lightpositions;
 		std::vector<glm::vec3> lightcolors;
-		
+
 		unsigned int gBuffer;
 		unsigned int gPosition, gNormal, gAlbedoSpec;
 		unsigned int rboDepth;
@@ -77,7 +78,7 @@ namespace ngiv {
 		std::vector<Mesh> _meshes_static_data;
 		std::vector<glm::mat4> _meshes_static_model;
 		std::vector<unsigned int> _meshes_static_index;
-		
+
 		std::vector<Mesh> _meshes_dynamic_data;
 		std::vector<glm::mat4> _meshes_dynamic_model;
 		std::vector<unsigned int> _meshes_dynamic_index;
@@ -85,6 +86,11 @@ namespace ngiv {
 		//static instanced
 		std::vector<Mesh_I> _static_meshes_instanced_data;
 		std::vector<std::vector<Instance_Offset_Data>> _static_meshes_instanced_offsetpos;
+
+		//dynamic instanced
+        std::vector<Mesh_I> _dynamic_meshes_instanced_data;
+		std::vector<std::vector<Instance_Offset_Data>> _dynamic_meshes_instanced_offsetpos;
+
 
 
 		std::vector<Mesh> _mesh_strip;
@@ -101,7 +107,7 @@ namespace ngiv {
 		GLSLProgram _shading_glsl;
 		GLSLProgram _lightbox_glsl;
 		GLSLProgram _skybox_glsl;
-		
+
 		unsigned int _skyboxtexture = 0;
 
 		bool flighton = false;

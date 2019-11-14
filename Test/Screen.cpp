@@ -55,22 +55,15 @@ void Screen::init()
 
 
 	//_terrain.init((int)time(NULL),200.0f, 8.0f,512);
-	_terrain.init(1234125,32.0f, 1.0f, 64, glm::vec3(0));
-	_terrain.create();
+	_terrain.init(1234125,32.0f, 1.0f, 32, glm::vec3(0));
 
 
-    _terrain2.init(1234125,32.0f, 1.0f, 32, glm::vec3(0,-25,0));
-    _terrain2.create();
 
 	//draw
 //	_container.drawall(_3drenderer,true);
 //	_container.drawallcollision(_3drenderer);
 //	_terrain.draw(&_3drenderer);
 //	_3drenderer.redraw_static();
-
-	_terrain.set_draw(&_3drenderer);
-	_terrain2.set_draw(&_3drenderer);
-
 }
 
 
@@ -115,9 +108,6 @@ void Screen::checkInput() {
 	}
 
 	return;
-
-
-
 	// DEBUG BALL MOVEMENT
 	ngiv::Collision_Object* b1 = _container.getObjbyName("sphere1")->getCollision_Object();
 	ngiv::Collision_Object* b2 = _container.getObjbyName("sphere2")->getCollision_Object();
@@ -161,10 +151,12 @@ void Screen::checkInput() {
 	if (_inputmanager.isKeyDown(SDLK_n)) {
 		b2->addVelocity(glm::vec3(0, 0, -power));
 	}
-	
+	if (_inputmanager.isKeyDown(SDLK_o)) {
+
+	}
 
 
-	
+
 
 }
 
@@ -219,11 +211,13 @@ bool Screen::update(float deltatime)
 void Screen::draw()
 {
 
+    _terrain.draw(&_3drenderer,6,_cam3d.getPos());
 	_gui.draw();
 }
 
 void Screen::render()
 {
+
 	_3drenderer.render();
 
 	_gui.render();

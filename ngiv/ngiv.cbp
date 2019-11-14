@@ -91,6 +91,8 @@
 		<Unit filename="Camera3D.h" />
 		<Unit filename="Collision_Box.h" />
 		<Unit filename="ColorRGBA8.h" />
+		<Unit filename="FastNoise.cpp" />
+		<Unit filename="FastNoise.h" />
 		<Unit filename="GLSLProgram.cpp" />
 		<Unit filename="GLSLProgram.h" />
 		<Unit filename="GameContainer.h" />

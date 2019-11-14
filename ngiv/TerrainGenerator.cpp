@@ -1,16 +1,10 @@
 #include "TerrainGenerator.h"
 #include <random>
-#include "Noise.h"
 #include "TextureLoader.h"
 
 namespace ngiv {
 
-	/*
-		fvert.TexCoords = glm::vec2(0.0f);
-		svert.TexCoords = glm::vec2(1.0f,0.0f);
-		tvert.TexCoords = glm::vec2(1.0f);
-		ffvert.TexCoords = glm::vec2(0.0f, 1.0f);
-		*/
+
 
 	TerrainGenerator::TerrainGenerator()
 	{
@@ -19,6 +13,22 @@ namespace ngiv {
 	TerrainGenerator::~TerrainGenerator()
 	{
 	}
+
+    void TerrainGenerator::init(int seed, float multiplier, float meshsizeMultiplier,int chunksize,const glm::vec3& pos_offset) {
+		_seed = seed;
+		_multiplier = multiplier;
+		this->meshsizeMultiplier = meshsizeMultiplier;
+		createmainmesh();
+        _pos = pos_offset;
+        _viewPos = glm::vec2(0);
+
+        _chunksize = chunksize;
+        _noise.SetNoiseType(FastNoise::Perlin);
+        _noise.SetFrequency(0.05);
+    //    _noise.SetFractalOctaves(8);
+	}
+
+
 
 	void TerrainGenerator::createmainmesh() {
 
@@ -77,17 +87,7 @@ namespace ngiv {
 
 
 		Mesh_I newmesh(vertics, indics, textures);
-		mesh = newmesh;
-	}
-
-	void TerrainGenerator::init(int seed, float multiplier, float meshsizeMultiplier,int maxDistance,const glm::vec3& pos_offset) {
-		_maxDistance = maxDistance;
-		_seed = seed;
-		_multiplier = multiplier;
-		this->meshsizeMultiplier = meshsizeMultiplier;
-		createmainmesh();
-        _pos = pos_offset;
-
+		_mainmesh = newmesh;
 	}
 
 
@@ -109,7 +109,68 @@ namespace ngiv {
 		offsetpos.push_back(offset);
 	}
 
-	void TerrainGenerator::create(int octaves) {
+
+
+
+	void TerrainGenerator::draw(Renderer_3D* rend,int viewDistance, glm::vec3 camPos) {
+        //check if render modification is needed
+        glm::vec2 coord = getChunkCoord(camPos);
+
+
+        if(coord != _viewPos || first_loop){
+            _viewPos = coord;
+            create(viewDistance);
+            first_loop = false;
+        }
+
+        rend->drawMeshInstanced(_mainmesh,offsetpos);
+	}
+
+
+    glm::vec2 TerrainGenerator::getChunkCoord(glm::vec3 pos){
+        int x = pos.x;
+        int y = pos.z;
+
+
+        return glm::vec2(x / _chunksize,y / _chunksize);
+    }
+
+    void TerrainGenerator::create(int viewDistance) {
+
+        int x = _viewPos.x;
+        int y = _viewPos.y;
+        int min_x = (x - viewDistance) * _chunksize;
+        int min_y = (y - viewDistance) * _chunksize;
+
+        int max_x = (x + viewDistance) * _chunksize;
+        int max_y = (y + viewDistance) * _chunksize;
+
+        //TODO:
+        // ADD SOME SORT OF CACHING
+        offsetpos.clear();
+
+		for (int i = min_x; i < max_x-1; i++) {
+			for (int j = min_y; j < max_y-1; j++) {
+                    createMeshPositionWithHeight(i,j,glm::vec4(_noise.GetNoise(i,j), _noise.GetNoise(i+1,j), _noise.GetNoise(i+1,j+1), _noise.GetNoise(i,j+1)));
+			}
+		}
+
+	}
+
+
+
+}
+
+/*
+LEGACY
+//#include "Noise.h"
+
+
+		fvert.TexCoords = glm::vec2(0.0f);
+		svert.TexCoords = glm::vec2(1.0f,0.0f);
+		tvert.TexCoords = glm::vec2(1.0f);
+		ffvert.TexCoords = glm::vec2(0.0f, 1.0f);
+
 
 		int width = _maxDistance;
 		int height = _maxDistance;
@@ -118,30 +179,10 @@ namespace ngiv {
 			octaves = log2((double)width);
 		}
 
+
 		std::vector<std::vector<float>>* noise = ngiv::Noise::get2DNoise(_seed, width, height, 2.0f, octaves);
-
-
-		for (int i = 0; i < width-1; i++) {
-			for (int j = 0; j < height-1; j++) {
 				createMeshPositionWithHeight(i,j,glm::vec4((*noise)[i][j], (*noise)[i + 1][j], (*noise)[i+1][j+1], (*noise)[i][j+1]));
-			}
-		}
 
-	}
-
-	void TerrainGenerator::updateDrawPoss() {
-		throw "update draw poss not implemented";
-	}
-
-	void TerrainGenerator::set_draw(Renderer_3D* rend) {
-		rend->addtolist_drawMeshInstanced(mesh,offsetpos);
-	}
+*/
 
 
-	void TerrainGenerator::update() {
-
-
-	}
-
-
-}
