@@ -667,6 +667,13 @@ namespace ngiv {
 		return -1;
 	}
 
+    void Renderer_3D::drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets){
+
+        _dynamic_meshes_instanced_data.push_back(mesh);
+        _dynamic_meshes_instanced_offsetpos.push_back(posoffsets);
+        return;
+    }
+
 
 
 	void Renderer_3D::drawCollisionBox(Collision_Object* sp) {
@@ -1020,6 +1027,89 @@ namespace ngiv {
 
 
 		}
+
+
+        for (int i = 0; i < _dynamic_meshes_instanced_data.size(); i++) {
+
+			Mesh_I* m = &_dynamic_meshes_instanced_data[i];
+
+			int size = _dynamic_meshes_instanced_offsetpos[i].size();
+
+			std::vector<Vertex3D_Instanced> vertics = _dynamic_meshes_instanced_data[i].vertices;
+			std::vector<unsigned int> indics = _dynamic_meshes_instanced_data[i].indices;
+
+
+			glBindVertexArray(VAO);
+			glEnable(GL_DEPTH_TEST);
+
+			//upload VBO
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
+
+
+
+
+			//create the buffer;
+			std::vector<Instance_Offset_Data>* data = &_dynamic_meshes_instanced_offsetpos[i];
+
+
+
+			glBufferData(GL_ARRAY_BUFFER, vertics.size() * sizeof(Vertex3D_Instanced), vertics.data(), GL_DYNAMIC_DRAW);
+
+
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_I);
+
+			glBufferData(GL_ARRAY_BUFFER, data->size() * sizeof(Instance_Offset_Data), data->data(), GL_DYNAMIC_DRAW);
+
+
+
+
+
+			//upload EBO
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indics.size() * sizeof(unsigned int), indics.data(), GL_DYNAMIC_DRAW);
+
+			glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
+			glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
+
+
+
+			//prepare data
+
+
+			int difn = 1;
+			int specn = 1;
+			int texturecounter = 0;
+			for (int x = 0; x < m->textures.size(); x++) {
+				glActiveTexture(GL_TEXTURE0 + texturecounter);
+
+				std::string name = m->textures[x].type;
+				std::string number;
+
+				if (name == "texture_diffuse") {
+					number = std::to_string(difn++);
+				}
+				else if (name == "texture_specular") {
+					number = std::to_string(specn++);
+				}
+				else {
+					ngiv::o("unknown texture");
+				}
+
+				glsl.setInt(name, texturecounter++);
+				glBindTexture(GL_TEXTURE_2D, m->textures[x].id);
+			}
+
+
+
+			glm::mat4 model = glm::mat4();
+			glUniformMatrix4fv(glsl.getUniformLocation("model"), 1, GL_FALSE, &(model[0][0]));
+		 	glDrawElementsInstanced(GL_TRIANGLES, indics.size(), GL_UNSIGNED_INT, NULL, size);
+
+
+		}
+
+        _dynamic_meshes_instanced_data.clear();
+        _dynamic_meshes_instanced_offsetpos.clear();
 
 
 

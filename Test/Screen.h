@@ -54,8 +54,6 @@ private:
 	ngiv::Renderer_3D _3drenderer;
 	ngiv::PhysicsWorld _world;
 	ngiv::TerrainGenerator _terrain;
-	ngiv::TerrainGenerator _terrain2;
-
 
 	ngiv::NGUI_TEXT* text;
 

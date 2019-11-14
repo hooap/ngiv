@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="ngiv workspace">
-		<Project filename="../Projects/ngiv/Test/Test.cbp">
-			<Depends filename="../Projects/ngiv/ngiv/ngiv.cbp" />
+		<Project filename="ngiv/ngiv.cbp" />
+		<Project filename="Test/Test.cbp">
+			<Depends filename="ngiv/ngiv.cbp" />
 		</Project>
-		<Project filename="../Projects/ngiv/ngiv/ngiv.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
