@@ -13,6 +13,14 @@ namespace ngiv {
 		glm::vec2 xzoffset;
 	};
 
+	struct _OBJDATA {
+        unsigned int mesh_size;
+        unsigned int index_i;
+        unsigned int index_loc_i;
+        unsigned int index_start_loc;
+        unsigned int index_end_loc;
+	};
+
 
 
 	class Renderer_3D
@@ -24,29 +32,25 @@ namespace ngiv {
 		void init(Camera3D* cam, int width, int height, GLSLProgram* glsl = nullptr);
 		void loadSkybox(std::string path, std::vector<std::string> facenames = std::vector<std::string>());
 
-		void redraw_static();
+
+		void redraw(OBJ* m, int id);
+		int addtodraw(OBJ* m);
 
 
-		void draw(OBJ* m);
-		int addtolist_draw(OBJ* m, bool isstatic);
+
+		void redrawCollisionBox(int id,Collision_Object* sp);
+		int addtodrawCollisionBox(Collision_Object* sp);
 
 
-		void drawCollisionBox(Collision_Object* sp);
-		int addtolist_drawCollisionBox(Collision_Object* sp);
-
-
-	//	void drawMultipleMesh(const std::vector<std::vector<Mesh>>& meshes, const std::vector<glm::vec3>& posoffsets,glm::vec3 scale = glm::vec3(1));
-
-
-		int addtolist_drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
-		void drawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
+		int addtodrawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
+		void redrawMeshInstanced(int id ,const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
 
 
 
 		void render();
 	private:
 
-		void render_individual(const Mesh& mesh,const glm::mat4& model, int loc, GLSLProgram* glsl, int& indiccounter);
+		void render_individual(const Mesh& mesh,const glm::mat4& model,unsigned int loc, GLSLProgram* glsl, int& indiccounter);
 		bool initialized = false;
 
 
@@ -69,30 +73,22 @@ namespace ngiv {
 		unsigned int rboDepth;
 
 
-		std::vector<Vertex3D> static_vertics;
-		std::vector<unsigned int> static_indics;
-		std::vector<unsigned int> static_locs;
-		unsigned int static_last_loc;
+		///DATA
+		//objdata
+		std::vector<_OBJDATA> _database;
 
-
-		std::vector<Mesh> _meshes_static_data;
-		std::vector<glm::mat4> _meshes_static_model;
-		std::vector<unsigned int> _meshes_static_index;
-
-		std::vector<Mesh> _meshes_dynamic_data;
-		std::vector<glm::mat4> _meshes_dynamic_model;
-		std::vector<unsigned int> _meshes_dynamic_index;
-
-		//static instanced
-		std::vector<Mesh_I> _static_meshes_instanced_data;
-		std::vector<std::vector<Instance_Offset_Data>> _static_meshes_instanced_offsetpos;
+        std::vector<Mesh> _meshes;
+        std::vector<glm::mat4> _mesh_models;
+		std::vector<Vertex3D> _vertics;
+		std::vector<unsigned int> _indics;
+		std::vector<std::pair<unsigned int,unsigned int>> _locs;
 
 		//dynamic instanced
-        std::vector<Mesh_I> _dynamic_meshes_instanced_data;
-		std::vector<std::vector<Instance_Offset_Data>> _dynamic_meshes_instanced_offsetpos;
+        std::vector<Mesh_I> _meshes_instanced_data;
+		std::vector<std::vector<Instance_Offset_Data>> _meshes_instanced_offsetpos;
 
 
-
+        //collisionbox data
 		std::vector<Mesh> _mesh_strip;
 		std::vector<glm::vec3> _mesh_strip_poss;
 

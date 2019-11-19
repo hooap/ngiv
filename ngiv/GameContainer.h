@@ -48,7 +48,7 @@ namespace ngiv {
 				glm::vec3 cobcenter = getvec3fromstring(data, index);
 				glm::vec3 cobveloc = getvec3fromstring(data, index);
 				bool cobdynam = getboolfromstring(data, index);
-				
+
 
 				//create stuff
 				OBJ* t = ModelLoader::loadModel(name,pos, filepath, true, scale);
@@ -62,7 +62,7 @@ namespace ngiv {
 				cob->setRotation(cobrot);
 				cob->setCenterofmass(cobcenter);
 				cob->setVelocity(cobveloc);
-				
+
 				int bind = index;
 				index = data.find("[",index);
 
@@ -72,19 +72,19 @@ namespace ngiv {
 					glm::vec3 boxrot = getvec3fromstring(data, index);
 					glm::vec3 boxcenter = getvec3fromstring(data, index);
 					glm::vec3 boxscale = getvec3fromstring(data, index);
-					
+
 					Collision_Box box(boxpos, boxcenter, Collision_Object::makeCollisionBox(boxscale), boxscale, boxrot);
 					cob->addBox(box);
 					index = data.find("[",index);
 				}
  				index = bind;
 				index = data.find("(",index);
-				
+
 				while (index != data.npos && (index < nextindex || nextindex == data.npos)) {
 					index++;
 					glm::vec3 sphpos = getvec3fromstring(data, index);
 					float sphradius = getfloatfromstring(data, index);
-					
+
 
 					Collision_Sphere sphere(sphpos, sphradius);
 					cob->addSphere(sphere);
@@ -166,8 +166,8 @@ namespace ngiv {
 					//pos
 					addtostring(data, sphere.getPos());
 					//rot
-					addtostring(data, sphere.getRadius());					
-				}						   				 			  
+					addtostring(data, sphere.getRadius());
+				}
 
 			}
 
@@ -175,22 +175,22 @@ namespace ngiv {
 			of.close();
 
 		}
-		
-		void draw_setalways(ngiv::Renderer_3D& rend,bool isstatic) {
+
+		void draw_setalways(ngiv::Renderer_3D& rend) {
 			for (int i = 0; i < objs.size(); i++) {
-				rend.addtolist_draw(objs[i], isstatic);
+				rend.addtodraw(objs[i]);
 			}
 		}
 
 		void draw_setcollisionalways(ngiv::Renderer_3D& rend) {
 			for (int i = 0; i < objs.size(); i++) {
-				rend.addtolist_drawCollisionBox(objs[i]->getCollision_Object());
+				rend.addtodrawCollisionBox(objs[i]->getCollision_Object());
 			}
 		}
 
 		void addObj(OBJ* obj) {
 			objs.push_back(obj);
-		}			
+		}
 
 		void addalltoWorld(PhysicsWorld& world) {
 			for (int i = 0; i < objs.size(); i++) {
@@ -281,7 +281,7 @@ namespace ngiv {
 			return vec;
 		}
 		bool getboolfromstring(std::string& d, int& index) {
-			
+
 			char c = d[index] - 48;
 			index += 1;
 			if (c) {
