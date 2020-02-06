@@ -60,7 +60,7 @@ void Screen::init()
 
 
 	//draw
-	_container.draw_setalways(_3drenderer,true);
+	_container.draw_setalways(_3drenderer);
 //	_container.drawallcollision(_3drenderer);
 //	_terrain.draw(&_3drenderer);
 //	_3drenderer.redraw_static();

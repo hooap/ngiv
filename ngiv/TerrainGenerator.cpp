@@ -116,14 +116,21 @@ namespace ngiv {
         //check if render modification is needed
         glm::vec2 coord = getChunkCoord(camPos);
 
-
-        if(coord != _viewPos || first_loop){
+        if(first_loop){
+            first_loop = false;
             _viewPos = coord;
             create(viewDistance);
-            first_loop = false;
+            _rendid = rend->addtodrawMeshInstanced(_mainmesh,offsetpos);
+            return;
         }
 
-        rend->drawMeshInstanced(_mainmesh,offsetpos);
+
+        if(coord != _viewPos){
+            _viewPos = coord;
+            create(viewDistance);
+        }
+
+        rend->redrawMeshInstanced(_rendid, _mainmesh,offsetpos);
 	}
 
 

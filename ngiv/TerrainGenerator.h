@@ -48,6 +48,7 @@ private:
     FastNoise _noise;
     int _seed;
     float _multiplier;
+    int _rendid;
 
 };
 

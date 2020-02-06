@@ -5,7 +5,7 @@
 namespace ngiv {
 
 	void BasicLevelEditor::init() {
-		
+
 
 	}
 	void BasicLevelEditor::lateinit() {
@@ -26,7 +26,7 @@ namespace ngiv {
 			std::vector<std::string> fs;
 			for (int j = 0; j < in_dir.size(); j++) {
 				std::string innerpath = in_dir[j].path;
-				if (innerpath.substr(innerpath.size() - 4) == ".obj") {					
+				if (innerpath.substr(innerpath.size() - 4) == ".obj") {
 					if (preload) {
 						OBJ* to = ModelLoader::loadModel(innerpath, glm::vec3(0), innerpath, false);
 						if (to != nullptr) {
@@ -39,21 +39,21 @@ namespace ngiv {
 						_model_paths.push_back(innerpath);
 					}
 
-					
-				}				
+
+				}
 			}
-	
+
 		}
 
 	}
 
 	void BasicLevelEditor::initui() {
-		
+
 		//left panel
 		{
 			//panel
 			ngiv::NGUI_PANEL* lpanel = _gui.addpanel(glm::vec4(0.5, 0.5, 20, 99), "");
-			
+
 
 
 			_model_list = _gui.getdropdownlist(glm::vec4(5, 90, 90, 5), 1.0f, ngiv::ColorRGBA8(0, 0, 0, 255));
@@ -78,7 +78,7 @@ namespace ngiv {
 			//forced grid text
 			ngiv::NGUI_TEXT* t2 = _gui.gettext("forcedgrid", glm::vec2(25, 6.2), ngiv::ColorRGBA8(0, 0, 255, 255), 0.5f, true, true);
 			lpanel->texts.push_back(t2);
-			
+
 
 			//savepanelopenbutton
 			ngiv::NGUI_PANEL_BUTTON* bsave = _gui.getpanelbutton("Save", 0.9f, glm::vec4(42, 2, 26, 6), "", ngiv::ColorRGBA8(0, 255, 0, 255), std::bind(&BasicLevelEditor::checkpanelsavebutton, this, std::placeholders::_1, std::placeholders::_2));
@@ -90,13 +90,13 @@ namespace ngiv {
 
 
 		}
-			   
+
 		//save panel
 		{
 			_savepanel = _gui.addpanel(glm::vec4(30, 30, 40, 40), "", "", true, true, true, "Save map");
 			_savepanel->active = false;
 
-			
+
 			ngiv::NGUI_PANEL_EDITBOX* e1 = _gui.getpaneleditbox("savefilename", glm::vec4(5, 62, 85, 15), 0.8f, "", ngiv::ColorRGBA8(0, 0, 255, 255), "");
 			_savepanel->editboxs.push_back(e1);
 
@@ -118,7 +118,7 @@ namespace ngiv {
 		}
 
 
-		//resetpanel	
+		//resetpanel
 		_resetpanel = _gui.addPREMADEyesno(glm::vec4(30, 30, 20, 20), "Are you sure", std::bind(&BasicLevelEditor::checkresetpageyes, this, std::placeholders::_1, std::placeholders::_2));
 
 		//loadeven
@@ -150,7 +150,7 @@ namespace ngiv {
 			SDL_WarpMouseInWindow(_window->getwindow(), _width / 2, _height / 2);
 		}
 
-		
+
 
 		/*
 
@@ -350,7 +350,7 @@ namespace ngiv {
 		return false;
 	}
 	void BasicLevelEditor::draw() {
-			
+
 		if (_selected != nullptr) {
 
 			switch (_tool)
@@ -368,9 +368,9 @@ namespace ngiv {
 		if (_debugcheckbox->value) {
 			_container->draw_setcollisionalways(_3drenderer);
 		}else {
-			_container->draw_setalways(_3drenderer,true);
+			_container->draw_setalways(_3drenderer);
 		}
-	
+
 
 		_gui.draw();
 	}
@@ -390,7 +390,7 @@ namespace ngiv {
 		if (_inputmanager.isKeyPressed(SDLK_F6)) {
 			setSwitchScreen("game");
 		}
-		
+
 
 	}
 
@@ -498,7 +498,7 @@ namespace ngiv {
 			p->active = false;
 		}
 	}
-	
+
 
 
 
