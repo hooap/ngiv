@@ -50,8 +50,8 @@ void Screen::init()
 //	_world.add(floorbox->creatensetCollisionObject(fb, false));
 
 //	_container.addObj(floorbox);
-//	_container.addObj(sphere1);
-//	_container.addObj(sphere2);
+	_container.addObj(sphere1);
+	_container.addObj(sphere2);
 
 
 	//_terrain.init((int)time(NULL),200.0f, 8.0f,512);
@@ -60,7 +60,7 @@ void Screen::init()
 
 
 	//draw
-//	_container.drawall(_3drenderer,true);
+	_container.draw_setalways(_3drenderer,true);
 //	_container.drawallcollision(_3drenderer);
 //	_terrain.draw(&_3drenderer);
 //	_3drenderer.redraw_static();
