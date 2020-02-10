@@ -144,7 +144,6 @@
     <ClCompile Include="BasicLevelEditor.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
-    <ClCompile Include="FastNoise.cpp" />
     <ClCompile Include="glad.cpp" />
     <ClCompile Include="GLSLProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -166,7 +165,6 @@
     <ClInclude Include="Camera3D.h" />
     <ClInclude Include="Collision_Box.h" />
     <ClInclude Include="ColorRGBA8.h" />
-    <ClInclude Include="FastNoise.h" />
     <ClInclude Include="GameContainer.h" />
     <ClInclude Include="GLSLProgram.h" />
     <ClInclude Include="InputManager.h" />
