@@ -115,6 +115,13 @@ namespace ngiv {
 		if (i.isKeyDown(SDL_BUTTON_RIGHT)) {
 			ngiv::o(_pos);
 		}
+		if (i.isKeyDown(SDLK_SPACE)) {
+			setPos(_pos + _up * _speed);
+		}
+		if (i.isKeyDown(SDLK_LSHIFT)) {
+			setPos(_pos - _up * _speed);
+		}
+
 
 	}
 

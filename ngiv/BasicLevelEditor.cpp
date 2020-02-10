@@ -363,12 +363,12 @@ namespace ngiv {
 				break;
 			}
 		}
-
+		_container->draw(_3drenderer);
 
 		if (_debugcheckbox->value) {
-			_container->draw_setcollisionalways(_3drenderer);
+			_container->draw_collision(_3drenderer);
 		}else {
-			_container->draw_setalways(_3drenderer);
+			//todo clean
 		}
 
 

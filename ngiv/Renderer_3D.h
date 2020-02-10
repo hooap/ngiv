@@ -14,11 +14,17 @@ namespace ngiv {
 	};
 
 	struct _OBJDATA {
+		unsigned int mesh_start_id;
         unsigned int mesh_size;
-        unsigned int index_i;
-        unsigned int index_loc_i;
-        unsigned int index_start_loc;
-        unsigned int index_end_loc;
+        unsigned int database_id;
+        unsigned int loc_begin_id;
+		unsigned int loc_last_id;
+		unsigned int vertics_begin_id;
+		unsigned int vertics_last_id;
+		unsigned int indics_begin_id;
+		unsigned int indics_last_id;
+		bool active;
+		bool created;
 	};
 
 
@@ -33,17 +39,18 @@ namespace ngiv {
 		void loadSkybox(std::string path, std::vector<std::string> facenames = std::vector<std::string>());
 
 
-		void redraw(OBJ* m, int id);
+		void createBuffers();
+
+		void addtodrawUpdateModel(OBJ* m, int id);
 		int addtodraw(OBJ* m);
 
 
-
-		void redrawCollisionBox(int id,Collision_Object* sp);
+		void addtodrawCollisionBoxUpdateModel(Collision_Object* sp, int id);
 		int addtodrawCollisionBox(Collision_Object* sp);
 
 
 		int addtodrawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
-		void redrawMeshInstanced(int id ,const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
+		void addtodrawMeshInstancedUpdateModel(int id ,const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets);
 
 
 
@@ -54,7 +61,7 @@ namespace ngiv {
 		bool initialized = false;
 
 
-		void renderWithGLSL(GLSLProgram& glsl);
+		void renderWithGLSL(GLSLProgram* glsl);
 		void renderWithGLSLinstanced(GLSLProgram& glsl);
 
 
@@ -62,6 +69,9 @@ namespace ngiv {
 
 		void dispose();
 		GLuint VAO, VBO, EBO;
+
+
+		GLuint VAO_INS;
 		GLuint VBO_INS_I;
 		GLuint VBO_INS_D;
 
@@ -83,9 +93,15 @@ namespace ngiv {
 		std::vector<unsigned int> _indics;
 		std::vector<unsigned int> _locs;
 
+		unsigned int c_loc = 0;
+
+
 		//dynamic instanced
         std::vector<Mesh_I> _meshes_instanced_data;
 		std::vector<std::vector<Instance_Offset_Data>> _meshes_instanced_offsetpos;
+
+		std::vector<unsigned int> needupdate_id_instanced;
+		std::vector<unsigned int> needupdate_id;
 
 
         //collisionbox data

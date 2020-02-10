@@ -193,9 +193,15 @@ namespace ngiv {
 			return verts;
 		}
 
+		unsigned int getRendererID() { return __renderer_id; }
+		void setRendererID(unsigned int id) { __renderer_id = id; }
 
 
 	private:
+		unsigned int __renderer_id = -1;
+
+
+
 		bool _dynamic = false;
 		glm::vec3 _extrapos;
 

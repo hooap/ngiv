@@ -176,17 +176,37 @@ namespace ngiv {
 
 		}
 
-		void draw_setalways(ngiv::Renderer_3D& rend) {
-			for (int i = 0; i < objs.size(); i++) {
-				rend.addtodraw(objs[i]);
+		void draw(ngiv::Renderer_3D& rend) {
+			if (!draw_init) {
+				for (int i = 0; i < objs.size(); i++) {
+					unsigned int id = rend.addtodraw(objs[i]);
+					objs[i]->setRendererID(id);
+				}
+				draw_init = true;
+			}
+			else {
+				for (int i = 0; i < objs.size(); i++) {
+					rend.addtodrawUpdateModel(objs[i],objs[i]->getRendererID());
+				}
 			}
 		}
 
-		void draw_setcollisionalways(ngiv::Renderer_3D& rend) {
-			for (int i = 0; i < objs.size(); i++) {
-				rend.addtodrawCollisionBox(objs[i]->getCollision_Object());
+		void draw_collision(ngiv::Renderer_3D& rend) {
+			if (!draw_collision_init) {
+				for (int i = 0; i < objs.size(); i++) {
+					unsigned int id = rend.addtodrawCollisionBox(objs[i]->getCollision_Object());
+					objs[i]->getCollision_Object()->setRendererID(id);
+				}
+				draw_collision_init = true;
 			}
+			else {
+				for (int i = 0; i < objs.size(); i++) {
+					rend.addtodrawCollisionBoxUpdateModel(objs[i]->getCollision_Object(), objs[i]->getCollision_Object()->getRendererID());
+				}				
+			}			
 		}
+
+
 
 		void addObj(OBJ* obj) {
 			objs.push_back(obj);
@@ -226,11 +246,16 @@ namespace ngiv {
 			for (int i = 0; i < objs.size(); i++) {
 				objs[i]->updateObject();
 			}
+			
+
 		}
 
 
 
 	private:
+
+		bool draw_init = false;
+		bool draw_collision_init = false;
 
 		void addtostring(std::string& d, glm::vec3 v) {
 			d.append(std::to_string(v.x));

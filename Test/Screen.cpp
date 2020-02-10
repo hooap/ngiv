@@ -55,13 +55,11 @@ void Screen::init()
 
 
 	//_terrain.init((int)time(NULL),200.0f, 8.0f,512);
-	_terrain.init(1234125,32.0f, 1.0f, 32, glm::vec3(0));
+//	_terrain.init(1234125,32.0f, 1.0f, 32, glm::vec3(0));
 
 
 
 	//draw
-	_container.draw_setalways(_3drenderer);
-//	_container.drawallcollision(_3drenderer);
 //	_terrain.draw(&_3drenderer);
 //	_3drenderer.redraw_static();
 }
@@ -107,7 +105,6 @@ void Screen::checkInput() {
 		setSwitchScreen("leveleditor");
 	}
 
-	return;
 	// DEBUG BALL MOVEMENT
 	ngiv::Collision_Object* b1 = _container.getObjbyName("sphere1")->getCollision_Object();
 	ngiv::Collision_Object* b2 = _container.getObjbyName("sphere2")->getCollision_Object();
@@ -155,6 +152,7 @@ void Screen::checkInput() {
 
 	}
 
+	ngiv::o(b1->getExtraPos());
 
 
 
@@ -211,17 +209,18 @@ bool Screen::update(float deltatime)
 void Screen::draw()
 {
 
-    _terrain.draw(&_3drenderer,6,_cam3d.getPos());
+
+	_container.draw(_3drenderer);
+	//	_container.drawallcollision(_3drenderer);
+
+   // _terrain.draw(&_3drenderer,6,_cam3d.getPos());
 	_gui.draw();
 }
 
 void Screen::render()
 {
-
 	_3drenderer.render();
-
 	_gui.render();
-
 }
 
 void Screen::dispose()

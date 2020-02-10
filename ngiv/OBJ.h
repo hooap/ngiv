@@ -52,6 +52,11 @@ namespace ngiv {
 		std::string getName() { return name; }
 
 
+		unsigned int getRendererID() { return __renderer_id; }
+		void setRendererID(unsigned int id) { __renderer_id = id; }
+
+
+
 		Collision_Object* createCollisionObject() {
 			collision_boxes = new Collision_Object();
 
@@ -91,6 +96,10 @@ namespace ngiv {
 		float ydif;
 		float zdif;
 	protected:
+		unsigned int __renderer_id = -1;
+
+
+
 
 		std::string filepath;
 
@@ -101,7 +110,6 @@ namespace ngiv {
 		};
 
 		Collision_Object* collision_boxes = nullptr;
-
 
 
 

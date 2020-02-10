@@ -387,12 +387,9 @@ namespace ngiv {
 			lightpositions.push_back(glm::vec3(2, 6, 1));
 			lightcolors.push_back(glm::vec3(1, 1, 1));
 		}
-
-		//create VAO
+		//FOR NORMAL RENDERING
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &VBO_INS_D);
-		glGenBuffers(1, &VBO_INS_I);
 		glGenBuffers(1, &EBO);
 
 		glBindVertexArray(VAO);
@@ -408,10 +405,23 @@ namespace ngiv {
 		// vertex texture coords
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)offsetof(Vertex3D, Vertex3D::TexCoords));
+		
+		
 		glBindVertexArray(0);
 
+		//FOR INSTANCED RENDERING
+
+
+
+		//create VAO
+		glGenVertexArrays(1, &VAO_INS);
+		glGenBuffers(1, &VBO_INS_D);
+		glGenBuffers(1, &VBO_INS_I);
+
+		
+
 		//CREATE INSTANCED VBO
-		glBindVertexArray(VAO);
+		glBindVertexArray(VAO_INS);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_INS_D);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D_Instanced), (void*)offsetof(Vertex3D_Instanced, Vertex3D_Instanced::Position));
@@ -582,42 +592,65 @@ namespace ngiv {
 	*/
 
 
-	void Renderer_3D::redraw(OBJ* m, int id) {
-        _OBJDATA _data = _database[id];
-
-        unsigned int startval = _locs[id];
-
-        const std::vector<Mesh>* meshes = m->getMeshes();
-
-		int num = 0;
+	void Renderer_3D::createBuffers() {
 
 		std::vector<Vertex3D> vt;
-        std::vector<unsigned int> in;
-		for (int i = 0; i < _data.mesh_size; i++) {
-			const Mesh* m = &(*meshes)[i];
-			vt = m->vertices;
-			std::vector<Vertex3D>::iterator nth = _vertics.begin() + _data.index_loc_i;
-			_vertics.insert(nth, vt.begin(), vt.end());
-			in = m->indices;
-            std::vector<unsigned int>::iterator inth = _indics.begin() + _data.index_loc_i;
-			_indics.insert(inth, in.begin(), in.end());
+		std::vector<unsigned int> in;
+
+
+		for (int i = 0; i < _database.size(); i++) {
+			if (!_database[i].created) {
+				_OBJDATA* data = &_database[i];
+
+				data->created = true;
+				data->indics_begin_id = _indics.size();
+				data->vertics_begin_id = _vertics.size();
+				data->loc_begin_id = _locs.size();
+
+
+				//fill the buffers
+				for (int j = data->mesh_start_id; j < data->mesh_start_id + data->mesh_size; j++) {
+					//CREATE
+					const Mesh* mesh = &(_meshes[j]);
+
+					vt = mesh->vertices;
+					in = mesh->indices;
+
+					//insert vertics for each mesh
+					_vertics.insert(_vertics.end(), vt.begin(), vt.end());
+					//insert indics for each mesh
+					_indics.insert(_indics.end(), in.begin(), in.end());
+
+					//insert locs for each mesh
+					int indicsize = in.size();
+					_locs.push_back(c_loc);
+					c_loc += indicsize;
+				}
+				data->vertics_last_id = _vertics.size();
+				data->indics_last_id = _indics.size();			
+				data->loc_last_id = _locs.size();
+
+			}
+
 		}
 
-        glm::vec3 pos = m->getPos();
-        glm::mat4 model = glm::mat4(1);
-        model = glm::translate(model, pos);
-        model = glm::scale(model, m->getscale());
-        _mesh_models[_data.index_i]= model;
+
 
 	}
 
+
+	void Renderer_3D::addtodrawUpdateModel(OBJ* m, int id) {			   		
+		glm::vec3 pos = m->getPos();
+		glm::mat4 model = glm::mat4(1);
+		model = glm::translate(model, pos);
+		model = glm::scale(model, m->getscale());
+		_mesh_models[id] = model;		
+	}
 	int Renderer_3D::addtodraw(OBJ* m) {
 
-
-        ///insert render_data
-        const std::vector<Mesh>* meshes = m->getMeshes();
-
-        //insert meshes
+		//insert meshes
+		const std::vector<Mesh>* meshes = m->getMeshes();
+		int meshes_index_start = _meshes.size();
         _meshes.insert(_meshes.end(), meshes->begin(), meshes->end());
 
         //insert model
@@ -627,73 +660,52 @@ namespace ngiv {
         model = glm::scale(model, m->getscale());
         _mesh_models.push_back(model);
 
-        //loc logic
-        int v_start, v_const_start;
-		if(_locs.empty()){
-            v_start = 0;
-		}else{
-            v_start = _locs.back();
-		}
-        v_const_start = v_start;
-        int loc_i = _locs.size();
 
-        std::vector<Vertex3D> vt;
-        std::vector<unsigned int> in;
-        for(int i = 0; i < meshes->size(); i++){
-            const Mesh* mesh = &(*meshes)[i];
+        
+		
+		//fill object data
+		_OBJDATA new_object;
 
-
-
-            vt = mesh->vertices;
-            in = mesh->indices;
-
-            //insert vertics for each mesh
-            _vertics.insert(_vertics.end(), vt.begin(), vt.end());
-            //insert indics for each mesh
-            _indics.insert(_indics.end(), in.begin(), in.end());
-
-            //insert locs for each mesh
-            int indicsize = in.size();
-            _locs.push_back(v_start);
-            v_start += indicsize;
-        }
-
-
-        ///insert obj data
-        _OBJDATA new_object;
-        //insert mesh_size
         new_object.mesh_size = meshes->size();
-        //insert index_i
-        new_object.index_i = _database.size();
-        new_object.index_loc_i = loc_i;
-        new_object.index_start_loc = v_const_start;
-        new_object.index_end_loc = v_start;
+		new_object.mesh_start_id = meshes_index_start;
+        new_object.database_id = _database.size();
+        new_object.loc_begin_id = -1;
+		new_object.loc_last_id = -1;
+		new_object.active = true;
+		new_object.created = false;
+
         _database.push_back(new_object);
 
-		return new_object.index_i;
+		return new_object.database_id;
 	}
 
 
 
 	int Renderer_3D::addtodrawMeshInstanced(const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets) {
 
+		int id = _meshes_instanced_data.size();
+
 		_meshes_instanced_data.push_back(mesh);
 		_meshes_instanced_offsetpos.push_back(posoffsets);
+		needupdate_id_instanced.push_back(id);
 
-
-		return -1;
+		return id;
 	}
+    void Renderer_3D::addtodrawMeshInstancedUpdateModel(int id,const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets){
 
-    void Renderer_3D::redrawMeshInstanced(int id,const Mesh_I& mesh, const std::vector<Instance_Offset_Data>& posoffsets){
-
-        _meshes_instanced_data.push_back(mesh);
-        _meshes_instanced_offsetpos.push_back(posoffsets);
+		if (id >= _meshes_instanced_data.size()) {
+			assert("addtodrawMeshInstancedUpdateModel id is not valid");
+		}        
+        _meshes_instanced_offsetpos[id] = posoffsets;
         return;
     }
 
 
 
-	void Renderer_3D::redrawCollisionBox(int id, Collision_Object* sp) {
+	void Renderer_3D::addtodrawCollisionBoxUpdateModel(Collision_Object* sp, int id) {
+
+		assert("addtodrawCollisionBoxUpdateModel not implemented");
+		/*
 		glm::vec3 addpos = sp->getExtraPos();
 		std::vector<Collision_Sphere>* spheres = sp->getSpheres();
 		for (int i = 0; i < spheres->size(); i++) {
@@ -720,6 +732,8 @@ namespace ngiv {
 			glm::vec3 pos = (*boxes)[i].getPos();
 			_mesh_strip_poss.push_back(pos + addpos);
 		}
+		*/
+
 	}
 
 	int Renderer_3D::addtodrawCollisionBox(Collision_Object* sp) {
@@ -757,6 +771,8 @@ namespace ngiv {
 
 	//render logic
 	void Renderer_3D::render() {
+
+		createBuffers();
 		glDisable(GL_BLEND);
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -765,18 +781,18 @@ namespace ngiv {
 		_g_glsl.use();
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		renderWithGLSL(_g_glsl);
-
+		renderWithGLSL(&_g_glsl);
 		if (!_mesh_strip.empty()) {
 			renderStrips(_g_glsl);
 		}
-
 		_g_glsl.unuse();
+
+
 		_g_glsl_instanced.use();
 		renderWithGLSLinstanced(_g_glsl_instanced);
-        renderWithGLSL(_g_glsl);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		_g_glsl_instanced.unuse();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 	//	lightpositions.back() = _cam->getPos();
@@ -860,7 +876,7 @@ namespace ngiv {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	void Renderer_3D::renderWithGLSL(GLSLProgram& glsl) {
+	void Renderer_3D::renderWithGLSL(GLSLProgram* glsl) {
 
 		if (_meshes.empty()) {
 			return;
@@ -880,23 +896,35 @@ namespace ngiv {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indics.size() * sizeof(unsigned int), _indics.data(), GL_STATIC_DRAW);
 
-		glUniformMatrix4fv(glsl.getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
-		glUniformMatrix4fv(glsl.getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
+		glUniformMatrix4fv(glsl->getUniformLocation("projection"), 1, GL_FALSE, &(_cam->getProjection()[0][0]));
+		glUniformMatrix4fv(glsl->getUniformLocation("view"), 1, GL_FALSE, &(_cam->getView()[0][0]));
 
 
-		int indicindex = 0;
+		int indiccounter = 0;
 		//DRAW MESHES
-		int idcounter = 0;
-		int curid = 0;
-		int nextid = _meshes[0].indices.size();
 
-		for (int i = 0; i < _meshes.size(); i++) {
-			curid = _database[idcounter].index_start_loc;
+		for (int i = 0; i < _database.size(); i++) {
+ 			_OBJDATA curOBJ = _database[i];
+			unsigned int loc_id = curOBJ.loc_begin_id;
 
-			render_individual(_meshes[i], _mesh_models[0], curid, &glsl, indicindex);
-			
-			idcounter++;
+			unsigned int mesh_start_id = curOBJ.mesh_start_id;
+			unsigned int mesh_size = curOBJ.mesh_size;
+			unsigned int database_id = curOBJ.database_id;
+
+			//TODO:
+
+			//ERROR CHECKING IF DATA IS NOT CORRECT ?
+			for (int j = 0; j < mesh_size; j++) {
+				
+				render_individual(_meshes[mesh_start_id + j], _mesh_models[database_id], _locs[loc_id + j], glsl, indiccounter);
+
+			}
+
+
+
 		}
+
+		
 
 		glBindVertexArray(0);
 		glActiveTexture(GL_TEXTURE0);
@@ -951,7 +979,7 @@ namespace ngiv {
 			std::vector<unsigned int> indics = _meshes_instanced_data[i].indices;
 
 
-			glBindVertexArray(VAO);
+			glBindVertexArray(VAO_INS);
 			glEnable(GL_DEPTH_TEST);
 
 			//upload VBO

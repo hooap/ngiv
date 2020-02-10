@@ -108,10 +108,7 @@ namespace ngiv {
 
 		offsetpos.push_back(offset);
 	}
-
-
-
-
+	   	 
 	void TerrainGenerator::draw(Renderer_3D* rend,int viewDistance, glm::vec3 camPos) {
         //check if render modification is needed
         glm::vec2 coord = getChunkCoord(camPos);
@@ -130,10 +127,9 @@ namespace ngiv {
             create(viewDistance);
         }
 
-        rend->redrawMeshInstanced(_rendid, _mainmesh,offsetpos);
+        rend->addtodrawMeshInstancedUpdateModel(_rendid, _mainmesh,offsetpos);
 	}
-
-
+	
     glm::vec2 TerrainGenerator::getChunkCoord(glm::vec3 pos){
         int x = pos.x;
         int y = pos.z;
